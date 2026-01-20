@@ -11,6 +11,7 @@ const products = [
         id: 'white-wine-vinegar',
         name: 'White Wine Vinegar',
         price: 150.00,
+        size: '455ml Bottle',
         // Uses images array for slideshow
         images: [
             './assets/products/vinegar/1.jpg',
@@ -21,7 +22,7 @@ const products = [
         ],
         // Fallback for logic that might expect single image
         image: './assets/products/vinegar/1.jpg',
-        description: '455ml Bottle. White Wine Vinegar infused with salt, sugar, fresh dill, spearmint leaves, peppercorns, coriander, garlic, and grape leaves.',
+        description: 'White Wine Vinegar infused with salt, sugar, fresh dill, spearmint leaves, peppercorns, coriander, garlic, and grape leaves.',
         ingredients: [
             'White Wine Vinegar',
             'Salt',
@@ -38,6 +39,7 @@ const products = [
         id: 'spicy-pickled',
         name: 'Spicy Pickled Cucamelons',
         price: 120.00,
+        size: '455ml Bottle',
         images: [
             './assets/products/spicy-pickled/1.jpg',
             './assets/products/spicy-pickled/2.jpg',
@@ -45,7 +47,7 @@ const products = [
             './assets/products/spicy-pickled/4.jpg'
         ],
         image: './assets/products/spicy-pickled/1.jpg',
-        description: '455ml Bottle. Crunchy cucamelons pickled with a kick of chilli and garlic.',
+        description: 'Crunchy cucamelons pickled with a kick of chilli and garlic.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -62,6 +64,7 @@ const products = [
         id: 'dill-pickled',
         name: 'Dill & Garlic Pickled Cucamelons',
         price: 120.00,
+        size: '455ml Bottle',
         images: [
             './assets/products/dill-pickled/1.jpg',
             './assets/products/dill-pickled/2.jpg',
@@ -69,7 +72,7 @@ const products = [
             './assets/products/dill-pickled/4.jpg'
         ],
         image: './assets/products/dill-pickled/1.jpg',
-        description: '455ml Bottle. Classic dill flavor, perfect for salads and cheeseboards.',
+        description: 'Classic dill flavor, perfect for salads and cheeseboards.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -85,6 +88,7 @@ const products = [
         id: 'sweet-sour',
         name: 'Sweet & Sour Pickled Cucamelons',
         price: 120.00,
+        size: '455ml Bottle',
         images: [
             './assets/products/sweet-sour/1.jpg',
             './assets/products/sweet-sour/2.jpg',
@@ -93,7 +97,7 @@ const products = [
             './assets/products/sweet-sour/5.jpg'
         ],
         image: './assets/products/sweet-sour/1.jpg',
-        description: '455ml Bottle. A delightful balance of sweet and tangy flavors.',
+        description: 'A delightful balance of sweet and tangy flavors.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -110,13 +114,14 @@ const products = [
         id: 'sweet-cucamelon',
         name: 'Sweet Cucamelon',
         price: 120.00,
+        size: '455ml Bottle',
         images: [
             './assets/products/sweet-cucamelon/1.jpg',
             './assets/products/sweet-cucamelon/2.jpg',
             './assets/products/sweet-cucamelon/3.jpg'
         ],
         image: './assets/products/sweet-cucamelon/1.jpg',
-        description: '455ml Bottle. A unique twist with a sweet kick from Drink-O-Pop powder.',
+        description: 'A unique twist with a sweet kick from Drink-O-Pop powder.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -133,6 +138,7 @@ const products = [
         id: 'fresh-punnet',
         name: 'Fresh Cucamelons (250g)',
         price: 50.00,
+        size: '250g Punnet',
         images: [
             './assets/products/fresh/1.jpg',
             './assets/products/fresh/2.jpg',
@@ -349,6 +355,7 @@ function openProductDetails(product) {
         <img src="${mainImage}" alt="${product.name}" class="modal-product-image">
         <div class="modal-product-info">
             <h2>${product.name}</h2>
+            ${product.size ? `<p style="color: #666; margin-top: -5px; margin-bottom: 10px; font-weight: 500;">${product.size}</p>` : ''}
             <p class="price" style="font-size: 1.5rem; color: var(--primary-color); margin: 10px 0;">R ${product.price.toFixed(2)}</p>
             <p class="description">${product.description}</p>
             ${ingredientsHtml}
