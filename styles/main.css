@@ -174,60 +174,60 @@ ul {
     /* 11 images * 6s each */
 }
 
-/* Stagger animation for 11 images - New photos first */
+/* Stagger animation for 11 images */
 .hero-slide:nth-child(1) {
     animation-delay: 0s;
-    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.07.jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 20.jpeg');
 }
 
 .hero-slide:nth-child(2) {
     animation-delay: 6s;
-    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.10.jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.07.jpeg');
 }
 
 .hero-slide:nth-child(3) {
     animation-delay: 12s;
-    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.11.jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.10.jpeg');
 }
 
 .hero-slide:nth-child(4) {
     animation-delay: 18s;
-    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.12.jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.11.jpeg');
 }
 
 .hero-slide:nth-child(5) {
     animation-delay: 24s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.57 (1).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 14.13.12.jpeg');
 }
 
 .hero-slide:nth-child(6) {
     animation-delay: 30s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.57 (4).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 20.05.08.jpeg');
 }
 
 .hero-slide:nth-child(7) {
     animation-delay: 36s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.58 (1).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 20.05.09 (1).jpeg');
 }
 
 .hero-slide:nth-child(8) {
     animation-delay: 42s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.58 (5).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 20.05.09.jpeg');
 }
 
 .hero-slide:nth-child(9) {
     animation-delay: 48s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.58 (8).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 20.05.10 (1).jpeg');
 }
 
 .hero-slide:nth-child(10) {
     animation-delay: 54s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.59 (1).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 20.05.10 (2).jpeg');
 }
 
 .hero-slide:nth-child(11) {
     animation-delay: 60s;
-    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.59 (6).jpeg');
+    background-image: url('../assets/Page Header/WhatsApp Image 2026-01-20 at 20.05.10.jpeg');
 }
 
 
