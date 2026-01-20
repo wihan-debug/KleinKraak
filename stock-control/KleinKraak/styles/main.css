@@ -1,0 +1,434 @@
+:root {
+    --primary-color: #4A6741;
+    /* Deep Organic Green */
+    --primary-light: #7E9F70;
+    /* Light Green */
+    --primary-dark: #2F4229;
+    /* Darker Green */
+    --accent-color: #C2D5A8;
+    /* Pale Green Accent */
+    --bg-color: #F9F8F6;
+    /* Cream / Off-white */
+    --text-color: #333333;
+    --text-light: #666666;
+    --white: #FFFFFF;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius: 12px;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, #F9F8F6 0%, #eef5eb 100%);
+    color: var(--text-color);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-heading);
+    color: var(--primary-dark);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(47, 66, 41, 0.3);
+}
+
+.btn-success {
+    background-color: #2E7D32;
+    color: white;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 20px;
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.cart-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    color: var(--primary-dark);
+    padding: 5px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* Hero with Slideshow */
+.hero {
+    height: 80vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 60px;
+    overflow: hidden;
+    background-color: #333;
+    /* Fallback */
+}
+
+/* Slideshow Container */
+.hero-slideshow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: slideShow 42s infinite;
+    /* 7 images * 6s each */
+}
+
+/* Stagger animation for 7 images */
+.hero-slide:nth-child(1) {
+    animation-delay: 0s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.57 (1).jpeg');
+}
+
+.hero-slide:nth-child(2) {
+    animation-delay: 6s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.57 (4).jpeg');
+}
+
+.hero-slide:nth-child(3) {
+    animation-delay: 12s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.58 (1).jpeg');
+}
+
+.hero-slide:nth-child(4) {
+    animation-delay: 18s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.58 (5).jpeg');
+}
+
+.hero-slide:nth-child(5) {
+    animation-delay: 24s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.58 (8).jpeg');
+}
+
+.hero-slide:nth-child(6) {
+    animation-delay: 30s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.59 (1).jpeg');
+}
+
+.hero-slide:nth-child(7) {
+    animation-delay: 36s;
+    background-image: url('../assets/images/WhatsApp Image 2026-01-10 at 21.16.59 (6).jpeg');
+}
+
+
+@keyframes slideShow {
+    0% {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+
+    4% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    /* fade in quick */
+    14% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* hold */
+    18% {
+        opacity: 0;
+    }
+
+    /* fade out */
+    100% {
+        opacity: 0;
+    }
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    max-width: 700px;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Sections */
+.products-section {
+    padding: 80px 0;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-color);
+    margin: 15px auto 0;
+    border-radius: 2px;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--primary-dark);
+    color: white;
+    padding: 60px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-info h3 {
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.footer-info p {
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 200px;
+    background-color: #4a6741;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7f6dFqB4j9974t747-862953282216');
+    /* Optional generic map texture */
+    background-size: cover;
+}
+
+.map-placeholder span {
+    background: white;
+    color: var(--primary-dark);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Utility Class */
+.hidden {
+    display: none !important;
+}
+
+/* Product Slideshow */
+.product-image-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    /* Square images */
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+    display: block;
+}
+
+.product-image.hidden {
+    display: none;
+}
+
+/* Product Modal */
+.modal-product-details {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.modal-product-image {
+    width: 50%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.modal-product-info {
+    flex: 1;
+}
+
+.modal-ingredients {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.modal-ingredients h4 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.modal-ingredients p {
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .modal-product-details {
+        flex-direction: column;
+    }
+
+    .modal-product-image {
+        width: 100%;
+    }
+}

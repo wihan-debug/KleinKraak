@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak QR Code</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .url {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .print-btn {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .print-btn:hover {
+            background-color: #1b5e20;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Scan to Visit KleinKraak</h1>
+        <div id="qrcode"></div>
+        <span class="url">https://kleinkraak.com</span>
+        <p>Right-click the QR code to save the image.</p>
+        <button class="print-btn" onclick="window.print()">Print this Page</button>
+    </div>
+
+    <script>
+        // Generate QR Code
+        new QRCode(document.getElementById("qrcode"), {
+            text: "https://kleinkraak.com",
+            width: 256,
+            height: 256,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    </script>
+
+</body>
+
+</html>

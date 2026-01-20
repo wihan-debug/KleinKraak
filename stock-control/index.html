@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak - Stock Control System</title>
+    <meta name="description"
+        content="KleinKraak Stock Control - Manage inventory, track stock movements, and generate reports.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./favicon.png?v=2">
+    <link rel="apple-touch-icon" href="./favicon.png?v=2">
+    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=2">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/components.css">
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="logo">KleinKraak</h1>
+            <p class="logo-subtitle">Stock Control</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-view="dashboard">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-view="inventory">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                    </path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <span>Inventory</span>
+            </a>
+            <a href="#" class="nav-item" data-view="movements">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <span>Stock Movements</span>
+            </a>
+            <a href="#" class="nav-item" data-view="materials">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 7h-9"></path>
+                    <path d="M14 17H5"></path>
+                    <circle cx="17" cy="17" r="3"></circle>
+                    <circle cx="7" cy="7" r="3"></circle>
+                </svg>
+                <span>Raw Materials</span>
+            </a>
+            <a href="#" class="nav-item" data-view="material-movements">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="17 11 19 13 23 9"></polyline>
+                </svg>
+                <span>Material Movements</span>
+            </a>
+            <a href="#" class="nav-item" data-view="reports">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Reports</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left" style="display: flex; align-items: center; gap: 15px;">
+                <button id="mobile-menu-btn" class="btn-icon mobile-only" aria-label="Open Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h2 id="page-title">Dashboard</h2>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="global-search" placeholder="Search products..." autocomplete="off">
+                </div>
+                <div id="connection-status" class="connection-status online">
+                    🟢 Online
+                </div>
+                <div class="user-info">
+                    <span class="user-name">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Container -->
+        <div class="content-container">
+            <!-- Dashboard View -->
+            <section id="dashboard-view" class="view active">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon" style="background: #E8F5E9;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6741"
+                                stroke-width="2">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <p class="metric-label">Total Products</p>
+                            <h3 class="metric-value" id="total-products">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon" style="background: #FFF3E0;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F57C00"
+                                stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <p class="metric-label">Total Stock Value</p>
+                            <h3 class="metric-value" id="total-value">R 0.00</h3>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon" style="background: #E8F5E9;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E7D32"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <p class="metric-label">Total Sales</p>
+                            <h3 class="metric-value" id="total-sales">R 0.00</h3>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon" style="background: #FFEBEE;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C62828"
+                                stroke-width="2">
+                                <path
+                                    d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                                </path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <p class="metric-label">Low Stock Alerts</p>
+                            <h3 class="metric-value" id="low-stock-count">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon" style="background: #E3F2FD;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1976D2"
+                                stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <p class="metric-label">Recent Movements</p>
+                            <h3 class="metric-value" id="recent-movements-count">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Low Stock Items</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="low-stock-list" class="low-stock-list">
+                                <p class="empty-state">No low stock items</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="recent-activity" class="activity-list">
+                                <p class="empty-state">No recent activity</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inventory View -->
+            <section id="inventory-view" class="view">
+                <div class="view-header">
+                    <button class="btn btn-primary" id="add-product-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Product
+                    </button>
+                    <div class="view-actions">
+                        <select id="category-filter" class="filter-select">
+                            <option value="">All Categories</option>
+                            <option value="Pickled">Pickled</option>
+                            <option value="Fresh">Fresh</option>
+                            <option value="Vinegar">Vinegar</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Current Stock</th>
+                                        <th>Reorder Level</th>
+                                        <th>Unit Price</th>
+                                        <th>Stock Value</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody">
+                                    <tr>
+                                        <td colspan="8" class="empty-state">No products found. Click "Add Product" to
+                                            get started.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stock Movements View -->
+            <section id="movements-view" class="view">
+                <div class="view-header">
+                    <button class="btn btn-success" id="add-incoming-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                        Stock In
+                    </button>
+                    <button class="btn btn-danger" id="add-outgoing-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="19 12 12 19 5 12"></polyline>
+                        </svg>
+                        Stock Out
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="movements-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Product</th>
+                                        <th>Type</th>
+                                        <th>Quantity</th>
+                                        <th>Reason/Supplier</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="movements-tbody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">No stock movements recorded yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Raw Materials View -->
+            <section id="materials-view" class="view">
+                <div class="view-header">
+                    <button class="btn btn-primary" id="add-material-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Material
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="materials-table">
+                                <thead>
+                                    <tr>
+                                        <th>Material Name</th>
+                                        <th>Category</th>
+                                        <th>Current Stock</th>
+                                        <th>Unit</th>
+                                        <th>Unit Cost</th>
+                                        <th>Total Value</th>
+                                        <th>Supplier</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="materials-tbody">
+                                    <tr>
+                                        <td colspan="8" class="empty-state">Loading materials...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Material Movements View -->
+            <section id="material-movements-view" class="view">
+                <div class="view-header">
+                    <button class="btn btn-success" id="add-material-incoming-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                        Stock In
+                    </button>
+                    <button class="btn btn-danger" id="add-material-outgoing-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="19 12 12 19 5 12"></polyline>
+                        </svg>
+                        Stock Out
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="material-movements-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Material</th>
+                                        <th>Type</th>
+                                        <th>Quantity</th>
+                                        <th>Reason/Supplier</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="material-movements-tbody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">No material movements recorded yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports View -->
+            <section id="reports-view" class="view">
+                <div class="view-header">
+                    <button class="btn btn-secondary" id="export-csv-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export CSV
+                    </button>
+                    <button class="btn btn-secondary" id="print-report-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        Print
+                    </button>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Stock Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="stock-summary" class="summary-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Movement Summary (Last 30 Days)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="movement-summary" class="summary-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="product-modal-title">Add Product</h2>
+                <button class="close-modal-btn" id="close-product-modal">&times;</button>
+            </div>
+            <form id="product-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="product-name">Product Name *</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-category">Category *</label>
+                        <select id="product-category" required>
+                            <option value="">Select Category</option>
+                            <option value="Pickled">Pickled</option>
+                            <option value="Fresh">Fresh</option>
+                            <option value="Vinegar">Vinegar</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-boxes">Current Stock (Boxes)</label>
+                        <input type="number" id="product-boxes" min="0" step="1" placeholder="Enter boxes">
+                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-quantity">Total Units *</label>
+                        <input type="number" id="product-quantity" min="0" required readonly
+                            style="background: #f5f5f5;">
+                        <small style="color: var(--text-light); font-size: 0.85rem;">Auto-calculated from boxes, or
+                            enter directly for Fresh products</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-reorder">Reorder Level (Units) *</label>
+                        <input type="number" id="product-reorder" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Unit Price (R) *</label>
+                        <input type="number" id="product-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-supplier">Supplier</label>
+                        <input type="text" id="product-supplier">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-notes">Notes</label>
+                    <textarea id="product-notes" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-product-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stock Movement Modal -->
+    <div id="movement-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="movement-modal-title">Record Stock Movement</h2>
+                <button class="close-modal-btn" id="close-movement-modal">&times;</button>
+            </div>
+            <form id="movement-form">
+                <input type="hidden" id="movement-type">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="movement-product">Product *</label>
+                        <select id="movement-product" required>
+                            <option value="">Select Product</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="movement-boxes">Boxes</label>
+                        <input type="number" id="movement-boxes" min="0" step="1" placeholder="Enter boxes">
+                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="movement-quantity">Total Units *</label>
+                        <input type="number" id="movement-quantity" min="1" required readonly
+                            style="background: #f5f5f5;">
+                        <small style="color: var(--text-light); font-size: 0.85rem;">Auto-calculated from boxes</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="movement-reason">Reason/Supplier *</label>
+                        <input type="text" id="movement-reason" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="movement-date">Date & Time *</label>
+                        <input type="datetime-local" id="movement-date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="movement-notes">Notes</label>
+                    <textarea id="movement-notes" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-movement-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Record Movement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Material Modal -->
+    <div id="material-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="material-modal-title">Add Raw Material</h2>
+                <button class="close-modal-btn" id="close-material-modal">&times;</button>
+            </div>
+            <form id="material-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="material-name">Material Name *</label>
+                        <input type="text" id="material-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-category">Category *</label>
+                        <select id="material-category" required>
+                            <option value="">Select Category</option>
+                            <option value="Packaging">Packaging</option>
+                            <option value="Spices">Spices & Herbs</option>
+                            <option value="Vinegar">Vinegar</option>
+                            <option value="Dry Goods">Dry Goods</option>
+                            <option value="Grown">Grown (Dill/Grape Leaves)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="material-boxes-group" style="display: none;">
+                        <label for="material-boxes">Stock (Boxes)</label>
+                        <input type="number" id="material-boxes" min="0" step="1" placeholder="Enter boxes">
+                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-quantity">Current Stock *</label>
+                        <input type="number" id="material-quantity" min="0" step="0.01" required>
+                        <small id="material-quantity-hint"
+                            style="color: var(--text-light); font-size: 0.85rem; display: none;">Auto-calculated from
+                            boxes</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-unit">Unit *</label>
+                        <select id="material-unit" required>
+                            <option value="">Select Unit</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="g">Grams (g)</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="ml">Milliliters (ml)</option>
+                            <option value="L">Liters (L)</option>
+                            <option value="packets">Packets</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-cost">Unit Cost (R) *</label>
+                        <input type="number" id="material-cost" min="0" step="0.01" required>
+                        <small style="color: var(--text-light); font-size: 0.85rem;">Cost per unit</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-supplier">Supplier</label>
+                        <input type="text" id="material-supplier">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="material-notes">Notes</label>
+                    <textarea id="material-notes" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-material-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Material</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Material Movement Modal -->
+    <div id="material-movement-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="material-movement-modal-title">Record Material Movement</h2>
+                <button class="close-modal-btn" id="close-material-movement-modal">&times;</button>
+            </div>
+            <form id="material-movement-form">
+                <input type="hidden" id="material-movement-type">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="material-movement-material">Material *</label>
+                        <select id="material-movement-material" required>
+                            <option value="">Select Material</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="material-movement-boxes-group" style="display: none;">
+                        <label for="material-movement-boxes">Boxes</label>
+                        <input type="number" id="material-movement-boxes" min="0" step="1" placeholder="Enter boxes">
+                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-movement-quantity">Quantity *</label>
+                        <input type="number" id="material-movement-quantity" min="0.01" step="0.01" required>
+                        <small id="material-movement-unit-label"
+                            style="color: var(--text-light); font-size: 0.85rem;">Unit will be shown here</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-movement-reason">Reason/Supplier *</label>
+                        <input type="text" id="material-movement-reason" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-movement-date">Date & Time *</label>
+                        <input type="datetime-local" id="material-movement-date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="material-movement-notes">Notes</label>
+                    <textarea id="material-movement-notes" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-material-movement-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Record Movement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="sidebar-overlay" class="overlay"></div>
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Scripts -->
+    <!-- Load Firebase modules first (they will set window.Storage) -->
+    <script type="module">
+        // Import and initialize Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getDatabase, ref, onValue, set, push, update, remove, get } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLYTt1Wz4AcxDlQtnL374f0ntYuNG6C6U",
+            authDomain: "kleinkraak-49f26.firebaseapp.com",
+            databaseURL: "https://kleinkraak-49f26-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "kleinkraak-49f26",
+            storageBucket: "kleinkraak-49f26.firebasestorage.app",
+            messagingSenderId: "82607492969",
+            appId: "1:82607492969:web:73ab3ad041ca3cea0337f8",
+            measurementId: "G-39PR70CELK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const dbRefs = {
+            inventory: ref(database, 'products'),
+            movements: ref(database, 'movements'),
+            materials: ref(database, 'materials'),
+            materialMovements: ref(database, 'materialMovements')
+        };
+
+        // Create Firebase Storage wrapper
+        const FirebaseStorage = {
+            KEYS: {
+                PRODUCTS: 'products',
+                MOVEMENTS: 'movements',
+                MATERIALS: 'materials',
+                MATERIAL_MOVEMENTS: 'materialMovements',
+                SETTINGS: 'settings'
+            },
+
+            migrated: false,
+            isOnline: true,
+
+            async init() {
+                console.log('🔥 Initializing Firebase Storage...');
+                this.monitorConnection();
+                await this.migrateFromLocalStorage();
+                await this.initializeSampleData();
+                console.log('✅ Firebase Storage initialized');
+            },
+
+            monitorConnection() {
+                const connectedRef = ref(database, '.info/connected');
+                onValue(connectedRef, (snapshot) => {
+                    this.isOnline = snapshot.val() === true;
+                    this.updateConnectionStatus();
+                    console.log(this.isOnline ? '🟢 Connected to Firebase' : '🔴 Disconnected from Firebase');
+                });
+            },
+
+            updateConnectionStatus() {
+                const statusEl = document.getElementById('connection-status');
+                if (statusEl) {
+                    if (this.isOnline) {
+                        statusEl.innerHTML = '🟢 Online';
+                        statusEl.classList.remove('offline');
+                        statusEl.classList.add('online');
+                    } else {
+                        statusEl.innerHTML = '🔴 Offline';
+                        statusEl.classList.remove('online');
+                        statusEl.classList.add('offline');
+                    }
+                }
+            },
+
+            async migrateFromLocalStorage() {
+                const migrationFlag = localStorage.getItem('kleinkraak-firebase-migrated');
+                if (migrationFlag === 'true') {
+                    this.migrated = true;
+                    return;
+                }
+
+                console.log('📦 Migrating localStorage data to Firebase...');
+                try {
+                    const localProducts = localStorage.getItem('kleinkraak-stock-products');
+                    if (localProducts) {
+                        const products = JSON.parse(localProducts);
+                        if (products && products.length > 0) {
+                            await set(dbRefs.inventory, products);
+                        }
+                    }
+
+                    const localMovements = localStorage.getItem('kleinkraak-stock-movements');
+                    if (localMovements) {
+                        const movements = JSON.parse(localMovements);
+                        if (movements && movements.length > 0) {
+                            await set(dbRefs.movements, movements);
+                        }
+                    }
+
+                    const localMaterials = localStorage.getItem('kleinkraak-materials');
+                    if (localMaterials) {
+                        const materials = JSON.parse(localMaterials);
+                        if (materials && materials.length > 0) {
+                            await set(dbRefs.materials, materials);
+                        }
+                    }
+
+                    localStorage.setItem('kleinkraak-firebase-migrated', 'true');
+                    this.migrated = true;
+                    console.log('✅ Migration complete!');
+                } catch (error) {
+                    console.error('❌ Migration failed:', error);
+                }
+            },
+
+            async get(key) {
+                try {
+                    const dataRef = ref(database, key);
+                    const snapshot = await get(dataRef);
+                    return snapshot.exists() ? snapshot.val() : null;
+                } catch (error) {
+                    console.error('Error reading from Firebase:', error);
+                    return null;
+                }
+            },
+
+            async set(key, value) {
+                try {
+                    const dataRef = ref(database, key);
+                    await set(dataRef, value);
+                    return true;
+                } catch (error) {
+                    console.error('Error writing to Firebase:', error);
+                    return false;
+                }
+            },
+
+            listen(key, callback) {
+                const dataRef = ref(database, key);
+                return onValue(dataRef, (snapshot) => {
+                    const data = snapshot.exists() ? snapshot.val() : null;
+                    callback(data);
+                });
+            },
+
+            async initializeSampleData() {
+                const products = await this.get(this.KEYS.PRODUCTS);
+                if (!products || products.length === 0) {
+                    const sampleProducts = [
+                        {
+                            id: 'prod-' + Date.now() + '-1',
+                            name: 'White Wine Vinegar Cucamelons',
+                            category: 'Vinegar',
+                            quantity: 36,
+                            reorderLevel: 60,
+                            price: 150.00,
+                            supplier: 'Local Supplier',
+                            notes: 'Premium white wine vinegar infused - 3 boxes in stock',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 'prod-' + Date.now() + '-2',
+                            name: 'Spicy Pickled Cucamelons',
+                            category: 'Pickled',
+                            quantity: 144,
+                            reorderLevel: 120,
+                            price: 120.00,
+                            supplier: 'Local Supplier',
+                            notes: 'With chilli and garlic - 12 boxes in stock',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 'prod-' + Date.now() + '-3',
+                            name: 'Dill & Garlic Pickled Cucamelons',
+                            category: 'Pickled',
+                            quantity: 96,
+                            reorderLevel: 120,
+                            price: 120.00,
+                            supplier: 'Local Supplier',
+                            notes: 'Classic dill flavor - 8 boxes in stock',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 'prod-' + Date.now() + '-4',
+                            name: 'Sweet & Sour Pickled Cucamelons',
+                            category: 'Pickled',
+                            quantity: 180,
+                            reorderLevel: 120,
+                            price: 120.00,
+                            supplier: 'Local Supplier',
+                            notes: 'Balanced sweet and tangy - 15 boxes in stock',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 'prod-' + Date.now() + '-5',
+                            name: 'Sweet Cucamelons',
+                            category: 'Pickled',
+                            quantity: 36,
+                            reorderLevel: 60,
+                            price: 120.00,
+                            supplier: 'Local Supplier',
+                            notes: 'Sweet with Drink-O-Pop powder - 3 boxes in stock',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 'prod-' + Date.now() + '-6',
+                            name: 'Fresh Cucamelons (250g)',
+                            category: 'Fresh',
+                            quantity: 50,
+                            reorderLevel: 30,
+                            price: 50.00,
+                            supplier: 'Farm Fresh',
+                            notes: 'Freshly harvested - 50 packets in stock',
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    await this.set(this.KEYS.PRODUCTS, sampleProducts);
+                }
+
+                const movements = await this.get(this.KEYS.MOVEMENTS);
+                if (!movements || movements.length === 0) {
+                    await this.set(this.KEYS.MOVEMENTS, []);
+                }
+
+                const materials = await this.get(this.KEYS.MATERIALS);
+                if (!materials || materials.length === 0) {
+                    await this.set(this.KEYS.MATERIALS, []);
+                }
+            }
+        };
+
+        // Make Storage globally available
+        window.Storage = FirebaseStorage;
+        window.FirebaseStorage = FirebaseStorage;
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => FirebaseStorage.init());
+        } else {
+            FirebaseStorage.init();
+        }
+    </script>
+
+    <!-- Load other scripts after Firebase is initialized -->
+    <script src="./scripts/inventory.js"></script>
+    <script src="./scripts/movements.js"></script>
+    <script src="./scripts/materials.js"></script>
+    <script src="./scripts/material-movements.js"></script>
+    <script src="./scripts/reports.js"></script>
+    <script src="./scripts/app.js"></script>
+</body>
+
+</html>

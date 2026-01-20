@@ -1,0 +1,452 @@
+/* Product Grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    /* Fill container */
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-title {
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+    color: var(--primary-dark);
+}
+
+.product-price {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.add-to-cart-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-to-cart-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Cart Drawer */
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    /* Hidden via position */
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    /* Fallback */
+    height: 100dvh;
+    /* Mobile Fix */
+    background: white;
+    z-index: 2000;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-drawer.open {
+    right: 0;
+}
+
+.cart-header {
+    padding: 20px;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.cart-items {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.cart-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #ccc;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item-title {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.cart-item-price {
+    color: var(--text-light);
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.qty-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+}
+
+.remove-btn {
+    color: #e74c3c;
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.cart-footer {
+    padding: 20px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    /* iOS Safe Area */
+    border-top: 1px solid #ddd;
+    background: var(--bg-color);
+    flex-shrink: 0;
+    /* Ensure footer never shrinks */
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--primary-dark);
+}
+
+/* Generic Overlay for Drawer & Modals */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Checkout Modal Polished */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    width: 95%;
+    max-width: 600px;
+    /* Wider for better layout */
+    z-index: 2500;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: none;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Mobile Modal Fix */
+/* Mobile Modal Fix */
+@media (max-width: 768px) {
+    .modal {
+        display: none;
+        /* Default hidden */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        /* Fallback */
+        height: 100dvh;
+        z-index: 3000;
+        background: white;
+
+        /* The Modal IS the scroll container */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
+        /* Reset Desktop Styles */
+        transform: none !important;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .modal.active {
+        display: block;
+        /* Show as block to allow scrolling */
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .modal-content {
+        position: relative;
+        width: 100%;
+        min-height: 100%;
+        padding: 20px;
+        padding-bottom: 100px;
+        /* Safe space for buttons at bottom */
+        box-sizing: border-box;
+        overflow: visible;
+        /* Let parent scroll */
+    }
+
+    /* Ensure specific inputs don't break layout */
+    .modal input,
+    .modal textarea,
+    .modal select {
+        font-size: 16px;
+        /* Prevents iOS zoom */
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+}
+
+.modal-content {
+    padding: 40px;
+}
+
+.modal h2 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    color: var(--primary-dark);
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+}
+
+.close-modal-btn:hover {
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    font-family: var(--font-body);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Radio Group Styling */
+.radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.radio-label:hover {
+    border-color: #ccc;
+}
+
+.radio-label:has(input:checked) {
+    border-color: var(--primary-color);
+    background-color: #f0f7ef;
+}
+
+.radio-label input {
+    width: auto;
+}
+
+/* Payment Window Styling */
+.payment-window {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 25px 0;
+    border: 1px solid #e9ecef;
+}
+
+.payment-window h3 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+/* Summary Box */
+.checkout-summary {
+    background: #fff;
+    border-top: 2px dashed #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.summary-row.total {
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+    font-weight: 800;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn-success {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2rem;
+    padding: 16px;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(74, 103, 65, 0.3);
+}
+
+.btn-success:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(74, 103, 65, 0.4);
+}

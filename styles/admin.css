@@ -1,0 +1,178 @@
+/* Admin Sidebar and Menu Styles */
+
+/* Hamburger Button */
+.hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    transition: color 0.3s ease;
+    margin-right: auto;
+}
+
+.hamburger-btn:hover {
+    color: var(--primary);
+}
+
+.hamburger-btn svg {
+    stroke-width: 2.5px;
+}
+
+/* Admin Sidebar */
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar.active {
+    left: 0;
+}
+
+.admin-sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-sidebar-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.close-sidebar-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-light);
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.close-sidebar-btn:hover {
+    color: var(--text-dark);
+}
+
+.admin-sidebar-content {
+    padding: 1rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.admin-menu-item {
+    width: 100%;
+    padding: 1rem;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    color: var(--text-dark);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.admin-menu-item:hover {
+    background: var(--accent);
+    color: var(--primary);
+}
+
+.admin-menu-item svg {
+    flex-shrink: 0;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 9999;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Stock Control Container */
+#stock-control-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: white;
+    z-index: 10001;
+    overflow: auto;
+}
+
+#stock-control-container.active {
+    display: block !important;
+}
+
+/* Admin Password Modal Specific Styles */
+#admin-password-modal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#admin-password-modal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+#admin-password-modal input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+#admin-password-modal input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 280px;
+        left: -280px;
+    }
+}

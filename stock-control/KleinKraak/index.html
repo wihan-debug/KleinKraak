@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak - Fresh & Pickled Cucamelons</title>
+    <meta name="description"
+        content="KleinKraak - Home of delicious pickled and fresh cucamelons. Located in Elandsfontein.">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4PYK5N8RPH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-4PYK5N8RPH');
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/components.css">
+    <link rel="stylesheet" href="./styles/about.css">
+    <link rel="stylesheet" href="./styles/map_override.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">KleinKraak</a>
+            <button id="cart-btn" class="cart-btn" aria-label="Open Cart">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="cart-icon">
+                    <path
+                        d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span id="cart-count" class="cart-count">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-slideshow">
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Experience the Crunch of Nature</h1>
+            <p>Hand-picked, locally grown, and perfectly pickled cucamelons from KleinKraak.</p>
+            <a href="#products" class="btn btn-primary">Shop Now</a>
+        </div>
+        <div class="hero-overlay"></div>
+    </header>
+
+    <!-- Products Section -->
+    <main id="products" class="products-section">
+        <div class="container">
+            <h2 class="section-title">Our Harvest</h2>
+            <div id="product-grid" class="product-grid">
+                <!-- Products injected by JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- About & Contact Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">About KleinKraak</h2>
+            <div class="about-grid">
+                <div class="about-content">
+                    <h3>Grown with Love</h3>
+                    <p>At KleinKraak, we believe in the magic of fresh, locally grown produce. Based in Elandsfontein,
+                        we specialize in cultivating the finest cucamelons—tiny, grape-sized watermelons with a
+                        refreshing cucumber crunch and a hint of lime.</p>
+                    <p>Whether you prefer them fresh from the vine or pickled in our signature brines, KleinKraak
+                        provides a taste of nature's candy, straight to your table.</p>
+                </div>
+                <div class="contact-card">
+                    <h3>Get in Touch</h3>
+                    <ul class="contact-list">
+                        <li>
+                            <span class="icon">📧</span>
+                            <strong>Email:</strong> <a href="mailto:kleinkraak@gmail.com">kleinkraak@gmail.com</a>
+                        </li>
+                        <li>
+                            <span class="icon">📞</span>
+                            <strong>Phone:</strong> <a href="tel:0714796079">071 479 6079</a>
+                        </li>
+                        <li>
+                            <span class="icon">📞</span>
+                            <strong>Alt:</strong> <a href="tel:0716417215">071 641 7215</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h3>KleinKraak</h3>
+                <p><strong>Address:</strong> 39 Jimpro Road, Elandsfontein, South Africa</p>
+                <p><strong>Hours:</strong> Mon - Fri: 8:00 - 16:00</p>
+            </div>
+            <div class="footer-map">
+                <!-- Placeholder for map - clicking opens Google Maps -->
+                <a href="https://www.google.com/maps/search/?api=1&query=-25.991134309581064,28.31700897196065"
+                    target="_blank" class="map-link">
+                    <img src="./assets/images/map_preview.png" alt="Map Location of KleinKraak" class="map-image">
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 KleinKraak. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Modal/Drawer -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button id="close-cart" class="close-btn">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <!-- Cart items injected here or "Your cart is empty" -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-price">R 0.00</span>
+            </div>
+            <button id="checkout-btn" class="btn btn-primary btn-block">Checkout</button>
+        </div>
+    </div>
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-checkout" class="close-modal-btn">&times;</button>
+            <h2>Checkout</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label>Delivery Method</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="delivery" value="collect" checked>
+                            <span>Collect (Free)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="delivery" value="delivery_gauteng">
+                            <span>Gauteng Delivery (R 200.00)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="delivery" value="delivery_quote">
+                            <span>Outside Gauteng / International (Quote)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="For order confirmation">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" required>
+                </div>
+
+                <div id="delivery-address-group" class="form-group hidden">
+                    <label>Delivery Details</label>
+                    <input type="text" id="address-street" placeholder="Street Address & Number"
+                        style="margin-bottom: 10px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="address-town" placeholder="Town / City">
+                        <input type="text" id="address-code" placeholder="Postal Code">
+                    </div>
+                </div>
+
+
+
+                <div class="checkout-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="checkout-subtotal">R 0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery:</span>
+                        <span id="checkout-delivery">R 0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="checkout-total">R 0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block">Pay Now</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-product-modal" class="close-modal-btn">&times;</button>
+            <div id="modal-product-container" class="modal-product-details">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            emailjs.init("rmTCCejSdfLJrOwXR");
+        })();
+    </script>
+
+    <!-- Scripts -->
+    <script src="./scripts/app.js"></script>
+</body>
+
+</html>
