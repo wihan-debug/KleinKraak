@@ -21,7 +21,7 @@ const products = [
         ],
         // Fallback for logic that might expect single image
         image: './assets/products/vinegar/1.jpg',
-        description: 'White Wine Vinegar infused with salt, sugar, fresh dill, spearmint leaves, peppercorns, coriander, garlic, and grape leaves.',
+        description: '455ml Bottle. White Wine Vinegar infused with salt, sugar, fresh dill, spearmint leaves, peppercorns, coriander, garlic, and grape leaves.',
         ingredients: [
             'White Wine Vinegar',
             'Salt',
@@ -45,7 +45,7 @@ const products = [
             './assets/products/spicy-pickled/4.jpg'
         ],
         image: './assets/products/spicy-pickled/1.jpg',
-        description: 'Crunchy cucamelons pickled with a kick of chilli and garlic.',
+        description: '455ml Bottle. Crunchy cucamelons pickled with a kick of chilli and garlic.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -69,7 +69,7 @@ const products = [
             './assets/products/dill-pickled/4.jpg'
         ],
         image: './assets/products/dill-pickled/1.jpg',
-        description: 'Classic dill flavor, perfect for salads and cheeseboards.',
+        description: '455ml Bottle. Classic dill flavor, perfect for salads and cheeseboards.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -93,7 +93,7 @@ const products = [
             './assets/products/sweet-sour/5.jpg'
         ],
         image: './assets/products/sweet-sour/1.jpg',
-        description: 'A delightful balance of sweet and tangy flavors.',
+        description: '455ml Bottle. A delightful balance of sweet and tangy flavors.',
         ingredients: [
             'Dill',
             'Garlic',
@@ -116,7 +116,7 @@ const products = [
             './assets/products/sweet-cucamelon/3.jpg'
         ],
         image: './assets/products/sweet-cucamelon/1.jpg',
-        description: 'A unique twist with a sweet kick from Drink-O-Pop powder.',
+        description: '455ml Bottle. A unique twist with a sweet kick from Drink-O-Pop powder.',
         ingredients: [
             'Dill',
             'Garlic',
