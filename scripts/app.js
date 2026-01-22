@@ -239,6 +239,20 @@ const productModal = document.getElementById('product-modal');
 const closeProductModalBtn = document.getElementById('close-product-modal');
 const modalProductContainer = document.getElementById('modal-product-container');
 
+// Payment Modal Elements
+const paymentModal = document.getElementById('payment-modal');
+const closePaymentBtn = document.getElementById('close-payment-modal');
+const paymentIframe = document.getElementById('payment-iframe');
+const paymentLoading = document.querySelector('.payment-loading');
+
+// Debug: Log if payment modal elements are found
+console.log('Payment Modal Elements Check:');
+console.log('- paymentModal:', paymentModal ? 'Found' : 'NOT FOUND');
+console.log('- closePaymentBtn:', closePaymentBtn ? 'Found' : 'NOT FOUND');
+console.log('- paymentIframe:', paymentIframe ? 'Found' : 'NOT FOUND');
+console.log('- paymentLoading:', paymentLoading ? 'Found' : 'NOT FOUND');
+
+
 // Initialize Cart
 const cart = new Cart(updateCartUI);
 
@@ -417,6 +431,63 @@ function closeCheckout() {
     document.body.style.overflow = '';
 }
 
+// Payment Modal Functions
+function openPaymentModal(paymentUrl) {
+    try {
+        console.log('Opening payment modal with URL:', paymentUrl);
+
+        // Check if elements exist
+        if (!paymentModal) {
+            console.error('Payment modal element not found!');
+            throw new Error('Payment modal not initialized');
+        }
+
+        // Show modal
+        paymentModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Show loading, hide iframe initially
+        if (paymentLoading) {
+            paymentLoading.style.display = 'block';
+        }
+
+        if (paymentIframe) {
+            paymentIframe.style.display = 'none';
+            paymentIframe.classList.remove('loaded');
+
+            // Set iframe source
+            paymentIframe.src = paymentUrl;
+
+            // Hide loading when iframe loads
+            paymentIframe.onload = () => {
+                if (paymentLoading) {
+                    paymentLoading.style.display = 'none';
+                }
+                paymentIframe.style.display = 'block';
+                paymentIframe.classList.add('loaded');
+            };
+        }
+
+        console.log('Payment modal opened successfully');
+    } catch (error) {
+        console.error('Error opening payment modal:', error);
+        // Fallback to opening in new window
+        alert('Opening payment in new window...');
+        window.open(paymentUrl, '_blank');
+    }
+}
+
+function closePaymentModal() {
+    paymentModal.classList.remove('active');
+    document.body.style.overflow = '';
+
+    // Clear iframe after animation
+    setTimeout(() => {
+        paymentIframe.src = '';
+    }, 300);
+}
+
+
 // Event Listeners
 cartBtn.addEventListener('click', openCart);
 closeCartBtn.addEventListener('click', closeCart);
@@ -428,6 +499,12 @@ overlay.addEventListener('click', () => {
 
 checkoutBtn.addEventListener('click', openCheckout);
 closeCheckoutBtn.addEventListener('click', closeCheckout);
+
+// Payment Modal Listeners
+if (closePaymentBtn) {
+    closePaymentBtn.addEventListener('click', closePaymentModal);
+}
+
 
 // Cart UI Render
 function updateCartUI(cartInstance) {
@@ -577,16 +654,42 @@ checkoutForm.addEventListener('submit', (e) => {
         };
 
         const proceedToPayment = () => {
-            const confirmMessage = `Order Total: ${formData.total}\n\nClick OK to open the secure Yoco payment page.`;
-            if (confirm(confirmMessage)) {
+            console.log('=== proceedToPayment called ===');
+            console.log('Form Data Total:', formData.total);
+            console.log('Numeric Total:', numericTotal);
+
+            const confirmMessage = `Order Total: ${formData.total}\n\nClick OK to proceed to secure payment.`;
+            console.log('Showing confirmation dialog...');
+
+            const userConfirmed = confirm(confirmMessage);
+            console.log('User confirmed:', userConfirmed);
+
+            if (userConfirmed) {
+                console.log('User confirmed payment, proceeding...');
+
+                // Clear cart and close checkout
                 cart.clear();
+                console.log('Cart cleared');
+
                 closeCheckout();
-                const cleanTotal = numericTotal.toFixed(2); // Use number directly
+                console.log('Checkout closed');
+
+                // Calculate amount for Yoco
+                const cleanTotal = numericTotal.toFixed(2);
                 const finalLink = `${YOCO_LINK}?amount=${cleanTotal}`;
-                window.open(finalLink, '_blank');
+                console.log('Payment URL:', finalLink);
+
+                // Open payment modal with iframe
+                console.log('About to call openPaymentModal...');
+                openPaymentModal(finalLink);
+                console.log('openPaymentModal called');
+            } else {
+                console.log('User cancelled payment');
             }
+
             submitBtn.innerText = originalBtnText;
             submitBtn.disabled = false;
+            console.log('Button reset to:', originalBtnText);
         };
 
         // Check availability of EmailJS
