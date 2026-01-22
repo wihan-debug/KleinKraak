@@ -433,46 +433,80 @@ function closeCheckout() {
 
 // Payment Modal Functions
 function openPaymentModal(paymentUrl) {
-    try {
-        console.log('Opening payment modal with URL:', paymentUrl);
+    console.log('>>>>>>> ENTERING openPaymentModal <<<<<<<');
+    console.log('URL:', paymentUrl);
 
-        // Check if elements exist
+    try {
+        // Step 1: Check elements exist
+        console.log('STEP 1: Checking elements...');
+        console.log('- paymentModal:', paymentModal);
+        console.log('- paymentIframe:', paymentIframe);
+        console.log('- paymentLoading:', paymentLoading);
+
         if (!paymentModal) {
-            console.error('Payment modal element not found!');
+            console.error('❌ Payment modal element is NULL!');
             throw new Error('Payment modal not initialized');
         }
+        console.log('✓ Payment modal element found');
 
-        // Show modal
+        // Step 2: Add active class
+        console.log('STEP 2: Adding active class to modal...');
         paymentModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        console.log('✓ Active class added. Modal classes:', paymentModal.className);
 
-        // Show loading, hide iframe initially
+        // Step 3: Hide body scroll
+        console.log('STEP 3: Hiding body scroll...');
+        document.body.style.overflow = 'hidden';
+        console.log('✓ Body scroll hidden');
+
+        // Step 4: Show loading
+        console.log('STEP 4: Showing loading spinner...');
         if (paymentLoading) {
             paymentLoading.style.display = 'block';
+            console.log('✓ Loading spinner shown');
+        } else {
+            console.warn('⚠ paymentLoading is null');
         }
 
+        // Step 5: Setup iframe
+        console.log('STEP 5: Setting up iframe...');
         if (paymentIframe) {
             paymentIframe.style.display = 'none';
             paymentIframe.classList.remove('loaded');
+            console.log('✓ Iframe hidden and loaded class removed');
 
             // Set iframe source
+            console.log('STEP 6: Setting iframe src...');
             paymentIframe.src = paymentUrl;
+            console.log('✓ Iframe src set to:', paymentIframe.src);
 
             // Hide loading when iframe loads
-            paymentIframe.onload = () => {
+            paymentIframe.onload = function () {
+                console.log('📥 IFRAME LOADED!');
                 if (paymentLoading) {
                     paymentLoading.style.display = 'none';
+                    console.log('✓ Loading hidden');
                 }
                 paymentIframe.style.display = 'block';
                 paymentIframe.classList.add('loaded');
+                console.log('✓ Iframe now visible with loaded class');
             };
+            console.log('✓ Onload handler attached');
+        } else {
+            console.error('❌ paymentIframe is null!');
         }
 
-        console.log('Payment modal opened successfully');
+        console.log('>>>>>>> Payment modal setup COMPLETE <<<<<<<');
+        console.log('Modal computed style display:', window.getComputedStyle(paymentModal).display);
+
     } catch (error) {
-        console.error('Error opening payment modal:', error);
+        console.error('❌❌❌ ERROR in openPaymentModal ❌❌❌');
+        console.error('Error:', error);
+        console.error('Stack:', error.stack);
+
         // Fallback to opening in new window
-        alert('Opening payment in new window...');
+        console.log('Attempting fallback to window.open...');
+        alert('Modal failed - opening payment in new window...');
         window.open(paymentUrl, '_blank');
     }
 }
@@ -658,34 +692,24 @@ checkoutForm.addEventListener('submit', (e) => {
             console.log('Form Data Total:', formData.total);
             console.log('Numeric Total:', numericTotal);
 
-            const confirmMessage = `Order Total: ${formData.total}\n\nClick OK to proceed to secure payment.`;
-            console.log('Showing confirmation dialog...');
+            console.log('Proceeding to payment...');
 
-            const userConfirmed = confirm(confirmMessage);
-            console.log('User confirmed:', userConfirmed);
+            // Clear cart and close checkout
+            cart.clear();
+            console.log('Cart cleared');
 
-            if (userConfirmed) {
-                console.log('User confirmed payment, proceeding...');
+            closeCheckout();
+            console.log('Checkout closed');
 
-                // Clear cart and close checkout
-                cart.clear();
-                console.log('Cart cleared');
+            // Calculate amount for Yoco
+            const cleanTotal = numericTotal.toFixed(2);
+            const finalLink = `${YOCO_LINK}?amount=${cleanTotal}`;
+            console.log('Payment URL:', finalLink);
 
-                closeCheckout();
-                console.log('Checkout closed');
-
-                // Calculate amount for Yoco
-                const cleanTotal = numericTotal.toFixed(2);
-                const finalLink = `${YOCO_LINK}?amount=${cleanTotal}`;
-                console.log('Payment URL:', finalLink);
-
-                // Open payment modal with iframe
-                console.log('About to call openPaymentModal...');
-                openPaymentModal(finalLink);
-                console.log('openPaymentModal called');
-            } else {
-                console.log('User cancelled payment');
-            }
+            // Open payment modal with iframe
+            console.log('About to call openPaymentModal...');
+            openPaymentModal(finalLink);
+            console.log('openPaymentModal called');
 
             submitBtn.innerText = originalBtnText;
             submitBtn.disabled = false;
@@ -699,36 +723,27 @@ checkoutForm.addEventListener('submit', (e) => {
             return;
         }
 
-        // 2. Send Emails (Admin + Customer)
-        const sendAdmin = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        // Send Admin Notification Only (Customer email sent manually after payment confirmation)
+        const adminMessage = `Method: ${formData.deliveryMethod}\nAddress: ${formData.address}\n\n⚠️ PAYMENT PENDING - Customer has opened payment window. Verify payment in Yoco dashboard before fulfilling order.`;
+
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
-            message: `Method: ${formData.deliveryMethod}\nAddress: ${formData.address}`,
+            message: adminMessage,
             total: formData.total,
             cart_details: formData.cart_details
-        });
-
-        const sendCustomer = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, {
-            name: formData.name,
-            email: formData.email, // Important: Customer email
-            phone: formData.phone,
-            message: "Thank you for your order! We will be in touch.",
-            total: formData.total,
-            cart_details: formData.cart_details
-        });
-
-        Promise.all([sendAdmin, sendCustomer])
+        })
             .then(() => {
-                alert("Order placed successfully! Check your email.");
+                console.log('Admin notification sent successfully');
                 proceedToPayment();
             })
             .catch((error) => {
-                console.error('Email failed:', error);
+                console.error('Email notification failed:', error);
                 // Don't block sales on email failure
-                alert("Order received! (Note: Confirmation email might be delayed). Proceeding to payment...");
                 proceedToPayment();
             });
+
 
     } catch (err) {
         alert("Unexpected System Error: " + err.message);
