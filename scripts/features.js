@@ -134,11 +134,22 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Subscribing...';
 
         try {
-            // Send via EmailJS
+            // Check if EmailJS is loaded
+            if (typeof emailjs === 'undefined') {
+                throw new Error('EmailJS not loaded');
+            }
+
+            // Send welcome email to customer with WELCOME15 code
+            await emailjs.send('service_newsletter', 'template_newsletter_welcome', {
+                to_email: email,
+                email: email
+            });
+
+            // Send admin notification
             await emailjs.send('service_newsletter', 'template_newsletter', {
-                email: email,
                 to_email: 'kleinkraak@gmail.com',
-                message: `New newsletter signup: ${email}`
+                email: email,
+                message: `New newsletter subscriber: ${email}`
             });
 
             // Success
@@ -150,16 +161,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const thankYouMsg = document.createElement('p');
             thankYouMsg.style.color = 'white';
             thankYouMsg.style.marginTop = '10px';
-            thankYouMsg.textContent = 'Thanks for subscribing! Check your email for your 10% discount code.';
+            thankYouMsg.textContent = 'Thanks for subscribing! Check your email for your WELCOME15 discount code.';
             newsletterForm.appendChild(thankYouMsg);
 
-            // Reset after 3 seconds
+            // Reset after 5 seconds
             setTimeout(() => {
                 submitBtn.textContent = originalText;
                 submitBtn.style.background = '';
                 submitBtn.disabled = false;
                 thankYouMsg.remove();
-            }, 3000);
+            }, 5000);
 
         } catch (error) {
             console.error('Newsletter signup error:', error);
@@ -167,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = false;
 
             // Show error message
-            alert('Oops! Something went wrong. Please try again or contact us directly.');
+            alert('Oops! Something went wrong. Please try again or contact us directly at kleinkraak@gmail.com');
         }
     });
 });
