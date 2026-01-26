@@ -140,13 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Send welcome email to customer with WELCOME15 code
-            await emailjs.send('service_newsletter', 'templatenewsletterwelcom', {
+            await emailjs.send('service_g6v2rb9', 'templatenewsletterwelcom', {
                 to_email: email,
                 email: email
             });
 
             // Send admin notification
-            await emailjs.send('service_newsletter', 'template_newsletter', {
+            await emailjs.send('service_g6v2rb9', 'template_newsletter', {
                 to_email: 'kleinkraak@gmail.com',
                 email: email,
                 message: `New newsletter subscriber: ${email}`
