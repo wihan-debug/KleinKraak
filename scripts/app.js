@@ -589,6 +589,15 @@ const EMAILJS_TEMPLATE_ID = "template_wrsn1us"; // Admin
 const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_gydifo4"; // Customer
 
 // Checkout Logic
+let appliedPromoCode = null;
+let promoDiscount = 0;
+
+// Promo Code Database
+const PROMO_CODES = {
+    'FRESH10': { discount: 0.10, description: '10% off' },
+    'WELCOME15': { discount: 0.15, description: '15% off first order' }
+};
+
 function updateCheckoutSummary() {
     const subtotal = cart.getTotal();
     const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
@@ -598,7 +607,14 @@ function updateCheckoutSummary() {
         deliveryCost = 200.00;
     }
 
-    const total = subtotal + deliveryCost;
+    // Calculate discount
+    let discountAmount = 0;
+    if (appliedPromoCode && PROMO_CODES[appliedPromoCode]) {
+        discountAmount = subtotal * PROMO_CODES[appliedPromoCode].discount;
+        promoDiscount = discountAmount;
+    }
+
+    const total = subtotal - discountAmount + deliveryCost;
 
     checkoutSubtotal.textContent = `R ${subtotal.toFixed(2)}`;
 
@@ -606,6 +622,22 @@ function updateCheckoutSummary() {
         checkoutDelivery.textContent = "To Be Quoted";
     } else {
         checkoutDelivery.textContent = `R ${deliveryCost.toFixed(2)}`;
+    }
+
+    // Show discount row if promo applied
+    const existingDiscountRow = document.querySelector('.discount-row');
+    if (existingDiscountRow) existingDiscountRow.remove();
+
+    if (discountAmount > 0) {
+        const deliveryRow = document.querySelector('.checkout-summary .summary-row:nth-child(2)');
+        const discountRow = document.createElement('div');
+        discountRow.className = 'summary-row discount-row';
+        discountRow.style.color = '#2E7D32';
+        discountRow.innerHTML = `
+            <span>Discount (${appliedPromoCode}):</span>
+            <span>- R ${discountAmount.toFixed(2)}</span>
+        `;
+        deliveryRow.after(discountRow);
     }
 
     checkoutTotal.textContent = `R ${total.toFixed(2)}${deliveryMethod === 'delivery_quote' ? ' + Delivery' : ''}`;
@@ -631,6 +663,42 @@ function updateCheckoutSummary() {
 
 deliveryInputs.forEach(input => {
     input.addEventListener('change', updateCheckoutSummary);
+});
+
+// Promo Code Apply Button
+document.addEventListener('DOMContentLoaded', () => {
+    const applyPromoBtn = document.getElementById('apply-promo-btn');
+    const promoCodeInput = document.getElementById('promo-code');
+    const promoMessage = document.getElementById('promo-message');
+
+    if (applyPromoBtn && promoCodeInput) {
+        applyPromoBtn.addEventListener('click', () => {
+            const code = promoCodeInput.value.trim().toUpperCase();
+
+            if (!code) {
+                promoMessage.textContent = 'Please enter a promo code';
+                promoMessage.style.color = '#d50000';
+                promoMessage.style.display = 'block';
+                return;
+            }
+
+            if (PROMO_CODES[code]) {
+                appliedPromoCode = code;
+                promoMessage.textContent = `✓ ${PROMO_CODES[code].description} applied!`;
+                promoMessage.style.color = '#2E7D32';
+                promoMessage.style.display = 'block';
+                promoCodeInput.disabled = true;
+                applyPromoBtn.textContent = 'Applied';
+                applyPromoBtn.disabled = true;
+                applyPromoBtn.style.opacity = '0.6';
+                updateCheckoutSummary();
+            } else {
+                promoMessage.textContent = '✗ Invalid promo code';
+                promoMessage.style.color = '#d50000';
+                promoMessage.style.display = 'block';
+            }
+        });
+    }
 });
 
 // Checkout Form Logic
@@ -669,7 +737,13 @@ checkoutForm.addEventListener('submit', (e) => {
             deliveryLabel = "Outside Gauteng/Intl (Quote Required)";
         }
 
-        const numericTotal = cart.getTotal() + deliveryCost;
+        // Apply promo discount
+        let discountAmount = 0;
+        if (appliedPromoCode && PROMO_CODES[appliedPromoCode]) {
+            discountAmount = cart.getTotal() * PROMO_CODES[appliedPromoCode].discount;
+        }
+
+        const numericTotal = cart.getTotal() - discountAmount + deliveryCost;
 
         // Construct full address
         const requiresAddress = deliveryMethodValue === 'delivery_gauteng' || deliveryMethodValue === 'delivery_quote';
@@ -684,6 +758,8 @@ checkoutForm.addEventListener('submit', (e) => {
             deliveryMethod: deliveryLabel,
             address: fullAddress,
             cart_details: cart.items.map(i => `${i.qty}x ${i.name} (R${i.price})`).join('\n'),
+            promo_code: appliedPromoCode ? `${appliedPromoCode} (${PROMO_CODES[appliedPromoCode].description})` : 'None',
+            discount: discountAmount > 0 ? `- R ${discountAmount.toFixed(2)}` : 'R 0.00',
             total: `R ${numericTotal.toFixed(2)}${deliveryMethodValue === 'delivery_quote' ? ' + Delivery Quote' : ''}`
         };
 
