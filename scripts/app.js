@@ -433,6 +433,17 @@ function openCheckout() {
         applyPromoBtn.dataset.listenerAttached = 'true';
         applyPromoBtn.addEventListener('click', () => {
             const code = promoCodeInput.value.trim().toUpperCase();
+            const emailInput = document.getElementById('email');
+            const customerEmail = emailInput.value.trim().toLowerCase();
+
+            // Validate email is filled first
+            if (!customerEmail || !emailInput.validity.valid) {
+                promoMessage.textContent = '⚠️ Please enter your email address first';
+                promoMessage.style.color = '#ff6f00';
+                promoMessage.style.display = 'block';
+                emailInput.focus();
+                return;
+            }
 
             if (!code) {
                 promoMessage.textContent = 'Please enter a promo code';
@@ -442,6 +453,19 @@ function openCheckout() {
             }
 
             if (PROMO_CODES[code]) {
+                // Check if this email has already used this code
+                const usedCodes = JSON.parse(localStorage.getItem('kleinkraak-promo-usage') || '{}');
+                const emailKey = customerEmail;
+                const userCodes = usedCodes[emailKey] || [];
+
+                if (userCodes.includes(code)) {
+                    promoMessage.textContent = '✗ You have already used this promo code';
+                    promoMessage.style.color = '#d50000';
+                    promoMessage.style.display = 'block';
+                    return;
+                }
+
+                // Apply the code
                 appliedPromoCode = code;
                 promoMessage.textContent = `✓ ${PROMO_CODES[code].description} applied!`;
                 promoMessage.style.color = '#2E7D32';
@@ -451,6 +475,12 @@ function openCheckout() {
                 applyPromoBtn.disabled = true;
                 applyPromoBtn.style.opacity = '0.6';
                 updateCheckoutSummary();
+
+                // Save that this email used this code (will be finalized on successful checkout)
+                // Note: This is saved immediately to prevent multiple attempts, but could be cleared if checkout fails
+                userCodes.push(code);
+                usedCodes[emailKey] = userCodes;
+                localStorage.setItem('kleinkraak-promo-usage', JSON.stringify(usedCodes));
             } else {
                 promoMessage.textContent = '✗ Invalid promo code';
                 promoMessage.style.color = '#d50000';
