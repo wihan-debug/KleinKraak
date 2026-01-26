@@ -146,12 +146,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: email
             }); */
 
-            // Send admin notification
-            await emailjs.send('service_g6v2rb9', 'template_newsletter', {
-                to_email: 'kleinkraak@gmail.com',
-                email: email,
-                message: `New newsletter subscriber: ${email}`
-            });
+            // Admin notification - DISABLED (template_newsletter doesn't exist yet)
+            // You can manually check localStorage for subscribers
+
+            // Save to localStorage for manual follow-up
+            const subscribers = JSON.parse(localStorage.getItem('kleinkraak-newsletter-subscribers') || '[]');
+            if (!subscribers.includes(email)) {
+                subscribers.push(email);
+                localStorage.setItem('kleinkraak-newsletter-subscribers', JSON.stringify(subscribers));
+            }
 
             // Success
             submitBtn.textContent = '✓ Subscribed!';
