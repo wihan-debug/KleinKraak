@@ -508,3 +508,228 @@ gmpx-store-locator {
         --gmpx-font-size-base: 0.85rem;
     }
 }
+
+/* Promotional Banner */
+.promo-banner {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 12px 20px;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.promo-banner.hidden {
+    transform: translateY(-100%);
+}
+
+.promo-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+
+.promo-icon {
+    font-size: 1.3rem;
+}
+
+.promo-text strong {
+    font-weight: 700;
+}
+
+.promo-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: auto;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    padding: 0 5px;
+}
+
+.promo-close:hover {
+    opacity: 1;
+}
+
+/* Adjust hero margin when promo is visible */
+.hero {
+    margin-top: 106px;
+    /* 60px nav + 46px promo */
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.6);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7);
+    }
+}
+
+/* Testimonials Section */
+.testimonials-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #F9F8F6 0%, #eef5eb 100%);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.testimonial-card {
+    background: white;
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.rating {
+    color: #FFB300;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.rating span {
+    margin-right: 2px;
+}
+
+.testimonial-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.testimonial-author {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Social Share Buttons */
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    color: white;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.share-btn-whatsapp {
+    background: #25D366;
+}
+
+.share-btn-facebook {
+    background: #1877F2;
+}
+
+.share-btn-twitter {
+    background: #1DA1F2;
+}
+
+.share-btn-copy {
+    background: #666;
+}
+
+.share-btn-copy.copied {
+    background: #2E7D32;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .promo-content {
+        font-size: 0.85rem;
+    }
+
+    .promo-icon {
+        display: none;
+    }
+
+    .whatsapp-float {
+        bottom: 20px;
+        right: 20px;
+        width: 55px;
+        height: 55px;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .share-buttons {
+        flex-wrap: wrap;
+    }
+
+    .share-btn {
+        flex: 1 1 45%;
+        justify-content: center;
+        font-size: 0.85rem;
+        padding: 10px 12px;
+    }
+}
