@@ -94,3 +94,80 @@ function addShareButtonsToModal(productName, productPrice) {
 // Make functions globally available
 window.shareProduct = shareProduct;
 window.addShareButtonsToModal = addShareButtonsToModal;
+
+// FAQ Accordion Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const faqQuestions = document.querySelectorAll('.faq-question');
+
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const faqItem = question.parentElement;
+            const isActive = faqItem.classList.contains('active');
+
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Toggle current item
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        });
+    });
+});
+
+// Newsletter Signup
+document.addEventListener('DOMContentLoaded', () => {
+    const newsletterForm = document.getElementById('newsletter-form');
+    const emailInput = document.getElementById('newsletter-email');
+
+    newsletterForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = emailInput.value.trim();
+        const submitBtn = newsletterForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+
+        // Disable button and show loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Subscribing...';
+
+        try {
+            // Send via EmailJS
+            await emailjs.send('service_newsletter', 'template_newsletter', {
+                email: email,
+                to_email: 'kleinkraak@gmail.com',
+                message: `New newsletter signup: ${email}`
+            });
+
+            // Success
+            submitBtn.textContent = '✓ Subscribed!';
+            submitBtn.style.background = '#2E7D32';
+            emailInput.value = '';
+
+            // Show thank you message
+            const thankYouMsg = document.createElement('p');
+            thankYouMsg.style.color = 'white';
+            thankYouMsg.style.marginTop = '10px';
+            thankYouMsg.textContent = 'Thanks for subscribing! Check your email for your 10% discount code.';
+            newsletterForm.appendChild(thankYouMsg);
+
+            // Reset after 3 seconds
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.background = '';
+                submitBtn.disabled = false;
+                thankYouMsg.remove();
+            }, 3000);
+
+        } catch (error) {
+            console.error('Newsletter signup error:', error);
+            submitBtn.textContent = 'Try Again';
+            submitBtn.disabled = false;
+
+            // Show error message
+            alert('Oops! Something went wrong. Please try again or contact us directly.');
+        }
+    });
+});
