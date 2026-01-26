@@ -140,10 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Send welcome email to customer with WELCOME15 code
-            await emailjs.send('service_g6v2rb9', 'templatenewsletterwelcom', {
+            // TEMPORARILY DISABLED - will re-enable once template is fully configured
+            /* await emailjs.send('service_g6v2rb9', 'templatenewsletterwelcom', {
                 to_email: email,
                 email: email
-            });
+            }); */
 
             // Send admin notification
             await emailjs.send('service_g6v2rb9', 'template_newsletter', {
@@ -161,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const thankYouMsg = document.createElement('p');
             thankYouMsg.style.color = 'white';
             thankYouMsg.style.marginTop = '10px';
-            thankYouMsg.textContent = 'Thanks for subscribing! Check your email for your WELCOME15 discount code.';
+            thankYouMsg.textContent = 'Thanks for subscribing! We\'ll send you updates and exclusive offers.';
             newsletterForm.appendChild(thankYouMsg);
 
             // Reset after 5 seconds
