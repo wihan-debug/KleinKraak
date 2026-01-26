@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Send welcome email to customer with WELCOME15 code
-            await emailjs.send('service_newsletter', 'template_newsletter_welcome', {
+            await emailjs.send('service_newsletter', 'templatenewsletterwelcom', {
                 to_email: email,
                 email: email
             });
