@@ -582,3 +582,70 @@
         font-size: 1.2rem;
     }
 }
+
+/* Google Maps Autocomplete Styling */
+#address-autocomplete {
+    background-color: #f8f9fa;
+    border: 2px solid var(--primary-color) !important;
+    font-weight: 500;
+}
+
+#address-autocomplete:focus {
+    background-color: white;
+}
+
+#address-autocomplete::placeholder {
+    color: #999;
+    font-weight: 400;
+}
+
+/* Style the Google autocomplete dropdown */
+.pac-container {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    font-family: var(--font-body);
+    z-index: 10000 !important;
+}
+
+.pac-item {
+    padding: 12px 14px;
+    border-top: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.95rem;
+}
+
+.pac-item:first-child {
+    border-top: none;
+}
+
+.pac-item:hover {
+    background-color: #f8f9fa;
+}
+
+.pac-item-selected {
+    background-color: #f0f7ef !important;
+}
+
+.pac-icon {
+    background-image: none !important;
+    margin-right: 10px;
+}
+
+.pac-icon::before {
+    content: "📍";
+    font-size: 1.2rem;
+}
+
+.pac-item-query {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.pac-matched {
+    font-weight: 700;
+    color: var(--primary-color);
+}

@@ -36,6 +36,11 @@
     <link rel="stylesheet" href="./styles/about.css">
     <link rel="stylesheet" href="./styles/map_override.css">
     <link rel="stylesheet" href="./styles/admin.css">
+
+    <!-- Google Maps API -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCmH8_LWgT_Is4KPArtnnmeA88VpdA1Ro&libraries=places&callback=initAutocomplete"
+        async defer></script>
 </head>
 
 <body>
@@ -200,11 +205,8 @@
                 <p><strong>Hours:</strong> Mon - Fri: 8:00 - 16:00</p>
             </div>
             <div class="footer-map">
-                <!-- Placeholder for map - clicking opens Google Maps -->
-                <a href="https://www.google.com/maps/search/?api=1&query=-25.991134309581064,28.31700897196065"
-                    target="_blank" class="map-link">
-                    <img src="./assets/images/map_preview.png" alt="Map Location of KleinKraak" class="map-image">
-                </a>
+                <!-- Interactive Store Locator -->
+                <gmpx-store-locator id="store-locator"></gmpx-store-locator>
             </div>
         </div>
         <div class="footer-bottom">
@@ -270,11 +272,20 @@
 
                 <div id="delivery-address-group" class="form-group hidden">
                     <label>Delivery Details</label>
+                    <input type="text" id="address-autocomplete" placeholder="Start typing your address..."
+                        style="margin-bottom: 10px;" autocomplete="off">
                     <input type="text" id="address-street" placeholder="Street Address & Number"
                         style="margin-bottom: 10px;">
+                    <input type="text" id="address-unit" placeholder="Unit / Apartment (optional)"
+                        style="margin-bottom: 10px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="address-town" placeholder="Town / City" style="flex: 1;">
+                        <input type="text" id="address-province" placeholder="Province" style="flex: 1;">
+                    </div>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="address-town" placeholder="Town / City">
-                        <input type="text" id="address-code" placeholder="Postal Code">
+                        <input type="text" id="address-code" placeholder="Postal Code" style="flex: 1;">
+                        <input type="text" id="address-country" placeholder="Country" value="South Africa"
+                            style="flex: 1;">
                     </div>
                 </div>
 
@@ -333,6 +344,151 @@
         (function () {
             emailjs.init("rmTCCejSdfLJrOwXR");
         })();
+    </script>
+
+    <!-- Google Maps Address Autocomplete -->
+    <script>
+        let autocomplete;
+
+        function initAutocomplete() {
+            const input = document.getElementById('address-autocomplete');
+
+            if (!input) {
+                console.log('Address autocomplete input not found, will retry...');
+                return;
+            }
+
+            // Initialize autocomplete with South Africa bias
+            autocomplete = new google.maps.places.Autocomplete(input, {
+                types: ['address'],
+                componentRestrictions: { country: 'za' }, // South Africa
+                fields: ['address_components', 'formatted_address', 'geometry', 'name']
+            });
+
+            // Listen for place selection
+            autocomplete.addListener('place_changed', fillInAddress);
+        }
+
+        function fillInAddress() {
+            const place = autocomplete.getPlace();
+
+            if (!place.address_components) {
+                console.log('No address components available');
+                return;
+            }
+
+            // Component mapping
+            const componentForm = {
+                street_number: 'short_name',
+                route: 'long_name',
+                locality: 'long_name',
+                administrative_area_level_1: 'long_name',
+                postal_code: 'short_name',
+                country: 'long_name'
+            };
+
+            // Clear existing values
+            document.getElementById('address-street').value = '';
+            document.getElementById('address-town').value = '';
+            document.getElementById('address-province').value = '';
+            document.getElementById('address-code').value = '';
+            document.getElementById('address-country').value = '';
+
+            // Extract components
+            let streetNumber = '';
+            let route = '';
+
+            for (const component of place.address_components) {
+                const addressType = component.types[0];
+
+                if (componentForm[addressType]) {
+                    const val = component[componentForm[addressType]];
+
+                    switch (addressType) {
+                        case 'street_number':
+                            streetNumber = val;
+                            break;
+                        case 'route':
+                            route = val;
+                            break;
+                        case 'locality':
+                            document.getElementById('address-town').value = val;
+                            break;
+                        case 'administrative_area_level_1':
+                            document.getElementById('address-province').value = val;
+                            break;
+                        case 'postal_code':
+                            document.getElementById('address-code').value = val;
+                            break;
+                        case 'country':
+                            document.getElementById('address-country').value = val;
+                            break;
+                    }
+                }
+            }
+
+            // Combine street number and route
+            const fullStreet = `${streetNumber} ${route}`.trim();
+            document.getElementById('address-street').value = fullStreet;
+
+            console.log('Address filled successfully!');
+        }
+
+        // Ensure autocomplete initializes even if called before DOM is ready
+        if (typeof google === 'undefined') {
+            console.log('Google Maps not yet loaded, will initialize via callback');
+        } else {
+            console.log('Google Maps already loaded, initializing now');
+            initAutocomplete();
+        }
+    </script>
+
+    <!-- Google Maps Extended Component Library -->
+    <script type="module"
+        src="https://ajax.googleapis.com/ajax/libs/@googlemaps/extended-component-library/0.6.11/index.min.js"></script>
+    <gmpx-api-loader key="AIzaSyDCmH8_LWgT_Is4KPArtnnmeA88VpdA1Ro"
+        solution-channel="GMP_kleinkraak_locator"></gmpx-api-loader>
+
+    <!-- Store Locator Configuration -->
+    <script type="module">
+        const LOCATOR_CONFIGURATION = {
+            "locations": [
+                {
+                    "title": "KleinKraak",
+                    "address1": "39 Jimpro Road",
+                    "address2": "Elandsfontein, Gauteng, South Africa",
+                    "coords": { "lat": -25.991191893861192, "lng": 28.316451664418036 },
+                    "placeId": "ChIJPT6hJcJBlR4RRwtn-pSz6Cs"
+                }
+            ],
+            "mapOptions": {
+                "center": { "lat": -25.991191893861192, "lng": 28.316451664418036 },
+                "fullscreenControl": true,
+                "mapTypeControl": false,
+                "streetViewControl": true,
+                "zoom": 15,
+                "zoomControl": true,
+                "maxZoom": 20,
+                "mapId": "DEMO_MAP_ID"
+            },
+            "mapsApiKey": "AIzaSyDCmH8_LWgT_Is4KPArtnnmeA88VpdA1Ro",
+            "capabilities": {
+                "input": true,
+                "autocomplete": true,
+                "directions": true,
+                "distanceMatrix": true,
+                "details": false,
+                "actions": false
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await customElements.whenDefined('gmpx-store-locator');
+            const locator = document.querySelector('#store-locator');
+            if (locator) {
+                locator.configureFromQuickBuilder(LOCATOR_CONFIGURATION);
+            }
+        });
     </script>
 
     <!-- Scripts -->

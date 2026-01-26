@@ -452,3 +452,59 @@ ul {
         width: 100%;
     }
 }
+
+/* Store Locator Styling */
+.footer-map {
+    width: 100%;
+    min-height: 400px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+gmpx-store-locator {
+    width: 100%;
+    height: 400px;
+    display: block;
+
+    /* Custom brand colors for store locator */
+    --gmpx-color-surface: #fff;
+    --gmpx-color-on-surface: #333333;
+    --gmpx-color-on-surface-variant: #666666;
+    --gmpx-color-primary: #4A6741;
+    /* Your brand green */
+    --gmpx-color-on-primary: #ffffff;
+    --gmpx-color-outline: #e0e0e0;
+    --gmpx-fixed-panel-width-row-layout: 25em;
+    --gmpx-fixed-panel-height-column-layout: 50%;
+    --gmpx-font-family-base: 'Outfit', sans-serif;
+    --gmpx-font-family-headings: 'Playfair Display', serif;
+    --gmpx-font-size-base: 0.9rem;
+    --gmpx-hours-color-open: #2E7D32;
+    --gmpx-hours-color-closed: #d50000;
+    --gmpx-rating-color: #ffb300;
+    --gmpx-rating-color-empty: #e0e0e0;
+}
+
+/* Ensure locator is responsive */
+@media (max-width: 768px) {
+    .footer-map {
+        min-height: 500px;
+    }
+
+    gmpx-store-locator {
+        height: 500px;
+        --gmpx-fixed-panel-height-column-layout: 45%;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-map {
+        min-height: 450px;
+    }
+
+    gmpx-store-locator {
+        height: 450px;
+        --gmpx-font-size-base: 0.85rem;
+    }
+}
