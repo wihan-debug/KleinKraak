@@ -423,6 +423,41 @@ function openCheckout() {
     checkoutModal.classList.add('active');
     overlay.classList.add('active'); // Keep overlay active
     document.body.style.overflow = 'hidden';
+
+    // Attach promo code button listener (needs to be done after modal is active)
+    const applyPromoBtn = document.getElementById('apply-promo-btn');
+    const promoCodeInput = document.getElementById('promo-code');
+    const promoMessage = document.getElementById('promo-message');
+
+    if (applyPromoBtn && promoCodeInput && !applyPromoBtn.dataset.listenerAttached) {
+        applyPromoBtn.dataset.listenerAttached = 'true';
+        applyPromoBtn.addEventListener('click', () => {
+            const code = promoCodeInput.value.trim().toUpperCase();
+
+            if (!code) {
+                promoMessage.textContent = 'Please enter a promo code';
+                promoMessage.style.color = '#d50000';
+                promoMessage.style.display = 'block';
+                return;
+            }
+
+            if (PROMO_CODES[code]) {
+                appliedPromoCode = code;
+                promoMessage.textContent = `✓ ${PROMO_CODES[code].description} applied!`;
+                promoMessage.style.color = '#2E7D32';
+                promoMessage.style.display = 'block';
+                promoCodeInput.disabled = true;
+                applyPromoBtn.textContent = 'Applied';
+                applyPromoBtn.disabled = true;
+                applyPromoBtn.style.opacity = '0.6';
+                updateCheckoutSummary();
+            } else {
+                promoMessage.textContent = '✗ Invalid promo code';
+                promoMessage.style.color = '#d50000';
+                promoMessage.style.display = 'block';
+            }
+        });
+    }
 }
 
 function closeCheckout() {
@@ -663,42 +698,6 @@ function updateCheckoutSummary() {
 
 deliveryInputs.forEach(input => {
     input.addEventListener('change', updateCheckoutSummary);
-});
-
-// Promo Code Apply Button
-document.addEventListener('DOMContentLoaded', () => {
-    const applyPromoBtn = document.getElementById('apply-promo-btn');
-    const promoCodeInput = document.getElementById('promo-code');
-    const promoMessage = document.getElementById('promo-message');
-
-    if (applyPromoBtn && promoCodeInput) {
-        applyPromoBtn.addEventListener('click', () => {
-            const code = promoCodeInput.value.trim().toUpperCase();
-
-            if (!code) {
-                promoMessage.textContent = 'Please enter a promo code';
-                promoMessage.style.color = '#d50000';
-                promoMessage.style.display = 'block';
-                return;
-            }
-
-            if (PROMO_CODES[code]) {
-                appliedPromoCode = code;
-                promoMessage.textContent = `✓ ${PROMO_CODES[code].description} applied!`;
-                promoMessage.style.color = '#2E7D32';
-                promoMessage.style.display = 'block';
-                promoCodeInput.disabled = true;
-                applyPromoBtn.textContent = 'Applied';
-                applyPromoBtn.disabled = true;
-                applyPromoBtn.style.opacity = '0.6';
-                updateCheckoutSummary();
-            } else {
-                promoMessage.textContent = '✗ Invalid promo code';
-                promoMessage.style.color = '#d50000';
-                promoMessage.style.display = 'block';
-            }
-        });
-    }
 });
 
 // Checkout Form Logic
