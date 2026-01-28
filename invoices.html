@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak - Create Invoice</title>
+    <!-- Use the same styles as the main site for consistency -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/components.css">
+    <link rel="stylesheet" href="./styles/admin.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--bg-gray);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .invoice-page-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .invoice-paper {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: #E0E0E0;
+            margin: 25px 0;
+        }
+
+        .totals-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            width: 250px;
+            padding: 8px 0;
+        }
+
+        .total-row.final {
+            border-top: 2px solid #E0E0E0;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .invoice-paper {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+
+    <div class="invoice-page-container">
+        <a href="index.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
+        </a>
+
+        <div class="invoice-header">
+            <h1>Create New Invoice</h1>
+            <div style="display: flex; gap: 10px;">
+                <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                <button id="download-invoice-btn" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="margin-right: 8px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download PDF
+                </button>
+            </div>
+        </div>
+
+        <div class="invoice-paper" id="invoice-form-area">
+
+            <!-- Client & Invoice Info -->
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h3>Bill To</h3>
+                    <div class="form-group">
+                        <label>Client Name</label>
+                        <input type="text" id="inv-name" placeholder="Enter client name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="inv-email" placeholder="client@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="inv-phone" placeholder="Contact number">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea id="inv-address" rows="2" placeholder="Street address, City, Code"
+                            style="resize: none;"></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Invoice Details</h3>
+                    <div class="form-group">
+                        <label>Invoice Number</label>
+                        <input type="text" id="inv-number" placeholder="INV-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="inv-date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Items -->
+            <h3>Items</h3>
+            <div id="invoice-items-container">
+                <!-- Dynamic Items -->
+            </div>
+
+            <button id="add-invoice-item-btn" class="btn btn-secondary btn-small" style="margin-top: 15px;">
+                + Add Item
+            </button>
+
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span>R <span id="display-subtotal">0.00</span></span>
+                </div>
+                <div class="total-row">
+                    <span>Delivery Fee:</span>
+                    <input type="number" id="inv-delivery" value="0" min="0" step="10"
+                        style="width: 100px; text-align: right; padding: 4px;">
+                </div>
+                <div class="total-row final">
+                    <span>Total:</span>
+                    <span>R <span id="display-total">0.00</span></span>
+                </div>
+            </div>
+
+            <!-- Hidden Template for PDF Generation -->
+            <div id="invoice-template" style="display: none;">
+                <!-- Content will be cloned and shown here during generation -->
+                <div style="padding: 40px; font-family: 'Outfit', sans-serif; background: white; color: #333;">
+                    <!-- Header -->
+                    <div
+                        style="display: flex; justify-content: space-between; border-bottom: 2px solid #4A6741; padding-bottom: 20px; margin-bottom: 30px;">
+                        <div>
+                            <h1
+                                style="color: #4A6741; font-family: 'Playfair Display', serif; font-size: 32px; margin: 0;">
+                                INVOICE</h1>
+                            <p style="margin: 5px 0 0; color: #666; font-size: 14px;">KleinKraak Stock Control</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <h2 style="color: #2F4229; margin: 0; font-size: 20px;">KleinKraak</h2>
+                            <p style="margin: 5px 0 0; font-size: 12px; color: #666;">
+                                39 Jimpro Road<br>
+                                Elandsfontein, Gauteng<br>
+                                071 479 6079 | kleinkraak@gmail.com
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+                        <div style="width: 45%;">
+                            <h3
+                                style="color: #4A6741; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+                                Bill To:</h3>
+                            <p style="margin: 0; font-weight: bold; font-size: 16px;" id="pdf-client-name"></p>
+                            <p style="margin: 5px 0 0; font-size: 14px; color: #555;" id="pdf-client-address"></p>
+                            <p style="margin: 5px 0 0; font-size: 14px; color: #555;" id="pdf-client-email"></p>
+                        </div>
+                        <div style="width: 45%; text-align: right;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 5px; color: #666; font-size: 14px;">Invoice #:</td>
+                                    <td style="padding: 5px; font-weight: bold; font-size: 14px;" id="pdf-inv-number">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px; color: #666; font-size: 14px;">Date:</td>
+                                    <td style="padding: 5px; font-weight: bold; font-size: 14px;" id="pdf-inv-date">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background-color: #F9F8F6; color: #4A6741;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #4A6741;">Item</th>
+                                <th style="padding: 12px; text-align: center; border-bottom: 1px solid #4A6741;">Qty
+                                </th>
+                                <th style="padding: 12px; text-align: right; border-bottom: 1px solid #4A6741;">Price
+                                </th>
+                                <th style="padding: 12px; text-align: right; border-bottom: 1px solid #4A6741;">Total
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdf-items-body">
+                            <!-- Items -->
+                        </tbody>
+                    </table>
+
+                    <!-- Totals -->
+                    <div style="display: flex; justify-content: flex-end;">
+                        <div style="width: 250px;">
+                            <div
+                                style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+                                <span style="color: #666;">Subtotal:</span>
+                                <span style="font-weight: bold;" id="pdf-subtotal"></span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+                                <span style="color: #666;">Delivery:</span>
+                                <span style="font-weight: bold;" id="pdf-delivery"></span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; padding: 10px 0; margin-top: 5px; border-top: 2px solid #4A6741; color: #4A6741;">
+                                <span style="font-weight: bold; font-size: 16px;">Total:</span>
+                                <span style="font-weight: bold; font-size: 16px;" id="pdf-total"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div
+                        style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; color: #555; font-size: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+
+                        <div style="width: 48%; text-align: left;">
+                            <h4 style="color: #4A6741; margin-bottom: 8px; font-size: 14px;">Terms & Conditions</h4>
+                            <p style="margin: 0 0 5px;">Payment is due upon receipt of invoice unless otherwise agreed.
+                            </p>
+                            <p style="margin: 0;">Please use your Invoice Number as the payment reference.</p>
+                        </div>
+
+                        <div
+                            style="width: 48%; background-color: #f4f8f4; border: 1px solid #c2d5a8; border-radius: 8px; padding: 15px;">
+                            <h4
+                                style="color: #2F4229; margin: 0 0 10px; font-size: 14px; border-bottom: 1px solid #c2d5a8; padding-bottom: 5px;">
+                                Banking Details (EFT)
+                            </h4>
+                            <div style="font-size: 13px; color: #333; line-height: 1.6;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Bank:</span>
+                                    <strong>Capitec Savings</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Account Holder:</span>
+                                    <strong>KleinKraak</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Account Number:</span>
+                                    <strong>1736441092</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Branch Code:</span>
+                                    <strong>470010</strong>
+                                </div>
+                                <div
+                                    style="margin-top: 8px; font-size: 12px; color: #666; border-top: 1px dashed #c2d5a8; padding-top: 5px;">
+                                    Please send proof of payment to: <strong>071 479 6079</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Global/Compat) to work with file:// protocol -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Config and Storage Logic (Inlined to avoid module CORS issues) -->
+    <script>
+        // --- Firebase Config & Setup ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLYTt1Wz4AcxDlQtnL374f0ntYuNG6C6U",
+            authDomain: "kleinkraak-49f26.firebaseapp.com",
+            databaseURL: "https://kleinkraak-49f26-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "kleinkraak-49f26",
+            storageBucket: "kleinkraak-49f26.firebasestorage.app",
+            messagingSenderId: "82607492969",
+            appId: "1:82607492969:web:73ab3ad041ca3cea0337f8",
+            measurementId: "G-39PR70CELK"
+        };
+
+        // Initialize Firebase
+        if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+            const database = firebase.database();
+
+            // Define global Storage object (mimicking storage.js)
+            window.Storage = {
+                KEYS: {
+                    PRODUCTS: 'products',
+                    MOVEMENTS: 'movements',
+                    MATERIALS: 'materials',
+                    SETTINGS: 'settings'
+                },
+
+                async get(key) {
+                    try {
+                        const snapshot = await database.ref(key).once('value');
+                        return snapshot.exists() ? snapshot.val() : null;
+                    } catch (error) {
+                        console.error('Error reading from Firebase:', error);
+                        return null;
+                    }
+                },
+
+                async set(key, value) {
+                    try {
+                        await database.ref(key).set(value);
+                        return true;
+                    } catch (error) {
+                        console.error('Error writing to Firebase:', error);
+                        return false;
+                    }
+                }
+            };
+            console.log("Firebase initialized globally for file:// support");
+        } else {
+            console.error("Firebase SDK failed to load");
+        }
+    </script>
+
+    <!-- Logic -->
+    <script src="./stock-control/scripts/inventory.js"></script>
+    <script src="./scripts/invoice-manager.js"></script>
+    <script>
+        // Init logic specifically for this page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for scripts
+            setTimeout(() => {
+                if (typeof InvoiceManager !== 'undefined') {
+                    InvoiceManager.initPage();
+                }
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>

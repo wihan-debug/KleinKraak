@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak - Wholesale Catalogue</title>
+    <meta name="description" content="KleinKraak Product Catalogue - Standard and Wholesale Prices.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./favicon.png?v=3">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/components.css">
+
+    <style>
+        .catalogue-section {
+            padding: 100px 0;
+            background-color: var(--bg-color);
+        }
+
+        .catalogue-table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+
+        table.catalogue-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-body);
+        }
+
+        .catalogue-table th,
+        .catalogue-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .catalogue-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .catalogue-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .catalogue-table td.price {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .catalogue-table td.wholesale-price {
+            font-weight: 700;
+            color: var(--primary-dark);
+            background-color: #f0f7ef;
+        }
+
+        .print-btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        @media print {
+
+            .navbar,
+            .footer,
+            .print-btn-container,
+            .whatsapp-float {
+                display: none;
+            }
+
+            .catalogue-section {
+                padding: 20px 0;
+            }
+
+            body {
+                background: white;
+            }
+
+            .catalogue-table th {
+                background-color: #ddd !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">KleinKraak</a>
+            <a href="index.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Back to Home</a>
+        </div>
+    </nav>
+
+    <main class="catalogue-section">
+        <div class="container">
+            <h1 class="section-title">Product Catalogue & Wholesale Pricing</h1>
+
+            <div class="catalogue-table-container">
+                <table class="catalogue-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Size</th>
+                            <th>Description</th>
+                            <th>Standard Price</th>
+                            <th>Wholesale Price (20% Off)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>White Wine Vinegar</td>
+                            <td>455ml Bottle</td>
+                            <td>Infused with salt, sugar, dill, spearmint, and more.</td>
+                            <td class="price">R 150.00</td>
+                            <td class="wholesale-price">R 120.00</td>
+                        </tr>
+                        <tr>
+                            <td>Spicy Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>Crunchy with a kick of chilli and garlic.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Dill & Garlic Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>Classic dill flavor, perfect for salads.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet & Sour Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>A delightful balance of sweet and tangy flavors.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet Cucamelon</td>
+                            <td>455ml Bottle</td>
+                            <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Fresh Cucamelons</td>
+                            <td>250g Punnet</td>
+                            <td>Freshly harvested, perfect for snacking.</td>
+                            <td class="price">R 50.00</td>
+                            <td class="wholesale-price">R 40.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet & Spicy Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>New flavor variant.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>French Salad Dressing</td>
+                            <td>455ml Bottle</td>
+                            <td>Delicious home-made dressing.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Garlic & Herb Salad Dressing</td>
+                            <td>455ml Bottle</td>
+                            <td>Savory dressing with fresh herbs.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="print-btn-container">
+                <button onclick="window.print()" class="btn btn-primary">Print Catalogue</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container" style="text-align: center;">
+            <p>&copy; 2024 KleinKraak. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -11,6 +11,18 @@ const AdminPanel = {
         this.setupHamburgerMenu();
         this.setupPasswordModal();
         this.setupAdminButton();
+        this.setupInvoiceButton();
+    },
+
+    setupInvoiceButton() {
+        const btn = document.getElementById('invoice-btn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                this.pendingAction = 'invoice';
+                this.closeSidebar();
+                this.openPasswordModal();
+            });
+        }
     },
 
     // Setup hamburger menu
@@ -33,7 +45,6 @@ const AdminPanel = {
         });
     },
 
-    // Setup password modal
     setupPasswordModal() {
         const modal = document.getElementById('admin-password-modal');
         const form = document.getElementById('admin-password-form');
@@ -47,8 +58,15 @@ const AdminPanel = {
 
             if (password === this.correctPassword) {
                 this.closePasswordModal();
-                this.loadStockControl();
                 passwordInput.value = '';
+
+                if (this.pendingAction === 'invoice') {
+                    // Redirect to dedicated page
+                    window.location.href = 'invoices.html';
+                } else {
+                    this.loadStockControl();
+                }
+                this.pendingAction = null;
             } else {
                 alert('Incorrect password. Please try again.');
                 passwordInput.value = '';
@@ -184,7 +202,6 @@ const AdminPanel = {
         container.classList.add('active');
     },
 
-    // Close stock control
     closeStockControl() {
         document.getElementById('stock-control-container').classList.remove('active');
     }

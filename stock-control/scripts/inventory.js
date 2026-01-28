@@ -6,15 +6,56 @@
 const Inventory = {
     products: [],
 
-    // Load products from storage
+    // Helpers for fallback storage
+    _getLocal(key) {
+        return JSON.parse(localStorage.getItem('kleinkraak-stock-' + key)) || [];
+    },
+
+    _getHardcoded() {
+        return [
+            { id: 'hc1', name: 'White Wine Vinegar Cucamelons', price: 150.00 },
+            { id: 'hc2', name: 'Spicy Pickled Cucamelons', price: 120.00 },
+            { id: 'hc3', name: 'Dill & Garlic Pickled Cucamelons', price: 120.00 },
+            { id: 'hc4', name: 'Sweet & Sour Pickled Cucamelons', price: 120.00 },
+            { id: 'hc5', name: 'Sweet Cucamelons', price: 120.00 },
+            { id: 'hc6', name: 'Fresh Cucamelons (250g)', price: 50.00 },
+            { id: 'hc7', name: 'French Salad Dressing', price: 120.00 },
+            { id: 'hc8', name: 'Garlic And Herb Salad Dressing', price: 120.00 },
+            { id: 'hc9', name: 'Sweet&Spicy', price: 120.00 },
+            { id: 'hc10', name: 'Pickled Apple Cider Vinegar', price: 130.00 }
+        ];
+    },
+
+    // Load products from storage (Firebase or Local or Hardcoded)
     async load() {
-        this.products = await Storage.get(Storage.KEYS.PRODUCTS) || [];
+        try {
+            if (typeof Storage !== 'undefined' && Storage.get) {
+                this.products = await Storage.get(Storage.KEYS.PRODUCTS) || [];
+            } else {
+                throw new Error("Storage missing");
+            }
+        } catch (e) {
+            console.warn("Inventory: Loading from primary storage failed, trying fallbacks.");
+            // Fallback 1: LocalStorage
+            this.products = this._getLocal('products');
+        }
+
+        // Fallback 2: Hardcoded (if still empty)
+        if (!this.products || this.products.length === 0) {
+            console.warn("Inventory: Using hardcoded fallback data.");
+            this.products = this._getHardcoded();
+        }
+
         return this.products;
     },
 
     // Save products to storage
     async save() {
-        await Storage.set(Storage.KEYS.PRODUCTS, this.products);
+        if (typeof Storage !== 'undefined' && Storage.set) {
+            await Storage.set(Storage.KEYS.PRODUCTS, this.products);
+        } else {
+            localStorage.setItem('kleinkraak-stock-products', JSON.stringify(this.products));
+        }
     },
 
     // Get all products
@@ -142,5 +183,8 @@ const Inventory = {
         }
     }
 };
+
+// Make Globally Available
+window.Inventory = Inventory;
 
 

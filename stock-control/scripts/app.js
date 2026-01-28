@@ -16,6 +16,8 @@ const App = {
         await Materials.load();
         await MaterialMovements.load();
 
+
+
         // Then setup UI
         this.setupNavigation();
         this.setupModals();
@@ -121,6 +123,9 @@ const App = {
                 break;
             case 'reports':
                 this.renderReports();
+                break;
+            case 'invoices':
+                if (typeof Invoices !== 'undefined') Invoices.refreshProductSelect();
                 break;
         }
     },
@@ -465,6 +470,9 @@ const App = {
                 break;
             case 'reports':
                 this.renderReports();
+                break;
+            case 'invoices':
+                if (typeof Invoices !== 'undefined') Invoices.refreshProductSelect();
                 break;
         }
     },
