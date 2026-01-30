@@ -151,6 +151,132 @@ const products = [
         image: './assets/products/fresh/1.jpg',
         description: 'Freshly harvested cucamelons, perfect for snacking.',
         ingredients: null
+    },
+    // 230ml Variants
+    {
+        id: 'white-wine-vinegar-230',
+        name: 'White Wine Vinegar',
+        price: 70.00,
+        size: '230ml Bottle',
+        images: [
+            './assets/products/vinegar/1.jpg',
+            './assets/products/vinegar/2.jpg',
+            './assets/products/vinegar/3.jpg',
+            './assets/products/vinegar/4.jpg',
+            './assets/products/vinegar/5.jpg'
+        ],
+        image: './assets/products/vinegar/1.jpg',
+        description: 'White Wine Vinegar infused with salt, sugar, fresh dill, spearmint leaves, peppercorns, coriander, garlic, and grape leaves.',
+        ingredients: [
+            'White Wine Vinegar',
+            'Salt',
+            'Sugar',
+            'Fresh Dill',
+            'Spearmint Leaves',
+            'Peppercorns',
+            'Coriander',
+            'Garlic',
+            'Grape Leaves'
+        ]
+    },
+    {
+        id: 'spicy-pickled-230',
+        name: 'Spicy Pickled Cucamelons',
+        price: 70.00,
+        size: '230ml Bottle',
+        images: [
+            './assets/products/spicy-pickled/1.jpg',
+            './assets/products/spicy-pickled/2.jpg',
+            './assets/products/spicy-pickled/3.jpg',
+            './assets/products/spicy-pickled/4.jpg'
+        ],
+        image: './assets/products/spicy-pickled/1.jpg',
+        description: 'Crunchy cucamelons pickled with a kick of chilli and garlic.',
+        ingredients: [
+            'Dill',
+            'Garlic',
+            'Coriander Seeds',
+            'Kosher Salt',
+            'Mustard Seeds',
+            'Vinegar',
+            'Water',
+            'Grape Leaves',
+            'Chilli Flakes'
+        ]
+    },
+    {
+        id: 'dill-pickled-230',
+        name: 'Dill & Garlic Pickled Cucamelons',
+        price: 70.00,
+        size: '230ml Bottle',
+        images: [
+            './assets/products/dill-pickled/1.jpg',
+            './assets/products/dill-pickled/2.jpg',
+            './assets/products/dill-pickled/3.jpg',
+            './assets/products/dill-pickled/4.jpg'
+        ],
+        image: './assets/products/dill-pickled/1.jpg',
+        description: 'Classic dill flavor, perfect for salads and cheeseboards.',
+        ingredients: [
+            'Dill',
+            'Garlic',
+            'Coriander Seeds',
+            'Kosher Salt',
+            'Mustard Seeds',
+            'Vinegar',
+            'Water',
+            'Grape Leaves'
+        ]
+    },
+    {
+        id: 'sweet-sour-230',
+        name: 'Sweet & Sour Pickled Cucamelons',
+        price: 70.00,
+        size: '230ml Bottle',
+        images: [
+            './assets/products/sweet-sour/1.jpg',
+            './assets/products/sweet-sour/2.jpg',
+            './assets/products/sweet-sour/3.jpg',
+            './assets/products/sweet-sour/4.jpg',
+            './assets/products/sweet-sour/5.jpg'
+        ],
+        image: './assets/products/sweet-sour/1.jpg',
+        description: 'A delightful balance of sweet and tangy flavors.',
+        ingredients: [
+            'Dill',
+            'Garlic',
+            'Coriander Seeds',
+            'Kosher Salt',
+            'Sugar',
+            'Mustard Seeds',
+            'Vinegar',
+            'Water',
+            'Grape Leaves'
+        ]
+    },
+    {
+        id: 'sweet-cucamelon-230',
+        name: 'Sweet Cucamelon',
+        price: 70.00,
+        size: '230ml Bottle',
+        images: [
+            './assets/products/sweet-cucamelon/1.jpg',
+            './assets/products/sweet-cucamelon/2.jpg',
+            './assets/products/sweet-cucamelon/3.jpg'
+        ],
+        image: './assets/products/sweet-cucamelon/1.jpg',
+        description: 'A unique twist with a sweet kick from Drink-O-Pop powder.',
+        ingredients: [
+            'Dill',
+            'Garlic',
+            'Coriander Seeds',
+            'Kosher Salt',
+            'Sugar',
+            'Mustard Seeds',
+            'Vinegar',
+            'Water',
+            'Drink-O-Pop Powder'
+        ]
     }
 ];
 
