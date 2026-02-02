@@ -65,6 +65,46 @@
     color: white;
 }
 
+/* Out of Stock Badge */
+.out-of-stock-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #d50000;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled Product Card */
+.product-card.disabled {
+    opacity: 0.7;
+}
+
+.product-card.disabled .product-image-container {
+    position: relative;
+}
+
+.product-card.disabled .product-image {
+    filter: grayscale(50%);
+}
+
+.product-card.disabled .add-to-cart-btn:disabled {
+    background: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.product-card.disabled .add-to-cart-btn:disabled:hover {
+    background: #999;
+    transform: none;
+}
+
 /* Cart Drawer */
 .cart-drawer {
     position: fixed;
