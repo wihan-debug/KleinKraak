@@ -1,0 +1,50 @@
+    // Refresh all product dropdowns when price type changes
+    refreshAllProductDropdowns() {
+        const rows = document.querySelectorAll('.invoice-item-row');
+        const priceType = this.getPriceType();
+
+        rows.forEach(row => {
+            const select = row.querySelector('.item-select');
+            const priceInput = row.querySelector('.item-price');
+            const qtyInput = row.querySelector('.item-qty');
+
+            if (select && select.style.display !== 'none') {
+                const currentValue = select.value;
+
+                // Rebuild dropdown options with new pricing
+                const currentProducts = this.state.products || [];
+                let opts = `<option value="">Select Product...</option>`;
+                currentProducts.forEach(p => {
+                    const displayPrice = this.getProductPrice(p);
+                    const priceLabel = priceType === 'wholesale' ? ' (Wholesale)' : '';
+                    opts += `<option value="${p.id}" data-retail-price="${p.price}" data-wholesale-price="${p.wholesalePrice || p.price}" data-name="${p.name}">${p.name}${priceLabel} - R${displayPrice.toFixed(2)}</option>`;
+                });
+                opts += `<option value="custom">-- Custom / Manual Item --</option>`;
+                select.innerHTML = opts;
+
+                // If there was a product selected, restore it and UPDATE THE PRICE
+                if (currentValue && currentValue !== '' && currentValue !== 'custom') {
+                    select.value = currentValue;
+                    const option = select.options[select.selectedIndex];
+                    
+                    if (option) {
+                        // THIS IS THE KEY: Update the visible price input field
+                        const newPrice = priceType === 'wholesale'
+                            ? parseFloat(option.getAttribute('data-wholesale-price'))
+                            : parseFloat(option.getAttribute('data-retail-price'));
+                        
+                        // Update price field (THIS IS WHAT YOU SEE)
+                        priceInput.value = newPrice.toFixed(2);
+                        
+                        // Update the row total
+                        const qty = parseFloat(qtyInput.value) || 1;
+                        const total = qty * newPrice;
+                        row.querySelector('.item-total').textContent = total.toFixed(2);
+                    }
+                }
+            }
+        });
+        
+        // Recalculate grand total
+        this.updateTotal();
+    },
