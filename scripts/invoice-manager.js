@@ -14,17 +14,18 @@ const InvoiceManager = {
     // Called when loading invoice-manager.js on the dedicated page
     initPage() {
         // EMERGENCY FIX: Hardcode products directly into state to bypass loading issues
+        // Products with BOTH retail and wholesale prices (from catalogue.html)
         const manualProducts = [
-            { id: 'hc1', name: 'White Wine Vinegar Cucamelons', price: 150.00 },
-            { id: 'hc2', name: 'Spicy Pickled Cucamelons', price: 120.00 },
-            { id: 'hc3', name: 'Dill & Garlic Pickled Cucamelons', price: 120.00 },
-            { id: 'hc4', name: 'Sweet & Sour Pickled Cucamelons', price: 120.00 },
-            { id: 'hc5', name: 'Sweet Cucamelons', price: 120.00 },
-            { id: 'hc6', name: 'Fresh Cucamelons (250g)', price: 50.00 },
-            { id: 'hc7', name: 'French Salad Dressing', price: 120.00 },
-            { id: 'hc8', name: 'Garlic And Herb Salad Dressing', price: 120.00 },
-            { id: 'hc9', name: 'Sweet&Spicy', price: 120.00 },
-            { id: 'hc10', name: 'Pickled Apple Cider Vinegar', price: 130.00 }
+            { id: 'hc1', name: 'White Wine Vinegar', price: 150.00, wholesalePrice: 120.00 },
+            { id: 'hc2', name: 'Spicy Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc3', name: 'Dill & Garlic Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc4', name: 'Sweet & Sour Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc5', name: 'Sweet Cucamelons', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc6', name: 'Fresh Cucamelons (250g)', price: 50.00, wholesalePrice: 40.00 },
+            { id: 'hc7', name: 'French Salad Dressing', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc8', name: 'Garlic And Herb Salad Dressing', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc9', name: 'Sweet&Spicy', price: 120.00, wholesalePrice: 96.00 },
+            { id: 'hc10', name: 'Pickled Apple Cider Vinegar', price: 130.00, wholesalePrice: 104.00 }
         ];
 
         console.log("InvoiceManager: EMERGENCY LOADING HARDCODED PRODUCTS", manualProducts);
@@ -98,12 +99,73 @@ const InvoiceManager = {
             });
         }
 
+        // WHOLESALE/RETAIL TOGGLE LISTENER
+        const priceTypeInputs = document.querySelectorAll('input[name="price-type"]');
+        priceTypeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                this.refreshAllProductDropdowns();
+            });
+        });
+
         // Live calculation listeners for general inputs
         document.getElementById('invoice-form-area')?.addEventListener('input', (e) => {
             if (e.target.matches('input') || e.target.matches('select')) {
                 // If it's not an item row input, just update the preview if needed
                 if (!e.target.closest('.invoice-item-row') && e.target.id !== 'inv-delivery') {
                     this.updatePreview();
+                }
+            }
+        });
+    },
+
+    // Get current price type
+    getPriceType() {
+        const priceTypeRadio = document.querySelector('input[name="price-type"]:checked');
+        return priceTypeRadio ? priceTypeRadio.value : 'retail';
+    },
+
+    // Get product price based on current price type
+    getProductPrice(product) {
+        const priceType = this.getPriceType();
+        return priceType === 'wholesale' ? (product.wholesalePrice || product.price) : product.price;
+    },
+
+    // Refresh all product dropdowns when price type changes
+    refreshAllProductDropdowns() {
+        const rows = document.querySelectorAll('.invoice-item-row');
+        const priceType = this.getPriceType();
+
+        rows.forEach(row => {
+            const select = row.querySelector('.item-select');
+            const priceInput = row.querySelector('.item-price');
+
+            if (select && select.style.display !== 'none') {
+                const currentValue = select.value;
+
+                // Rebuild options with new pricing
+                const currentProducts = this.state.products || [];
+                let opts = `<option value="">Select Product...</option>`;
+                currentProducts.forEach(p => {
+                    const displayPrice = this.getProductPrice(p);
+                    const priceLabel = priceType === 'wholesale' ? '(Wholesale)' : '';
+                    opts += `<option value="${p.id}" data-retail-price="${p.price}" data-wholesale-price="${p.wholesalePrice || p.price}" data-name="${p.name}">${p.name} ${priceLabel} (R${displayPrice.toFixed(2)})</option>`;
+                });
+                opts += `<option value="custom">-- Custom / Manual Item --</option>`;
+                select.innerHTML = opts;
+
+                // Restore selection if it was set
+                if (currentValue && currentValue !== '') {
+                    select.value = currentValue;
+
+                    // Update price in price input
+                    if (currentValue !== 'custom') {
+                        const option = select.options[select.selectedIndex];
+                        const newPrice = priceType === 'wholesale'
+                            ? option.getAttribute('data-wholesale-price')
+                            : option.getAttribute('data-retail-price');
+                        priceInput.value = newPrice;
+                        this.updateItemTotal(row);
+                    }
                 }
             }
         });
@@ -121,10 +183,12 @@ const InvoiceManager = {
         const products = this.state.products || [];
 
         // Build Options
+        const priceType = this.getPriceType();
         let optionsHtml = `<option value="">Select Product...</option>`;
         products.forEach(p => {
-            // Store price in data attribute for easy access
-            optionsHtml += `<option value="${p.id}" data-price="${p.price}" data-name="${p.name}">${p.name} (R${p.price})</option>`;
+            const displayPrice = this.getProductPrice(p);
+            const priceLabel = priceType === 'wholesale' ? '(Wholesale)' : '';
+            optionsHtml += `<option value="${p.id}" data-retail-price="${p.price}" data-wholesale-price="${p.wholesalePrice || p.price}" data-name="${p.name}">${p.name} ${priceLabel} (R${displayPrice.toFixed(2)})</option>`;
         });
         optionsHtml += `<option value="custom">-- Custom / Manual Item --</option>`;
 
@@ -160,11 +224,13 @@ const InvoiceManager = {
 
         // Helper to populate select options (reused)
         const populateSelect = (sel) => {
-            // Always grab fresh list from State which should now be populated
             const currentProducts = this.state.products || [];
+            const priceType = this.getPriceType();
             let opts = `<option value="">Select Product...</option>`;
             currentProducts.forEach(p => {
-                opts += `<option value="${p.id}" data-price="${p.price}" data-name="${p.name}">${p.name} (R${p.price})</option>`;
+                const displayPrice = this.getProductPrice(p);
+                const priceLabel = priceType === 'wholesale' ? '(Wholesale)' : '';
+                opts += `<option value="${p.id}" data-retail-price="${p.price}" data-wholesale-price="${p.wholesalePrice || p.price}" data-name="${p.name}">${p.name} ${priceLabel} (R${displayPrice.toFixed(2)})</option>`;
             });
             opts += `<option value="custom">-- Custom / Manual Item --</option>`;
             sel.innerHTML = opts;
@@ -216,7 +282,10 @@ const InvoiceManager = {
             } else if (val) {
                 // Product selected
                 const option = select.options[select.selectedIndex];
-                const price = option.getAttribute('data-price');
+                const priceType = this.getPriceType();
+                const price = priceType === 'wholesale'
+                    ? option.getAttribute('data-wholesale-price')
+                    : option.getAttribute('data-retail-price');
                 const name = option.getAttribute('data-name');
 
                 priceInput.value = price;
