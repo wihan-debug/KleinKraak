@@ -135,49 +135,50 @@ const InvoiceManager = {
         const rows = document.querySelectorAll('.invoice-item-row');
         const priceType = this.getPriceType();
 
-        console.log(`Switching to ${priceType} pricing mode...`);
-        let updatedCount = 0;
-
         rows.forEach(row => {
             const select = row.querySelector('.item-select');
             const priceInput = row.querySelector('.item-price');
+            const qtyInput = row.querySelector('.item-qty');
+            const totalSpan = row.querySelector('.item-total');
 
             if (select && select.style.display !== 'none') {
                 const currentValue = select.value;
 
-                // Rebuild options with new pricing
+                // Rebuild dropdown options with new pricing
                 const currentProducts = this.state.products || [];
                 let opts = `<option value="">Select Product...</option>`;
                 currentProducts.forEach(p => {
                     const displayPrice = this.getProductPrice(p);
-                    const priceLabel = priceType === 'wholesale' ? '(Wholesale)' : '';
-                    opts += `<option value="${p.id}" data-retail-price="${p.price}" data-wholesale-price="${p.wholesalePrice || p.price}" data-name="${p.name}">${p.name} ${priceLabel} (R${displayPrice.toFixed(2)})</option>`;
+                    const priceLabel = priceType === 'wholesale' ? ' (Wholesale)' : '';
+                    opts += `<option value="${p.id}" data-retail-price="${p.price}" data-wholesale-price="${p.wholesalePrice || p.price}" data-name="${p.name}">${p.name}${priceLabel} - R${displayPrice.toFixed(2)}</option>`;
                 });
                 opts += `<option value="custom">-- Custom / Manual Item --</option>`;
                 select.innerHTML = opts;
 
-                // Restore selection if it was set
+                // If there was a product selected, UPDATE THE PRICE VISIBLY
                 if (currentValue && currentValue !== '' && currentValue !== 'custom') {
                     select.value = currentValue;
-
-                    // Update price in price input
                     const option = select.options[select.selectedIndex];
+
                     if (option) {
+                        // Get the new price based on wholesale/retail toggle
                         const newPrice = priceType === 'wholesale'
-                            ? option.getAttribute('data-wholesale-price')
-                            : option.getAttribute('data-retail-price');
-                        const oldPrice = priceInput.value;
-                        priceInput.value = newPrice;
-                        console.log(`  Updated ${option.getAttribute('data-name')}: R${oldPrice} → R${newPrice}`);
-                        this.updateItemTotal(row);
-                        updatedCount++;
+                            ? parseFloat(option.getAttribute('data-wholesale-price'))
+                            : parseFloat(option.getAttribute('data-retail-price'));
+
+                        // UPDATE THE PRICE INPUT - THIS IS WHAT YOU SEE
+                        priceInput.value = newPrice.toFixed(2);
+
+                        // UPDATE THE ITEM TOTAL
+                        const qty = parseFloat(qtyInput.value) || 1;
+                        const lineTotal = qty * newPrice;
+                        totalSpan.textContent = lineTotal.toFixed(2);
                     }
                 }
             }
         });
 
-        console.log(`Updated ${updatedCount} item(s) to ${priceType} pricing`);
-        // Force total recalculation
+        // UPDATE THE GRAND TOTAL AT THE BOTTOM
         this.updateTotal();
     },
 
