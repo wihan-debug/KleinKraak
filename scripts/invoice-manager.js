@@ -33,8 +33,8 @@ const InvoiceManager = {
 
         this.setupEventListeners();
 
-        // Try to load additional/live products in background, but don't block
-        setTimeout(() => this.loadProducts(), 100);
+        // DISABLED: This was loading old product data WITHOUT wholesale prices and overwriting our good data
+        // setTimeout(() => this.loadProducts(), 100);
 
         // Set default values formatted correctly
         const numberInput = document.getElementById('inv-number');
@@ -103,6 +103,8 @@ const InvoiceManager = {
         const priceTypeInputs = document.querySelectorAll('input[name="price-type"]');
         priceTypeInputs.forEach(input => {
             input.addEventListener('change', () => {
+                const priceType = this.getPriceType();
+                alert(`Switching to ${priceType} pricing! You should see prices update now...`);
                 this.refreshAllProductDropdowns();
             });
         });
