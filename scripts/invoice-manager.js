@@ -135,6 +135,9 @@ const InvoiceManager = {
         const rows = document.querySelectorAll('.invoice-item-row');
         const priceType = this.getPriceType();
 
+        console.log(`Switching to ${priceType} pricing mode...`);
+        let updatedCount = 0;
+
         rows.forEach(row => {
             const select = row.querySelector('.item-select');
             const priceInput = row.querySelector('.item-price');
@@ -154,21 +157,28 @@ const InvoiceManager = {
                 select.innerHTML = opts;
 
                 // Restore selection if it was set
-                if (currentValue && currentValue !== '') {
+                if (currentValue && currentValue !== '' && currentValue !== 'custom') {
                     select.value = currentValue;
 
                     // Update price in price input
-                    if (currentValue !== 'custom') {
-                        const option = select.options[select.selectedIndex];
+                    const option = select.options[select.selectedIndex];
+                    if (option) {
                         const newPrice = priceType === 'wholesale'
                             ? option.getAttribute('data-wholesale-price')
                             : option.getAttribute('data-retail-price');
+                        const oldPrice = priceInput.value;
                         priceInput.value = newPrice;
+                        console.log(`  Updated ${option.getAttribute('data-name')}: R${oldPrice} → R${newPrice}`);
                         this.updateItemTotal(row);
+                        updatedCount++;
                     }
                 }
             }
         });
+
+        console.log(`Updated ${updatedCount} item(s) to ${priceType} pricing`);
+        // Force total recalculation
+        this.updateTotal();
     },
 
     // Add item row with Select Dropdown
