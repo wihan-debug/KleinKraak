@@ -103,8 +103,6 @@ const InvoiceManager = {
         const priceTypeInputs = document.querySelectorAll('input[name="price-type"]');
         priceTypeInputs.forEach(input => {
             input.addEventListener('change', () => {
-                const priceType = this.getPriceType();
-                alert(`Switching to ${priceType} pricing! You should see prices update now...`);
                 this.refreshAllProductDropdowns();
             });
         });
