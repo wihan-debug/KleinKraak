@@ -76,9 +76,9 @@
     <!-- Promotional Banner -->
     <div class="promo-banner" id="promo-banner">
         <div class="promo-content">
-            <span class="promo-icon">🎉</span>
-            <span class="promo-text"><strong>Fresh Harvest Available!</strong> Get 10% off your first order with code
-                <strong>FRESH10</strong></span>
+            <span class="promo-icon">🚚</span>
+            <span class="promo-text"><strong>FREE DELIVERY</strong> on all Gauteng orders over <strong>R500</strong> |
+                Use code <strong>FRESH10</strong> for 10% off your first order!</span>
             <button class="promo-close" id="close-promo-banner" aria-label="Close banner">&times;</button>
         </div>
     </div>
@@ -179,7 +179,7 @@
         <div class="hero-content">
             <h1>Experience the Crunch of Nature</h1>
             <p>Hand-picked, locally grown, and perfectly pickled cucamelons from KleinKraak.</p>
-            <a href="#products" class="btn btn-primary">Shop Now</a>
+            <a href="#products" class="btn btn-primary">Shop Now - Free Delivery Over R500! 🚚</a>
         </div>
         <div class="hero-overlay"></div>
     </header>
@@ -604,7 +604,29 @@
     <div id="checkout-modal" class="modal">
         <div class="modal-content">
             <button id="close-checkout" class="close-modal-btn">&times;</button>
-            <h2>Checkout</h2>
+            <h2>Secure Checkout</h2>
+
+            <!-- CONVERSION OPTIMIZATION: Trust Signals -->
+            <div class="guarantee-banner">
+                <strong>🛡️ 30-Day Money-Back Guarantee</strong>
+                Not satisfied? Get a full refund, no questions asked!
+            </div>
+
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <span class="trust-badge-icon">🔒</span>
+                    <span>Secure Payment</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="trust-badge-icon">⭐</span>
+                    <span>500+ Happy Customers</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="trust-badge-icon">🇿🇦</span>
+                    <span>100% South African</span>
+                </div>
+            </div>
+
             <form id="checkout-form">
                 <div class="form-group">
                     <label>Delivery Method</label>
@@ -631,10 +653,11 @@
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" required placeholder="For order confirmation">
+                    <small style="color: #666; font-size: 0.85rem;">🔒 We never share your email</small>
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" required>
+                    <input type="tel" id="phone" required placeholder="For delivery updates">
                 </div>
 
                 <div id="delivery-address-group" class="form-group hidden">
@@ -682,7 +705,10 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-block">Pay Now</button>
+                <button type="submit" class=" btn-success btn-block">🔒 Proceed to Secure Payment</button>
+                <p style="text-align: center; font-size: 0.85rem; color: #666; margin-top: 10px;">
+                    Powered by Yoco • 256-bit SSL encryption
+                </p>
             </form>
         </div>
     </div>

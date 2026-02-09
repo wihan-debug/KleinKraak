@@ -44,25 +44,128 @@
     font-size: 1.1rem;
     color: var(--text-light);
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
+}
+
+.product-size {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+/* CONVERSION OPTIMIZATION: Product Rating */
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.product-rating .stars {
+    color: #FFB800;
+    font-size: 0.85rem;
+}
+
+.product-rating .rating-count {
+    color: #666;
+    font-size: 0.85rem;
 }
 
 .add-to-cart-btn {
     margin-top: auto;
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: transparent;
     border: 2px solid var(--primary-color);
     color: var(--primary-color);
     border-radius: var(--radius);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
 }
 
 .add-to-cart-btn:hover {
     background-color: var(--primary-color);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 103, 65, 0.3);
+}
+
+/* CONVERSION OPTIMIZATION: Urgent CTA styling */
+.add-to-cart-btn.urgent {
+    background-color: #FF6B00;
+    border-color: #FF6B00;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.add-to-cart-btn.urgent:hover {
+    background-color: #E65100;
+    border-color: #E65100;
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(255, 107, 0, 0);
+    }
+}
+
+/* CONVERSION OPTIMIZATION: Badges */
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.best-seller-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stock-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #FF3B30, #C7200F);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-align: center;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: urgentPulse 1.5s infinite;
+}
+
+@keyframes urgentPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
 }
 
 /* Out of Stock Badge */
@@ -103,6 +206,71 @@
 .product-card.disabled .add-to-cart-btn:disabled:hover {
     background: #999;
     transform: none;
+}
+
+/* CONVERSION OPTIMIZATION: Recent Purchase Notification */
+.recent-purchase-notification {
+    position: fixed;
+    bottom: -100px;
+    left: 20px;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    max-width: 350px;
+    transition: bottom 0.3s ease-out;
+}
+
+.recent-purchase-notification.show {
+    bottom: 20px;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+}
+
+.notification-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.notification-text strong {
+    color: var(--primary-color);
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.notification-close:hover {
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .recent-purchase-notification {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+
+    .recent-purchase-notification.show {
+        bottom: 80px;
+        /* Above WhatsApp button */
+    }
 }
 
 /* Cart Drawer */
@@ -489,6 +657,47 @@
     background-color: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(74, 103, 65, 0.4);
+}
+
+/* CONVERSION OPTIMIZATION: Trust Badges in Checkout */
+.trust-badges {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.trust-badge-icon {
+    font-size: 1.2rem;
+}
+
+.guarantee-banner {
+    background: linear-gradient(135deg, #2E7D32, #4CAF50);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.guarantee-banner strong {
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 4px;
 }
 
 /* Payment Modal Styling */
