@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Summer Salad Recipe - KleinKraak</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4A6741;
+            --primary-light: #7E9F70;
+            --primary-dark: #2F4229;
+            --accent-color: #C2D5A8;
+            --bg-color: #F9F8F6;
+            --text-color: #333333;
+            --text-light: #666666;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Outfit', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F9F8F6 0%, #eef5eb 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .recipe-card {
+            background: white;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(74, 103, 65, 0.15);
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .recipe-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .recipe-header h1 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .recipe-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .recipe-body {
+            padding: 40px 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+        }
+
+        .ingredients-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .ingredients-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .ingredients-list li:before {
+            content: "🥒";
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .ingredients-list li:last-child {
+            border-bottom: none;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #F9F8F6 0%, #fff 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .instructions h3 {
+            font-family: var(--font-heading);
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .serving-info {
+            display: flex;
+            justify-content: space-around;
+            background: var(--accent-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .recipe-footer {
+            background: var(--primary-dark);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .recipe-footer p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .brand-logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .recipe-card {
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            @page {
+                margin: 0.5cm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="recipe-card">
+        <div class="recipe-header">
+            <span class="recipe-icon">🥗</span>
+            <h1>Fresh Summer Salad</h1>
+            <span class="recipe-tag">Fresh & Light</span>
+        </div>
+
+        <div class="recipe-body">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Ingredients
+            </h2>
+            <ul class="ingredients-list">
+                <li>250g fresh cucamelons, halved</li>
+                <li>200g cherry tomatoes, halved</li>
+                <li>100g feta cheese, crumbled</li>
+                <li>Fresh mint leaves, chopped</li>
+                <li>2 tbsp extra virgin olive oil</li>
+                <li>Juice of 1 lemon</li>
+                <li>Salt and pepper to taste</li>
+            </ul>
+
+            <div class="instructions">
+                <h3>🍴 Preparation</h3>
+                <ol>
+                    <li><strong>Prepare the cucamelons:</strong> Rinse fresh cucamelons and cut them in half lengthwise.
+                    </li>
+                    <li><strong>Prep the tomatoes:</strong> Halve the cherry tomatoes and set aside.</li>
+                    <li><strong>Combine in bowl:</strong> In a large salad bowl, mix cucamelons, cherry tomatoes, and
+                        crumbled feta cheese.</li>
+                    <li><strong>Add herbs:</strong> Tear fresh mint leaves and sprinkle over the salad.</li>
+                    <li><strong>Make dressing:</strong> In a small bowl, whisk together olive oil, lemon juice, salt,
+                        and pepper.</li>
+                    <li><strong>Toss & serve:</strong> Drizzle the dressing over the salad and toss gently. Serve
+                        immediately!</li>
+                </ol>
+            </div>
+
+            <div class="serving-info">
+                <div class="info-item">
+                    <span class="info-icon">👥</span>
+                    <div class="info-label">Serves</div>
+                    <div class="info-value">4</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">⏱️</span>
+                    <div class="info-label">Prep Time</div>
+                    <div class="info-value">10 min</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">🌱</span>
+                    <div class="info-label">Type</div>
+                    <div class="info-value">Vegetarian</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recipe-footer">
+            <div class="brand-logo">KleinKraak</div>
+            <p>🥒 Fresh & Pickled Cucamelons | Elandsfontein, South Africa</p>
+            <p style="font-size: 0.9rem; margin-top: 5px;">📧 kleinkraak@gmail.com | 📞 071 479 6079</p>
+        </div>
+    </div>
+</body>
+
+</html>
