@@ -309,40 +309,52 @@
             <p class="section-subtitle">See how people are enjoying KleinKraak cucamelons!</p>
 
             <div class="gallery-grid">
-                <div class="gallery-item">
-                    <div class="gallery-placeholder" style="background: linear-gradient(135deg, #7E9F70, #4A6741);">
+                <div class="gallery-item" onclick="openGalleryModal('salads')">
+                    <div class="gallery-placeholder"
+                        style="background: linear-gradient(135deg, #7E9F70, #4A6741); cursor: pointer;">
                         <span class="gallery-emoji">🥗</span>
                         <p>Fresh in salads</p>
+                        <span class="gallery-overlay">Click to share yours!</span>
                     </div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder" style="background: linear-gradient(135deg, #4A6741, #2F4229);">
+                <div class="gallery-item" onclick="openGalleryModal('tacos')">
+                    <div class="gallery-placeholder"
+                        style="background: linear-gradient(135deg, #4A6741, #2F4229); cursor: pointer;">
                         <span class="gallery-emoji">🌮</span>
                         <p>Pickled tacos</p>
+                        <span class="gallery-overlay">Click to share yours!</span>
                     </div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder" style="background: linear-gradient(135deg, #C2D5A8, #7E9F70);">
+                <div class="gallery-item" onclick="openGalleryModal('cocktails')">
+                    <div class="gallery-placeholder"
+                        style="background: linear-gradient(135deg, #C2D5A8, #7E9F70); cursor: pointer;">
                         <span class="gallery-emoji">🍸</span>
                         <p>Cocktail garnish</p>
+                        <span class="gallery-overlay">Click to share yours!</span>
                     </div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder" style="background: linear-gradient(135deg, #2F4229, #4A6741);">
+                <div class="gallery-item" onclick="openGalleryModal('charcuterie')">
+                    <div class="gallery-placeholder"
+                        style="background: linear-gradient(135deg, #2F4229, #4A6741); cursor: pointer;">
                         <span class="gallery-emoji">🧀</span>
                         <p>Charcuterie boards</p>
+                        <span class="gallery-overlay">Click to share yours!</span>
                     </div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder" style="background: linear-gradient(135deg, #7E9F70, #C2D5A8);">
+                <div class="gallery-item" onclick="openGalleryModal('wraps')">
+                    <div class="gallery-placeholder"
+                        style="background: linear-gradient(135deg, #7E9F70, #C2D5A8); cursor: pointer;">
                         <span class="gallery-emoji">🥙</span>
                         <p>Wrap fillings</p>
+                        <span class="gallery-overlay">Click to share yours!</span>
                     </div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder" style="background: linear-gradient(135deg, #4A6741, #7E9F70);">
+                <div class="gallery-item" onclick="openGalleryModal('restaurant')">
+                    <div class="gallery-placeholder"
+                        style="background: linear-gradient(135deg, #4A6741, #7E9F70); cursor: pointer;">
                         <span class="gallery-emoji">🍽️</span>
                         <p>Restaurant dishes</p>
+                        <span class="gallery-overlay">Click to share yours!</span>
                     </div>
                 </div>
             </div>
@@ -727,6 +739,39 @@
         </div>
     </div>
 
+    <!-- Gallery Share Modal -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button id="close-gallery-modal" class="close-modal-btn">&times;</button>
+            <h2 style="text-align: center; margin-bottom: 20px;">Share Your Cucamelon Creations! 📸</h2>
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;" id="gallery-modal-emoji">🥗</div>
+                <h3 id="gallery-modal-title" style="color: var(--primary-dark); margin-bottom: 15px;">Fresh in Salads
+                </h3>
+                <p style="line-height: 1.6; color: var(--text-color); margin-bottom: 25px;">
+                    We'd love to see how you're enjoying your KleinKraak cucamelons! Share your photos on social media
+                    and tag us <strong>@kleinkraak</strong>
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://www.facebook.com/profile.php?id=61586831340179" target="_blank"
+                        class="btn btn-primary"
+                        style="background: #1877F2; display: inline-flex; align-items: center; gap: 8px;">
+                        📘 Share on Facebook
+                    </a>
+                    <a href="https://www.tiktok.com/@kleinkraak" target="_blank" class="btn btn-primary"
+                        style="background: #000; display: inline-flex; align-items: center; gap: 8px;">
+                        🎵 Share on TikTok
+                    </a>
+                    <a href="https://wa.me/27714796079?text=Hi%20KleinKraak!%20I%20want%20to%20share%20my%20cucamelon%20photos!"
+                        target="_blank" class="btn btn-primary"
+                        style="background: #25D366; display: inline-flex; align-items: center; gap: 8px;">
+                        💬 Send via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Product Details Modal -->
     <div id="product-modal" class="modal">
         <div class="modal-content">
@@ -915,6 +960,53 @@
                 publicKey: "rmTCCejSdfLJrOwXR",
             });
         })();
+    </script>
+
+    <!-- Gallery Modal Script -->
+    <script>
+        function openGalleryModal(type) {
+            const modal = document.getElementById('gallery-modal');
+            const overlay = document.getElementById('overlay');
+            const emoji = document.getElementById('gallery-modal-emoji');
+            const title = document.getElementById('gallery-modal-title');
+
+            const galleryContent = {
+                'salads': { emoji: '🥗', title: 'Fresh in Salads' },
+                'tacos': { emoji: '🌮', title: 'Pickled Tacos' },
+                'cocktails': { emoji: '🍸', title: 'Cocktail Garnish' },
+                'charcuterie': { emoji: '🧀', title: 'Charcuterie Boards' },
+                'wraps': { emoji: '🥙', title: 'Wrap Fillings' },
+                'restaurant': { emoji: '🍽️', title: 'Restaurant Dishes' }
+            };
+
+            if (galleryContent[type]) {
+                emoji.textContent = galleryContent[type].emoji;
+                title.textContent = galleryContent[type].title;
+            }
+
+            modal.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const closeBtn = document.getElementById('close-gallery-modal');
+            const modal = document.getElementById('gallery-modal');
+            const overlay = document.getElementById('overlay');
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    modal.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+
+            overlay.addEventListener('click', function () {
+                if (modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
     </script>
 
     <!-- Scripts -->

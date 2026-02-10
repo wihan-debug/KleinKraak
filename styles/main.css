@@ -1166,3 +1166,31 @@ gmpx-store-locator {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* Gallery Overlay */
+.gallery-placeholder {
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.gallery-placeholder:hover {
+    transform: scale(1.05);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(47, 66, 41, 0.9);
+    color: white;
+    padding: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-placeholder:hover .gallery-overlay {
+    opacity: 1;
+}
