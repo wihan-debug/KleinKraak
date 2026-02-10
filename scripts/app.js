@@ -154,6 +154,7 @@ const products = [
         name: 'Sweet & Sour Pickled Cucamelons',
         price: 96.00,
         size: '455ml Bottle',
+        bestSeller: true,
         images: [
             './assets/products/sweet-sour/1.jpg',
             './assets/products/sweet-sour/2.jpg',
@@ -249,6 +250,7 @@ const products = [
         name: 'Pickled Apple Cider Vinegar',
         price: 130.00,
         size: '455ml Bottle',
+        bestSeller: true,
         images: [
             './assets/products/vinegar/3.jpg',
             './assets/products/dill-pickled/2.jpg',
