@@ -218,6 +218,77 @@ const products = [
         image: './assets/products/fresh/1.jpg',
         description: 'Freshly harvested cucamelons, perfect for snacking.',
         ingredients: null
+    },
+    {
+        id: 'sweet-spicy-pickled',
+        name: 'Pickled Sweet&Spicy',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/spicy-pickled/2.jpg',
+            './assets/products/sweet-sour/6.jpg',
+            './assets/products/dill-pickled/3.jpg',
+            './assets/products/sweet-sour/7.jpg'
+        ],
+        image: './assets/products/spicy-pickled/2.jpg',
+        description: 'A perfect blend of sweet and spicy flavors.',
+        ingredients: [
+            'Cucamelons',
+            'Sugar',
+            'Chilli Flakes',
+            'Garlic',
+            'Vinegar',
+            'Water',
+            'Coriander Seeds',
+            'Mustard Seeds',
+            'Salt'
+        ]
+    },
+    {
+        id: 'apple-cider-vinegar',
+        name: 'Pickled Apple Cider Vinegar',
+        price: 130.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/vinegar/3.jpg',
+            './assets/products/dill-pickled/2.jpg',
+            './assets/products/vinegar/4.jpg',
+            './assets/products/sweet-sour/3.jpg'
+        ],
+        image: './assets/products/vinegar/3.jpg',
+        description: 'Cucamelons pickled in apple cider vinegar with fresh herbs.',
+        ingredients: [
+            'Apple Cider Vinegar',
+            'Coriander Seeds',
+            'Black Peppercorns',
+            'Sugar',
+            'Dill',
+            'Garlic',
+            'Grape Leaves'
+        ]
+    },
+    {
+        id: 'pickled-mix',
+        name: 'Pickled Mix',
+        price: 80.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/sweet-sour/5.jpg',
+            './assets/products/spicy-pickled/3.jpg',
+            './assets/products/dill-pickled/4.jpg',
+            './assets/products/vinegar/2.jpg'
+        ],
+        image: './assets/products/sweet-sour/5.jpg',
+        description: 'A mix of our favorite pickled varieties in one jar.',
+        ingredients: [
+            'Mixed Cucamelons',
+            'Vinegar',
+            'Salt',
+            'Sugar',
+            'Garlic',
+            'Mixed Herbs',
+            'Spices'
+        ]
     }
 ];
 
