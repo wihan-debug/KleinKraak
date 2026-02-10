@@ -129,7 +129,6 @@ const products = [
         name: 'Dill & Garlic Pickled Cucamelons',
         price: 96.00,
         size: '455ml Bottle',
-        bestSeller: true,
         images: [
             './assets/products/dill-pickled/1.jpg',
             './assets/products/dill-pickled/2.jpg',
