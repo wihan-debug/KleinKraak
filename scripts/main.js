@@ -109,7 +109,12 @@ function updateCartUI(cartInstance) {
 function updateCheckoutSummary() {
     const subtotal = cart.getTotal();
     const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
-    const deliveryCost = deliveryMethod === 'delivery' ? 100.00 : 0.00;
+    let deliveryCost = 0;
+
+    if (deliveryMethod === 'delivery_gauteng') {
+        deliveryCost = 200.00;
+    }
+
     const total = subtotal + deliveryCost;
 
     checkoutSubtotal.textContent = `R ${subtotal.toFixed(2)}`;
