@@ -862,7 +862,11 @@ function updateCheckoutSummary() {
     let deliveryCost = 0.00;
 
     if (deliveryMethod === 'delivery_gauteng') {
-        deliveryCost = 200.00;
+        if (subtotal >= 500) {
+            deliveryCost = 0.00;
+        } else {
+            deliveryCost = 200.00;
+        }
     }
 
     // Calculate discount
@@ -952,8 +956,13 @@ checkoutForm.addEventListener('submit', (e) => {
         let deliveryLabel = "Collect";
 
         if (deliveryMethodValue === 'delivery_gauteng') {
-            deliveryCost = 200.00;
-            deliveryLabel = "Gauteng Delivery";
+            if (cart.getTotal() >= 500) {
+                deliveryCost = 0.00;
+                deliveryLabel = "Nationwide Delivery (Free)";
+            } else {
+                deliveryCost = 200.00;
+                deliveryLabel = "Nationwide Delivery";
+            }
         } else if (deliveryMethodValue === 'delivery_quote') {
             deliveryCost = 0.00;
             deliveryLabel = "Outside Gauteng/Intl (Quote Required)";
