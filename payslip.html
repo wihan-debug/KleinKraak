@@ -111,23 +111,13 @@
 
         /* Professional Payslip Design for PDF */
         #payslip-preview {
-            position: absolute;
-            left: -10000px;
-            top: 0;
+            display: none;
             background: white;
             padding: 40px;
             font-family: 'Arial', sans-serif;
             color: #333;
             width: 800px;
-        }
-
-        #payslip-preview.generating {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            opacity: 0.3;
+            margin: 40px auto;
         }
 
         .payslip-header {
@@ -573,27 +563,40 @@
             // Update net pay in PDF
             document.getElementById('pdf-net-pay').textContent = 'R ' + netPay.toFixed(2);
 
-            // Generate PDF
+            // Get the preview element and make it visible
             const element = document.getElementById('payslip-preview');
-            const opt = {
-                margin: 10,
-                filename: `Payslip_${empName.replace(/\s+/g, '_')}_${formatDate(payEnd).replace(/\//g, '-')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            element.style.position = 'relative';
+            element.style.left = '0';
+            element.style.opacity = '1';
+            element.style.display = 'block';
 
-            // Show preview temporarily for PDF generation
-            element.classList.add('generating');
+            // Scroll to preview
+            element.scrollIntoView({ behavior: 'smooth' });
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.classList.remove('generating');
-                alert('✅ Payslip PDF generated successfully!');
-            }).catch((error) => {
-                element.classList.remove('generating');
-                console.error('PDF generation error:', error);
-                alert('❌ Error generating PDF. Please try again.');
-            });
+            // Generate PDF with a slight delay to ensure rendering
+            setTimeout(() => {
+                const opt = {
+                    margin: 10,
+                    filename: `Payslip_${empName.replace(/\s+/g, '_')}_${formatDate(payEnd).replace(/\//g, '-')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: true
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // Hide preview again
+                    element.style.display = 'none';
+                    alert('✅ Payslip PDF generated successfully!');
+                }).catch((error) => {
+                    element.style.display = 'none';
+                    console.error('PDF generation error:', error);
+                    alert('❌ Error generating PDF: ' + error.message);
+                });
+            }, 500);
         }
 
         // Helper function to format dates
