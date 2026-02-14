@@ -12,6 +12,19 @@ const AdminPanel = {
         this.setupPasswordModal();
         this.setupAdminButton();
         this.setupInvoiceButton();
+        this.setupPayslipButton();
+    },
+
+    setupPayslipButton() {
+        const btn = document.getElementById('payslip-btn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent immediate navigation
+                this.pendingAction = 'payslip';
+                this.closeSidebar();
+                this.openPasswordModal();
+            });
+        }
     },
 
     setupInvoiceButton() {
@@ -61,8 +74,11 @@ const AdminPanel = {
                 passwordInput.value = '';
 
                 if (this.pendingAction === 'invoice') {
-                    // Redirect to dedicated page
+                    // Redirect to invoice page
                     window.location.href = 'invoices.html';
+                } else if (this.pendingAction === 'payslip') {
+                    // Redirect to payslip page
+                    window.location.href = 'payslip.html';
                 } else {
                     this.loadStockControl();
                 }

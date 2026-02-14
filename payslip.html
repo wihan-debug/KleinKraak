@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak - Employee Payslip Generator</title>
+    <meta name="description" content="KleinKraak Payslip Generator - Create employee payslips.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./favicon.png?v=3">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/components.css">
+
+    <style>
+        .payslip-page {
+            padding: 100px 0 50px 0;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .payslip-container {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .payslip-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .net-pay-display {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .net-pay-display h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .net-pay-display .amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .action-btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Professional Payslip Design for PDF */
+        #payslip-preview {
+            display: none;
+            background: white;
+            padding: 40px;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #payslip-preview.generating {
+            display: block;
+            position: fixed;
+            left: -9999px;
+            top: 0;
+        }
+
+        .payslip-header {
+            text-align: center;
+            border-bottom: 3px solid #2c5f2d;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .payslip-header h1 {
+            color: #2c5f2d;
+            margin: 0 0 5px 0;
+            font-size: 2rem;
+        }
+
+        .payslip-header .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        .payslip-header .address {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .payslip-info-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+
+        .payslip-info-row {
+            display: table-row;
+        }
+
+        .payslip-info-cell {
+            display: table-cell;
+            padding: 10px;
+            border: 1px solid #ddd;
+            width: 25%;
+        }
+
+        .payslip-info-label {
+            font-weight: bold;
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+        .payslip-info-value {
+            color: #333;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+
+        .payslip-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .payslip-table th {
+            background: #2c5f2d;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .payslip-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .payslip-table tr:last-child td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .payslip-table .amount-col {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .payslip-total-row {
+            background: #f5f5f5;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .payslip-net-pay {
+            background: #2c5f2d;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .payslip-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .payslip-container {
+                padding: 20px;
+            }
+
+            .net-pay-display .amount {
+                font-size: 2rem;
+            }
+
+            .payslip-info-cell {
+                display: block;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">KleinKraak</a>
+            <a href="index.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Back to Home</a>
+        </div>
+    </nav>
+
+    <main class="payslip-page">
+        <div class="container">
+            <h1 class="section-title">Employee Payslip Generator</h1>
+
+            <div class="payslip-container">
+                <form class="payslip-form" id="payslip-form">
+                    <!-- Employee Information -->
+                    <div class="section-header">Employee Information</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="emp-name">Employee Name *</label>
+                            <input type="text" id="emp-name" required placeholder="e.g., John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="emp-id">Employee ID *</label>
+                            <input type="text" id="emp-id" required placeholder="e.g., KK001">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="position">Position/Role</label>
+                            <input type="text" id="position" placeholder="e.g., Farm Worker">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <input type="text" id="department" placeholder="e.g., Production">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pay-start">Pay Period Start *</label>
+                            <input type="date" id="pay-start" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pay-end">Pay Period End *</label>
+                            <input type="date" id="pay-end" required>
+                        </div>
+                    </div>
+
+                    <!-- Earnings -->
+                    <div class="section-header">Earnings</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="basic-salary">Basic Salary (R) *</label>
+                            <input type="number" id="basic-salary" required placeholder="0.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="overtime">Overtime (R)</label>
+                            <input type="number" id="overtime" placeholder="0.00" step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="housing-allowance">Housing Allowance (R)</label>
+                            <input type="number" id="housing-allowance" placeholder="0.00" step="0.01" min="0"
+                                value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="transport-allowance">Transport Allowance (R)</label>
+                            <input type="number" id="transport-allowance" placeholder="0.00" step="0.01" min="0"
+                                value="0">
+                        </div>
+                    </div>
+
+                    <!-- Deductions -->
+                    <div class="section-header">Deductions</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tax">PAYE Tax (R)</label>
+                            <input type="number" id="tax" placeholder="0.00" step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="uif">UIF (R)</label>
+                            <input type="number" id="uif" placeholder="0.00" step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pension">Pension Fund (R)</label>
+                            <input type="number" id="pension" placeholder="0.00" step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="other-deduction">Other Deductions (R)</label>
+                            <input type="number" id="other-deduction" placeholder="0.00" step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <!-- Net Pay Display -->
+                    <div class="net-pay-display">
+                        <h3>Net Pay</h3>
+                        <p class="amount" id="net-pay">R 0.00</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-btn-container">
+                        <button type="button" onclick="generatePayslipPDF()" class="btn btn-primary"
+                            style="font-size: 1.1rem; padding: 15px 40px;">
+                            📄 Generate PDF Payslip
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Hidden Payslip Preview for PDF Generation -->
+        <div id="payslip-preview">
+            <div class="payslip-header">
+                <h1>KLEINKRAAK</h1>
+                <div class="subtitle">PAYSLIP</div>
+                <div class="address">39 Jimpro Road, Elandsfontein, South Africa</div>
+            </div>
+
+            <div class="payslip-info-grid">
+                <div class="payslip-info-row">
+                    <div class="payslip-info-cell">
+                        <div class="payslip-info-label">Employee Name</div>
+                        <div class="payslip-info-value" id="pdf-emp-name"></div>
+                    </div>
+                    <div class="payslip-info-cell">
+                        <div class="payslip-info-label">Employee ID</div>
+                        <div class="payslip-info-value" id="pdf-emp-id"></div>
+                    </div>
+                    <div class="payslip-info-cell">
+                        <div class="payslip-info-label">Position</div>
+                        <div class="payslip-info-value" id="pdf-position"></div>
+                    </div>
+                    <div class="payslip-info-cell">
+                        <div class="payslip-info-label">Department</div>
+                        <div class="payslip-info-value" id="pdf-department"></div>
+                    </div>
+                </div>
+                <div class="payslip-info-row">
+                    <div class="payslip-info-cell">
+                        <div class="payslip-info-label">Pay Period</div>
+                        <div class="payslip-info-value" id="pdf-pay-period"></div>
+                    </div>
+                    <div class="payslip-info-cell" colspan="3">
+                        <div class="payslip-info-label">Payment Date</div>
+                        <div class="payslip-info-value" id="pdf-payment-date"></div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="payslip-table">
+                <thead>
+                    <tr>
+                        <th>EARNINGS</th>
+                        <th class="amount-col">AMOUNT (R)</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-earnings">
+                </tbody>
+            </table>
+
+            <table class="payslip-table">
+                <thead>
+                    <tr>
+                        <th>DEDUCTIONS</th>
+                        <th class="amount-col">AMOUNT (R)</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-deductions">
+                </tbody>
+            </table>
+
+            <div class="payslip-net-pay">
+                NET PAY: <span id="pdf-net-pay"></span>
+            </div>
+
+            <div class="payslip-footer">
+                <p>This is a computer-generated payslip and does not require a signature.</p>
+                <p>Generated on: <span id="pdf-generated-date"></span></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container" style="text-align: center;">
+            <p>&copy; 2024 KleinKraak. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- PDF Library (html2pdf.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        // Calculate Net Pay
+        function calculateNetPay() {
+            // Get earnings values
+            const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
+            const overtime = parseFloat(document.getElementById('overtime').value) || 0;
+            const housingAllowance = parseFloat(document.getElementById('housing-allowance').value) || 0;
+            const transportAllowance = parseFloat(document.getElementById('transport-allowance').value) || 0;
+
+            // Get deduction values
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+            const uif = parseFloat(document.getElementById('uif').value) || 0;
+            const pension = parseFloat(document.getElementById('pension').value) || 0;
+            const otherDeduction = parseFloat(document.getElementById('other-deduction').value) || 0;
+
+            // Calculate totals
+            const totalEarnings = basicSalary + overtime + housingAllowance + transportAllowance;
+            const totalDeductions = tax + uif + pension + otherDeduction;
+            const netPay = totalEarnings - totalDeductions;
+
+            // Update display
+            document.getElementById('net-pay').textContent = 'R ' + netPay.toFixed(2);
+
+            return { totalEarnings, totalDeductions, netPay };
+        }
+
+        // Add event listeners to all input fields for automatic calculation
+        document.addEventListener('DOMContentLoaded', function () {
+            const payslipInputs = document.querySelectorAll('#payslip-form input[type="number"]');
+            payslipInputs.forEach(input => {
+                input.addEventListener('input', calculateNetPay);
+            });
+        });
+
+        // Generate PDF Payslip
+        function generatePayslipPDF() {
+            // Get form values
+            const empName = document.getElementById('emp-name').value;
+            const empId = document.getElementById('emp-id').value;
+            const position = document.getElementById('position').value || 'N/A';
+            const department = document.getElementById('department').value || 'N/A';
+            const payStart = document.getElementById('pay-start').value;
+            const payEnd = document.getElementById('pay-end').value;
+
+            // Validate required fields
+            if (!empName || !empId || !payStart || !payEnd) {
+                alert('Please fill in all required fields (marked with *)');
+                return;
+            }
+
+            const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
+            if (basicSalary === 0) {
+                alert('Please enter a basic salary');
+                return;
+            }
+
+            const overtime = parseFloat(document.getElementById('overtime').value) || 0;
+            const housingAllowance = parseFloat(document.getElementById('housing-allowance').value) || 0;
+            const transportAllowance = parseFloat(document.getElementById('transport-allowance').value) || 0;
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+            const uif = parseFloat(document.getElementById('uif').value) || 0;
+            const pension = parseFloat(document.getElementById('pension').value) || 0;
+            const otherDeduction = parseFloat(document.getElementById('other-deduction').value) || 0;
+
+            // Calculate net pay
+            const { totalEarnings, totalDeductions, netPay } = calculateNetPay();
+
+            // Populate PDF preview
+            document.getElementById('pdf-emp-name').textContent = empName;
+            document.getElementById('pdf-emp-id').textContent = empId;
+            document.getElementById('pdf-position').textContent = position;
+            document.getElementById('pdf-department').textContent = department;
+            document.getElementById('pdf-pay-period').textContent = formatDate(payStart) + ' to ' + formatDate(payEnd);
+            document.getElementById('pdf-payment-date').textContent = formatDate(payEnd);
+            document.getElementById('pdf-generated-date').textContent = formatDate(new Date().toISOString().split('T')[0]);
+
+            // Populate earnings table
+            const earningsBody = document.getElementById('pdf-earnings');
+            earningsBody.innerHTML = '';
+
+            if (basicSalary > 0) {
+                earningsBody.innerHTML += `<tr><td>Basic Salary</td><td class="amount-col">R ${basicSalary.toFixed(2)}</td></tr>`;
+            }
+            if (overtime > 0) {
+                earningsBody.innerHTML += `<tr><td>Overtime</td><td class="amount-col">R ${overtime.toFixed(2)}</td></tr>`;
+            }
+            if (housingAllowance > 0) {
+                earningsBody.innerHTML += `<tr><td>Housing Allowance</td><td class="amount-col">R ${housingAllowance.toFixed(2)}</td></tr>`;
+            }
+            if (transportAllowance > 0) {
+                earningsBody.innerHTML += `<tr><td>Transport Allowance</td><td class="amount-col">R ${transportAllowance.toFixed(2)}</td></tr>`;
+            }
+            earningsBody.innerHTML += `<tr class="payslip-total-row"><td>TOTAL EARNINGS</td><td class="amount-col">R ${totalEarnings.toFixed(2)}</td></tr>`;
+
+            // Populate deductions table
+            const deductionsBody = document.getElementById('pdf-deductions');
+            deductionsBody.innerHTML = '';
+
+            if (tax > 0) {
+                deductionsBody.innerHTML += `<tr><td>PAYE Tax</td><td class="amount-col">R ${tax.toFixed(2)}</td></tr>`;
+            }
+            if (uif > 0) {
+                deductionsBody.innerHTML += `<tr><td>UIF (1%)</td><td class="amount-col">R ${uif.toFixed(2)}</td></tr>`;
+            }
+            if (pension > 0) {
+                deductionsBody.innerHTML += `<tr><td>Pension Fund</td><td class="amount-col">R ${pension.toFixed(2)}</td></tr>`;
+            }
+            if (otherDeduction > 0) {
+                deductionsBody.innerHTML += `<tr><td>Other Deductions</td><td class="amount-col">R ${otherDeduction.toFixed(2)}</td></tr>`;
+            }
+            if (totalDeductions > 0) {
+                deductionsBody.innerHTML += `<tr class="payslip-total-row"><td>TOTAL DEDUCTIONS</td><td class="amount-col">R ${totalDeductions.toFixed(2)}</td></tr>`;
+            } else {
+                deductionsBody.innerHTML += `<tr><td colspan="2" style="text-align: center; color: #999;">No deductions</td></tr>`;
+            }
+
+            // Update net pay in PDF
+            document.getElementById('pdf-net-pay').textContent = 'R ' + netPay.toFixed(2);
+
+            // Generate PDF
+            const element = document.getElementById('payslip-preview');
+            const opt = {
+                margin: 10,
+                filename: `Payslip_${empName.replace(/\s+/g, '_')}_${formatDate(payEnd).replace(/\//g, '-')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Show preview temporarily for PDF generation
+            element.classList.add('generating');
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.remove('generating');
+                alert('✅ Payslip PDF generated successfully!');
+            }).catch((error) => {
+                element.classList.remove('generating');
+                console.error('PDF generation error:', error);
+                alert('❌ Error generating PDF. Please try again.');
+            });
+        }
+
+        // Helper function to format dates
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+    </script>
+
+</body>
+
+</html>
