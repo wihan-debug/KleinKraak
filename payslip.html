@@ -588,40 +588,18 @@
             // Update net pay in PDF
             document.getElementById('pdf-net-pay').textContent = 'R ' + netPay.toFixed(2);
 
-            // Get the preview element and make it visible
+            // Show preview and trigger print dialog
             const element = document.getElementById('payslip-preview');
-            element.style.position = 'relative';
-            element.style.left = '0';
-            element.style.opacity = '1';
             element.style.display = 'block';
 
-            // Scroll to preview
-            element.scrollIntoView({ behavior: 'smooth' });
-
-            // Generate PDF with a slight delay to ensure rendering
+            // Small delay to ensure content is rendered
             setTimeout(() => {
-                const opt = {
-                    margin: 10,
-                    filename: `Payslip_${empName.replace(/\s+/g, '_')}_${formatDate(payEnd).replace(/\//g, '-')}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        logging: true
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                html2pdf().set(opt).from(element).save().then(() => {
-                    // Hide preview again
+                window.print();
+                // Hide preview after print dialog closes
+                setTimeout(() => {
                     element.style.display = 'none';
-                    alert('✅ Payslip PDF generated successfully!');
-                }).catch((error) => {
-                    element.style.display = 'none';
-                    console.error('PDF generation error:', error);
-                    alert('❌ Error generating PDF: ' + error.message);
-                });
-            }, 500);
+                }, 100);
+            }, 300);
         }
 
         // Helper function to format dates
