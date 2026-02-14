@@ -248,6 +248,34 @@
                 width: 100%;
             }
         }
+
+        /* Print Styles for PDF Generation */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #payslip-preview,
+            #payslip-preview * {
+                visibility: visible;
+            }
+
+            #payslip-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+            }
+
+            .payslip-header {
+                page-break-after: avoid;
+            }
+
+            .payslip-table {
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 
@@ -440,9 +468,6 @@
             <p>&copy; 2024 KleinKraak. All rights reserved.</p>
         </div>
     </footer>
-
-    <!-- PDF Library (html2pdf.js) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
         // Calculate Net Pay
