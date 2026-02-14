@@ -395,8 +395,8 @@
         <div id="payslip-preview">
             <div class="payslip-header">
                 <h1>KLEINKRAAK</h1>
-                <div class="subtitle">PAYSLIP</div>
-                <div class="address">39 Jimpro Road, Elandsfontein, South Africa</div>
+                <div class="subtitle">EMPLOYEE PAYSLIP</div>
+                <div class="address">39 Jimpro Road, Elandsfontein, Gauteng, South Africa</div>
             </div>
 
             <div class="payslip-info-grid">
@@ -409,6 +409,8 @@
                         <div class="payslip-info-label">Employee ID</div>
                         <div class="payslip-info-value" id="pdf-emp-id"></div>
                     </div>
+                </div>
+                <div class="payslip-info-row">
                     <div class="payslip-info-cell">
                         <div class="payslip-info-label">Position</div>
                         <div class="payslip-info-value" id="pdf-position"></div>
@@ -423,42 +425,46 @@
                         <div class="payslip-info-label">Pay Period</div>
                         <div class="payslip-info-value" id="pdf-pay-period"></div>
                     </div>
-                    <div class="payslip-info-cell" colspan="3">
+                    <div class="payslip-info-cell">
                         <div class="payslip-info-label">Payment Date</div>
                         <div class="payslip-info-value" id="pdf-payment-date"></div>
                     </div>
                 </div>
             </div>
 
-            <table class="payslip-table">
-                <thead>
-                    <tr>
-                        <th>EARNINGS</th>
-                        <th class="amount-col">AMOUNT (R)</th>
-                    </tr>
-                </thead>
-                <tbody id="pdf-earnings">
-                </tbody>
-            </table>
+            <div class="payslip-content">
+                <table class="payslip-table">
+                    <thead>
+                        <tr>
+                            <th>EARNINGS</th>
+                            <th class="amount-col">AMOUNT (R)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pdf-earnings">
+                    </tbody>
+                </table>
 
-            <table class="payslip-table">
-                <thead>
-                    <tr>
-                        <th>DEDUCTIONS</th>
-                        <th class="amount-col">AMOUNT (R)</th>
-                    </tr>
-                </thead>
-                <tbody id="pdf-deductions">
-                </tbody>
-            </table>
+                <table class="payslip-table">
+                    <thead>
+                        <tr>
+                            <th>DEDUCTIONS</th>
+                            <th class="amount-col">AMOUNT (R)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pdf-deductions">
+                    </tbody>
+                </table>
 
-            <div class="payslip-net-pay">
-                NET PAY: <span id="pdf-net-pay"></span>
+                <div class="payslip-net-pay">
+                    NET PAY: <span id="pdf-net-pay"></span>
+                </div>
             </div>
 
             <div class="payslip-footer">
-                <p>This is a computer-generated payslip and does not require a signature.</p>
-                <p>Generated on: <span id="pdf-generated-date"></span></p>
+                <p><strong>CONFIDENTIAL DOCUMENT</strong></p>
+                <p>This payslip is computer-generated and does not require a signature.</p>
+                <p>For any queries, please contact HR Department | Generated on: <span id="pdf-generated-date"></span>
+                </p>
             </div>
         </div>
     </main>
