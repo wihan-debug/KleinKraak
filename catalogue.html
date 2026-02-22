@@ -23,47 +23,8 @@
 
     <style>
         .catalogue-section {
-            padding: 100px 0;
+            padding: 100px 0 60px;
             background-color: var(--bg-color);
-        }
-
-        /* Tab Navigation */
-        .tab-navigation {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .tab-btn {
-            padding: 12px 30px;
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            font-family: var(--font-heading);
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary-color);
-        }
-
-        .tab-btn.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
         }
 
         .catalogue-table-container {
@@ -78,11 +39,12 @@
             width: 100%;
             border-collapse: collapse;
             font-family: var(--font-body);
+            min-width: 500px;
         }
 
         .catalogue-table th,
         .catalogue-table td {
-            padding: 15px 20px;
+            padding: 14px 18px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
@@ -91,7 +53,7 @@
             background-color: var(--primary-color);
             color: white;
             font-family: var(--font-heading);
-            font-size: 1.1rem;
+            font-size: 1rem;
             white-space: nowrap;
         }
 
@@ -102,95 +64,14 @@
         .catalogue-table td.price {
             font-weight: 600;
             color: var(--text-color);
+            white-space: nowrap;
         }
 
         .catalogue-table td.wholesale-price {
             font-weight: 700;
             color: var(--primary-dark);
             background-color: #f0f7ef;
-        }
-
-        /* Payslip Styles */
-        .payslip-container {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .payslip-form {
-            display: grid;
-            gap: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-color);
-            font-size: 0.95rem;
-        }
-
-        .form-group input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: var(--font-body);
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .section-header {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin: 30px 0 15px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .calculated-field {
-            background-color: #f0f7ef;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-
-        .net-pay-display {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .net-pay-display h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .net-pay-display .amount {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
+            white-space: nowrap;
         }
 
         .print-btn-container {
@@ -198,77 +79,12 @@
             margin-top: 30px;
         }
 
-        /* Payslip Preview for PDF */
-        #payslip-preview {
-            display: none;
-            background: white;
-            padding: 40px;
-            font-family: var(--font-body);
-        }
-
-        #payslip-preview.generating {
-            display: block;
-        }
-
-        .payslip-header {
-            text-align: center;
-            border-bottom: 3px solid var(--primary-color);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        .payslip-header h1 {
-            color: var(--primary-dark);
-            margin: 0 0 5px 0;
-        }
-
-        .payslip-header p {
-            margin: 0;
-            color: #666;
-        }
-
-        .payslip-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .payslip-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .payslip-table th {
-            background: var(--primary-color);
-            color: white;
-            padding: 12px;
-            text-align: left;
-        }
-
-        .payslip-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .payslip-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .payslip-total {
-            background: #f5f5f5;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
         @media print {
 
             .navbar,
             .footer,
             .print-btn-container,
-            .whatsapp-float,
-            .tab-navigation {
+            .whatsapp-float {
                 display: none;
             }
 
@@ -287,20 +103,31 @@
         }
 
         @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
+            .catalogue-section {
+                padding: 80px 0 40px;
             }
 
-            .payslip-info {
-                grid-template-columns: 1fr;
+            .catalogue-table-container {
+                padding: 10px;
             }
 
-            .payslip-container {
-                padding: 20px;
+            .catalogue-table th,
+            .catalogue-table td {
+                padding: 10px 12px;
+                font-size: 0.9rem;
             }
 
-            .net-pay-display .amount {
-                font-size: 2rem;
+            .section-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .catalogue-table th,
+            .catalogue-table td {
+                padding: 8px 10px;
+                font-size: 0.82rem;
             }
         }
     </style>
@@ -318,323 +145,171 @@
 
     <main class="catalogue-section">
         <div class="container">
-            <h1 class="section-title">KleinKraak Admin Tools</h1>
+            <h1 class="section-title">Product Catalogue &amp; Wholesale Pricing</h1>
+            <p style="text-align:center; margin-bottom: 30px; color: #666;">All wholesale prices reflect a 20% discount
+                off the standard retail price.</p>
 
-            <!-- Tab Navigation -->
-            <div class="tab-navigation">
-                <button class="tab-btn active" onclick="switchTab('products')">Products</button>
-                <button class="tab-btn" onclick="switchTab('payslip')">Pay Slip</button>
+            <div class="catalogue-table-container">
+                <table class="catalogue-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Size</th>
+                            <th>Description</th>
+                            <th>Standard Price</th>
+                            <th>Wholesale Price (20% Off)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>White Wine Vinegar</td>
+                            <td>455ml Bottle</td>
+                            <td>Infused with salt, sugar, dill, spearmint, and more.</td>
+                            <td class="price">R 150.00</td>
+                            <td class="wholesale-price">R 120.00</td>
+                        </tr>
+                        <tr>
+                            <td>White Wine Vinegar</td>
+                            <td>230ml Bottle</td>
+                            <td>Infused with salt, sugar, dill, spearmint, and more.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Spicy Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>Crunchy with a kick of chilli and garlic.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Spicy Pickled Cucamelons</td>
+                            <td>230ml Bottle</td>
+                            <td>Crunchy with a kick of chilli and garlic.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Dill &amp; Garlic Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>Classic dill flavor, perfect for salads.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Dill &amp; Garlic Pickled Cucamelons</td>
+                            <td>230ml Bottle</td>
+                            <td>Classic dill flavor, perfect for salads.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet &amp; Sour Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>A delightful balance of sweet and tangy flavors.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet &amp; Sour Pickled Cucamelons</td>
+                            <td>230ml Bottle</td>
+                            <td>A delightful balance of sweet and tangy flavors.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet Cucamelon <span style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT
+                                    OF STOCK)</span></td>
+                            <td>455ml Bottle</td>
+                            <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
+                            <td class="price" style="opacity: 0.5;">R 120.00</td>
+                            <td class="wholesale-price" style="opacity: 0.5;">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet Cucamelon <span style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT
+                                    OF STOCK)</span></td>
+                            <td>230ml Bottle</td>
+                            <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
+                            <td class="price" style="opacity: 0.5;">R 70.00</td>
+                            <td class="wholesale-price" style="opacity: 0.5;">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Fresh Cucamelons</td>
+                            <td>250g Punnet</td>
+                            <td>Freshly harvested, perfect for snacking.</td>
+                            <td class="price">R 50.00</td>
+                            <td class="wholesale-price">R 40.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet &amp; Spicy Pickled Cucamelons</td>
+                            <td>455ml Bottle</td>
+                            <td>New flavor variant.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Sweet &amp; Spicy Pickled Cucamelons</td>
+                            <td>230ml Bottle</td>
+                            <td>New flavor variant.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>French Salad Dressing</td>
+                            <td>455ml Bottle</td>
+                            <td>Delicious home-made dressing.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>French Salad Dressing</td>
+                            <td>230ml Bottle</td>
+                            <td>Delicious home-made dressing.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Garlic &amp; Herb Salad Dressing</td>
+                            <td>455ml Bottle</td>
+                            <td>Savory dressing with fresh herbs.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Garlic &amp; Herb Salad Dressing</td>
+                            <td>230ml Bottle</td>
+                            <td>Savory dressing with fresh herbs.</td>
+                            <td class="price">R 70.00</td>
+                            <td class="wholesale-price">R 56.00</td>
+                        </tr>
+                        <tr>
+                            <td>Pickled Sweet&amp;Spicy</td>
+                            <td>455ml Bottle</td>
+                            <td>Perfect blend of sweet and spicy flavors.</td>
+                            <td class="price">R 120.00</td>
+                            <td class="wholesale-price">R 96.00</td>
+                        </tr>
+                        <tr>
+                            <td>Pickled Apple Cider Vinegar</td>
+                            <td>455ml Bottle</td>
+                            <td>Pickled in apple cider vinegar with fresh herbs.</td>
+                            <td class="price">R 130.00</td>
+                            <td class="wholesale-price">R 104.00</td>
+                        </tr>
+                        <tr>
+                            <td>Pickled Mix</td>
+                            <td>455ml Bottle</td>
+                            <td>A mix of our favorite pickled varieties.</td>
+                            <td class="price">R 80.00</td>
+                            <td class="wholesale-price">R 64.00</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <!-- Products Tab -->
-            <div id="products-tab" class="tab-content active">
-                <h2 style="text-align: center; margin-bottom: 20px;">Product Catalogue & Wholesale Pricing</h2>
-                <div class="catalogue-table-container">
-                    <table class="catalogue-table">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Size</th>
-                                <th>Description</th>
-                                <th>Standard Price</th>
-                                <th>Wholesale Price (20% Off)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>White Wine Vinegar</td>
-                                <td>455ml Bottle</td>
-                                <td>Infused with salt, sugar, dill, spearmint, and more.</td>
-                                <td class="price">R 150.00</td>
-                                <td class="wholesale-price">R 120.00</td>
-                            </tr>
-                            <tr>
-                                <td>White Wine Vinegar</td>
-                                <td>230ml Bottle</td>
-                                <td>Infused with salt, sugar, dill, spearmint, and more.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Spicy Pickled Cucamelons</td>
-                                <td>455ml Bottle</td>
-                                <td>Crunchy with a kick of chilli and garlic.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Spicy Pickled Cucamelons</td>
-                                <td>230ml Bottle</td>
-                                <td>Crunchy with a kick of chilli and garlic.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Dill & Garlic Pickled Cucamelons</td>
-                                <td>455ml Bottle</td>
-                                <td>Classic dill flavor, perfect for salads.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Dill & Garlic Pickled Cucamelons</td>
-                                <td>230ml Bottle</td>
-                                <td>Classic dill flavor, perfect for salads.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Sweet & Sour Pickled Cucamelons</td>
-                                <td>455ml Bottle</td>
-                                <td>A delightful balance of sweet and tangy flavors.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Sweet & Sour Pickled Cucamelons</td>
-                                <td>230ml Bottle</td>
-                                <td>A delightful balance of sweet and tangy flavors.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Sweet Cucamelon <span
-                                        style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT
-                                        OF STOCK)</span></td>
-                                <td>455ml Bottle</td>
-                                <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
-                                <td class="price" style="opacity: 0.5;">R 120.00</td>
-                                <td class="wholesale-price" style="opacity: 0.5;">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Sweet Cucamelon <span
-                                        style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT
-                                        OF STOCK)</span></td>
-                                <td>230ml Bottle</td>
-                                <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
-                                <td class="price" style="opacity: 0.5;">R 70.00</td>
-                                <td class="wholesale-price" style="opacity: 0.5;">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Fresh Cucamelons</td>
-                                <td>250g Punnet</td>
-                                <td>Freshly harvested, perfect for snacking.</td>
-                                <td class="price">R 50.00</td>
-                                <td class="wholesale-price">R 40.00</td>
-                            </tr>
-                            <tr>
-                                <td>Sweet & Spicy Pickled Cucamelons</td>
-                                <td>455ml Bottle</td>
-                                <td>New flavor variant.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Sweet & Spicy Pickled Cucamelons</td>
-                                <td>230ml Bottle</td>
-                                <td>New flavor variant.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>French Salad Dressing</td>
-                                <td>455ml Bottle</td>
-                                <td>Delicious home-made dressing.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>French Salad Dressing</td>
-                                <td>230ml Bottle</td>
-                                <td>Delicious home-made dressing.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Garlic & Herb Salad Dressing</td>
-                                <td>455ml Bottle</td>
-                                <td>Savory dressing with fresh herbs.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Garlic & Herb Salad Dressing</td>
-                                <td>230ml Bottle</td>
-                                <td>Savory dressing with fresh herbs.</td>
-                                <td class="price">R 70.00</td>
-                                <td class="wholesale-price">R 56.00</td>
-                            </tr>
-                            <tr>
-                                <td>Pickled Sweet&Spicy</td>
-                                <td>455ml Bottle</td>
-                                <td>Perfect blend of sweet and spicy flavors.</td>
-                                <td class="price">R 120.00</td>
-                                <td class="wholesale-price">R 96.00</td>
-                            </tr>
-                            <tr>
-                                <td>Pickled Apple Cider Vinegar</td>
-                                <td>455ml Bottle</td>
-                                <td>Pickled in apple cider vinegar with fresh herbs.</td>
-                                <td class="price">R 130.00</td>
-                                <td class="wholesale-price">R 104.00</td>
-                            </tr>
-                            <tr>
-                                <td>Pickled Mix</td>
-                                <td>455ml Bottle</td>
-                                <td>A mix of our favorite pickled varieties.</td>
-                                <td class="price">R 80.00</td>
-                                <td class="wholesale-price">R 64.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="print-btn-container">
-                    <button onclick="window.print()" class="btn btn-primary">Print Catalogue</button>
-                </div>
+            <div class="print-btn-container">
+                <button onclick="window.print()" class="btn btn-primary">Print Catalogue</button>
             </div>
-
-            <!-- Payslip Tab -->
-            <div id="payslip-tab" class="tab-content">
-                <h2 style="text-align: center; margin-bottom: 20px;">Employee Payslip Generator</h2>
-                <div class="payslip-container">
-                    <form class="payslip-form" id="payslip-form">
-                        <!-- Employee Information -->
-                        <div class="section-header">Employee Information</div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="emp-name">Employee Name *</label>
-                                <input type="text" id="emp-name" required placeholder="e.g., John Doe">
-                            </div>
-                            <div class="form-group">
-                                <label for="emp-id">Employee ID *</label>
-                                <input type="text" id="emp-id" required placeholder="e.g., EMP001">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="pay-start">Pay Period Start *</label>
-                                <input type="date" id="pay-start" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="pay-end">Pay Period End *</label>
-                                <input type="date" id="pay-end" required>
-                            </div>
-                        </div>
-
-                        <!-- Earnings -->
-                        <div class="section-header">Earnings</div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="basic-salary">Basic Salary (R) *</label>
-                                <input type="number" id="basic-salary" required placeholder="0.00" step="0.01" min="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="housing-allowance">Housing Allowance (R)</label>
-                                <input type="number" id="housing-allowance" placeholder="0.00" step="0.01" min="0"
-                                    value="0">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="transport-allowance">Transport Allowance (R)</label>
-                                <input type="number" id="transport-allowance" placeholder="0.00" step="0.01" min="0"
-                                    value="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="other-allowance">Other Allowance (R)</label>
-                                <input type="number" id="other-allowance" placeholder="0.00" step="0.01" min="0"
-                                    value="0">
-                            </div>
-                        </div>
-
-                        <!-- Deductions -->
-                        <div class="section-header">Deductions</div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="tax">Tax/PAYE (R)</label>
-                                <input type="number" id="tax" placeholder="0.00" step="0.01" min="0" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="uif">UIF (R)</label>
-                                <input type="number" id="uif" placeholder="0.00" step="0.01" min="0" value="0">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="pension">Pension/Retirement (R)</label>
-                                <input type="number" id="pension" placeholder="0.00" step="0.01" min="0" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="other-deduction">Other Deductions (R)</label>
-                                <input type="number" id="other-deduction" placeholder="0.00" step="0.01" min="0"
-                                    value="0">
-                            </div>
-                        </div>
-
-                        <!-- Net Pay Display -->
-                        <div class="net-pay-display">
-                            <h3>Net Pay</h3>
-                            <p class="amount" id="net-pay">R 0.00</p>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="print-btn-container">
-                            <button type="button" onclick="generatePayslipPDF()" class="btn btn-primary"
-                                style="font-size: 1.1rem; padding: 15px 40px;">
-                                📄 Generate PDF Payslip
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Hidden Payslip Preview for PDF Generation -->
-        <div id="payslip-preview">
-            <div class="payslip-header">
-                <h1>KleinKraak</h1>
-                <p>Employee Payslip</p>
-            </div>
-            <div class="payslip-info">
-                <div>
-                    <p><strong>Employee Name:</strong> <span id="pdf-emp-name"></span></p>
-                    <p><strong>Employee ID:</strong> <span id="pdf-emp-id"></span></p>
-                </div>
-                <div>
-                    <p><strong>Pay Period:</strong> <span id="pdf-pay-period"></span></p>
-                    <p><strong>Generated:</strong> <span id="pdf-generated-date"></span></p>
-                </div>
-            </div>
-
-            <table class="payslip-table">
-                <thead>
-                    <tr>
-                        <th colspan="2">Earnings</th>
-                    </tr>
-                </thead>
-                <tbody id="pdf-earnings">
-                </tbody>
-            </table>
-
-            <table class="payslip-table">
-                <thead>
-                    <tr>
-                        <th colspan="2">Deductions</th>
-                    </tr>
-                </thead>
-                <tbody id="pdf-deductions">
-                </tbody>
-            </table>
-
-            <table class="payslip-table">
-                <tbody>
-                    <tr class="payslip-total">
-                        <td>Net Pay</td>
-                        <td style="text-align: right;" id="pdf-net-pay"></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </main>
 
@@ -643,175 +318,6 @@
             <p>&copy; 2024 KleinKraak. All rights reserved.</p>
         </div>
     </footer>
-
-    <!-- PDF Library (html2pdf.js) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <script>
-        // Tab Switching Function
-        function switchTab(tab) {
-            // Remove active class from all tabs and buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-            // Add active class to selected tab
-            if (tab === 'products') {
-                document.getElementById('products-tab').classList.add('active');
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            } else if (tab === 'payslip') {
-                document.getElementById('payslip-tab').classList.add('active');
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            }
-        }
-
-        // Check URL hash on page load to auto-switch to payslip tab
-        document.addEventListener('DOMContentLoaded', function () {
-            if (window.location.hash === '#payslip') {
-                switchTab('payslip');
-            }
-        });
-
-        // Calculate Net Pay
-        function calculateNetPay() {
-            // Get earnings values
-            const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
-            const housingAllowance = parseFloat(document.getElementById('housing-allowance').value) || 0;
-            const transportAllowance = parseFloat(document.getElementById('transport-allowance').value) || 0;
-            const otherAllowance = parseFloat(document.getElementById('other-allowance').value) || 0;
-
-            // Get deduction values
-            const tax = parseFloat(document.getElementById('tax').value) || 0;
-            const uif = parseFloat(document.getElementById('uif').value) || 0;
-            const pension = parseFloat(document.getElementById('pension').value) || 0;
-            const otherDeduction = parseFloat(document.getElementById('other-deduction').value) || 0;
-
-            // Calculate totals
-            const totalEarnings = basicSalary + housingAllowance + transportAllowance + otherAllowance;
-            const totalDeductions = tax + uif + pension + otherDeduction;
-            const netPay = totalEarnings - totalDeductions;
-
-            // Update display
-            document.getElementById('net-pay').textContent = 'R ' + netPay.toFixed(2);
-
-            return { totalEarnings, totalDeductions, netPay };
-        }
-
-        // Add event listeners to all input fields for automatic calculation
-        document.addEventListener('DOMContentLoaded', function () {
-            const payslipInputs = document.querySelectorAll('#payslip-form input[type="number"]');
-            payslipInputs.forEach(input => {
-                input.addEventListener('input', calculateNetPay);
-            });
-        });
-
-        // Generate PDF Payslip
-        function generatePayslipPDF() {
-            // Get form values
-            const empName = document.getElementById('emp-name').value;
-            const empId = document.getElementById('emp-id').value;
-            const payStart = document.getElementById('pay-start').value;
-            const payEnd = document.getElementById('pay-end').value;
-
-            // Validate required fields
-            if (!empName || !empId || !payStart || !payEnd) {
-                alert('Please fill in all required employee information fields (marked with *)');
-                return;
-            }
-
-            const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
-            if (basicSalary === 0) {
-                alert('Please enter a basic salary');
-                return;
-            }
-
-            const housingAllowance = parseFloat(document.getElementById('housing-allowance').value) || 0;
-            const transportAllowance = parseFloat(document.getElementById('transport-allowance').value) || 0;
-            const otherAllowance = parseFloat(document.getElementById('other-allowance').value) || 0;
-            const tax = parseFloat(document.getElementById('tax').value) || 0;
-            const uif = parseFloat(document.getElementById('uif').value) || 0;
-            const pension = parseFloat(document.getElementById('pension').value) || 0;
-            const otherDeduction = parseFloat(document.getElementById('other-deduction').value) || 0;
-
-            // Calculate net pay
-            const { totalEarnings, totalDeductions, netPay } = calculateNetPay();
-
-            // Populate PDF preview
-            document.getElementById('pdf-emp-name').textContent = empName;
-            document.getElementById('pdf-emp-id').textContent = empId;
-            document.getElementById('pdf-pay-period').textContent = formatDate(payStart) + ' to ' + formatDate(payEnd);
-            document.getElementById('pdf-generated-date').textContent = formatDate(new Date().toISOString().split('T')[0]);
-
-            // Populate earnings table
-            const earningsBody = document.getElementById('pdf-earnings');
-            earningsBody.innerHTML = '';
-
-            if (basicSalary > 0) {
-                earningsBody.innerHTML += `<tr><td>Basic Salary</td><td style="text-align: right;">R ${basicSalary.toFixed(2)}</td></tr>`;
-            }
-            if (housingAllowance > 0) {
-                earningsBody.innerHTML += `<tr><td>Housing Allowance</td><td style="text-align: right;">R ${housingAllowance.toFixed(2)}</td></tr>`;
-            }
-            if (transportAllowance > 0) {
-                earningsBody.innerHTML += `<tr><td>Transport Allowance</td><td style="text-align: right;">R ${transportAllowance.toFixed(2)}</td></tr>`;
-            }
-            if (otherAllowance > 0) {
-                earningsBody.innerHTML += `<tr><td>Other Allowance</td><td style="text-align: right;">R ${otherAllowance.toFixed(2)}</td></tr>`;
-            }
-            earningsBody.innerHTML += `<tr class="payslip-total"><td>Total Earnings</td><td style="text-align: right;">R ${totalEarnings.toFixed(2)}</td></tr>`;
-
-            // Populate deductions table
-            const deductionsBody = document.getElementById('pdf-deductions');
-            deductionsBody.innerHTML = '';
-
-            if (tax > 0) {
-                deductionsBody.innerHTML += `<tr><td>Tax/PAYE</td><td style="text-align: right;">R ${tax.toFixed(2)}</td></tr>`;
-            }
-            if (uif > 0) {
-                deductionsBody.innerHTML += `<tr><td>UIF</td><td style="text-align: right;">R ${uif.toFixed(2)}</td></tr>`;
-            }
-            if (pension > 0) {
-                deductionsBody.innerHTML += `<tr><td>Pension/Retirement</td><td style="text-align: right;">R ${pension.toFixed(2)}</td></tr>`;
-            }
-            if (otherDeduction > 0) {
-                deductionsBody.innerHTML += `<tr><td>Other Deductions</td><td style="text-align: right;">R ${otherDeduction.toFixed(2)}</td></tr>`;
-            }
-            if (totalDeductions > 0) {
-                deductionsBody.innerHTML += `<tr class="payslip-total"><td>Total Deductions</td><td style="text-align: right;">R ${totalDeductions.toFixed(2)}</td></tr>`;
-            } else {
-                deductionsBody.innerHTML += `<tr><td colspan="2" style="text-align: center; color: #999;">No deductions</td></tr>`;
-            }
-
-            // Update net pay in PDF
-            document.getElementById('pdf-net-pay').textContent = 'R ' + netPay.toFixed(2);
-
-            // Generate PDF
-            const element = document.getElementById('payslip-preview');
-            const opt = {
-                margin: 15,
-                filename: `Payslip_${empId}_${formatDate(payEnd).replace(/\//g, '-')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // Show preview temporarily for PDF generation
-            element.classList.add('generating');
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.classList.remove('generating');
-                alert('Payslip PDF generated successfully!');
-            });
-        }
-
-        // Helper function to format dates
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
-    </script>
 
 </body>
 
