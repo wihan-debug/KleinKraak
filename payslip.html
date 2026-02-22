@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KleinKraak - Employee Payslip Generator</title>
+    <title>KleinKraak - Payslip Generator</title>
     <meta name="description" content="KleinKraak Payslip Generator - Create employee payslips.">
 
     <!-- Favicon -->
@@ -117,7 +117,6 @@
             font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             color: #000;
             width: 210mm;
-            min-height: 297mm;
             margin: 0 auto;
             box-sizing: border-box;
         }
@@ -125,7 +124,7 @@
         .payslip-header {
             background: linear-gradient(135deg, #2c5f2d 0%, #3d7a3e 100%);
             color: white;
-            padding: 20px 30px;
+            padding: 14px 30px;
             text-align: center;
             border-bottom: 3px solid #1a3a1b;
         }
@@ -153,7 +152,7 @@
         }
 
         .payslip-info-grid {
-            padding: 20px 30px;
+            padding: 14px 30px;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
         }
@@ -161,8 +160,8 @@
         .payslip-info-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .payslip-info-row:last-child {
@@ -192,7 +191,7 @@
         }
 
         .payslip-content {
-            padding: 20px 30px;
+            padding: 14px 30px;
         }
 
         .payslip-table {
@@ -256,10 +255,10 @@
         .payslip-net-pay {
             background: linear-gradient(135deg, #2c5f2d 0%, #3d7a3e 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 12px 30px;
             text-align: center;
-            margin: 15px 0;
-            font-size: 1.1rem;
+            margin: 12px 0;
+            font-size: 1.05rem;
             font-weight: 700;
             letter-spacing: 1px;
             box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
@@ -272,8 +271,8 @@
         }
 
         .payslip-footer {
-            margin-top: 20px;
-            padding: 15px 30px;
+            margin-top: 10px;
+            padding: 10px 30px;
             border-top: 2px solid #dee2e6;
             background: #f8f9fa;
             font-size: 0.7rem;
@@ -282,7 +281,7 @@
         }
 
         .payslip-footer p {
-            margin: 3px 0;
+            margin: 2px 0;
         }
 
         @media (max-width: 768px) {
@@ -306,6 +305,11 @@
 
         /* Print Styles for PDF Generation */
         @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
             body * {
                 visibility: hidden;
             }
@@ -321,6 +325,7 @@
                 top: 0;
                 width: 100%;
                 display: block !important;
+                page-break-after: avoid;
             }
 
             .payslip-header {
@@ -328,6 +333,12 @@
             }
 
             .payslip-table {
+                page-break-inside: avoid;
+            }
+
+            .payslip-content,
+            .payslip-info-grid,
+            .payslip-footer {
                 page-break-inside: avoid;
             }
         }
@@ -346,7 +357,6 @@
 
     <main class="payslip-page">
         <div class="container">
-            <h1 class="section-title">Employee Payslip Generator</h1>
 
             <div class="payslip-container">
                 <form class="payslip-form" id="payslip-form">
@@ -516,10 +526,7 @@
             </div>
 
             <div class="payslip-footer">
-                <p><strong>CONFIDENTIAL DOCUMENT</strong></p>
-                <p>This payslip is computer-generated and does not require a signature.</p>
-                <p>For any queries, please contact HR Department | Generated on: <span id="pdf-generated-date"></span>
-                </p>
+                <p><strong>CONFIDENTIAL</strong> &nbsp;|&nbsp; Generated on: <span id="pdf-generated-date"></span></p>
             </div>
         </div>
     </main>
