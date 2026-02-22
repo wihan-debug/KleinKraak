@@ -2,17 +2,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     const promoBanner = document.getElementById('promo-banner');
     const closePromoBtn = document.getElementById('close-promo-banner');
+    const hero = document.querySelector('.hero');
+
+    function hidePromoBanner() {
+        promoBanner.classList.add('hidden');
+        // Remove the extra promo margin so the hero sits flush under the navbar
+        if (hero) hero.style.marginTop = '60px';
+    }
 
     // Check if user previously closed the banner
     const promoClosed = localStorage.getItem('kleinkraak-promo-closed');
-
     if (promoClosed === 'true') {
-        promoBanner.classList.add('hidden');
+        hidePromoBanner();
     }
 
     // Close banner on click
     closePromoBtn?.addEventListener('click', () => {
-        promoBanner.classList.add('hidden');
+        hidePromoBanner();
         localStorage.setItem('kleinkraak-promo-closed', 'true');
     });
 });
