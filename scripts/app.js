@@ -853,7 +853,8 @@ let promoDiscount = 0;
 // Promo Code Database
 const PROMO_CODES = {
     'FRESH10': { discount: 0.10, description: '10% off' },
-    'WELCOME15': { discount: 0.15, description: '15% off first order' }
+    'WELCOME15': { discount: 0.15, description: '15% off first order' },
+    'FIRSTFREE': { freeDelivery: true, description: 'FREE delivery on your first order!' }
 };
 
 function updateCheckoutSummary() {
@@ -861,17 +862,20 @@ function updateCheckoutSummary() {
     const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
     let deliveryCost = 0.00;
 
+    // Check if FIRSTFREE promo is applied (free delivery override)
+    const firstFreeApplied = appliedPromoCode === 'FIRSTFREE' && PROMO_CODES['FIRSTFREE'];
+
     if (deliveryMethod === 'delivery_gauteng') {
-        if (subtotal >= 500) {
+        if (subtotal >= 500 || firstFreeApplied) {
             deliveryCost = 0.00;
         } else {
             deliveryCost = 200.00;
         }
     }
 
-    // Calculate discount
+    // Calculate discount (percentage-based codes only)
     let discountAmount = 0;
-    if (appliedPromoCode && PROMO_CODES[appliedPromoCode]) {
+    if (appliedPromoCode && PROMO_CODES[appliedPromoCode] && !PROMO_CODES[appliedPromoCode].freeDelivery) {
         discountAmount = subtotal * PROMO_CODES[appliedPromoCode].discount;
         promoDiscount = discountAmount;
     }
@@ -882,15 +886,27 @@ function updateCheckoutSummary() {
 
     if (deliveryMethod === 'delivery_quote') {
         checkoutDelivery.textContent = "To Be Quoted";
+    } else if (firstFreeApplied && deliveryMethod === 'delivery_gauteng') {
+        checkoutDelivery.textContent = 'FREE 🎁';
     } else {
         checkoutDelivery.textContent = `R ${deliveryCost.toFixed(2)}`;
     }
 
-    // Show discount row if promo applied
+    // Show promo row if applicable
     const existingDiscountRow = document.querySelector('.discount-row');
     if (existingDiscountRow) existingDiscountRow.remove();
 
-    if (discountAmount > 0) {
+    if (firstFreeApplied && deliveryMethod === 'delivery_gauteng') {
+        const deliveryRow = document.querySelector('.checkout-summary .summary-row:nth-child(2)');
+        const discountRow = document.createElement('div');
+        discountRow.className = 'summary-row discount-row';
+        discountRow.style.color = '#2E7D32';
+        discountRow.innerHTML = `
+            <span>🎉 First Order Bonus:</span>
+            <span>Delivery FREE!</span>
+        `;
+        deliveryRow.after(discountRow);
+    } else if (discountAmount > 0) {
         const deliveryRow = document.querySelector('.checkout-summary .summary-row:nth-child(2)');
         const discountRow = document.createElement('div');
         discountRow.className = 'summary-row discount-row';
@@ -956,9 +972,9 @@ checkoutForm.addEventListener('submit', (e) => {
         let deliveryLabel = "Collect";
 
         if (deliveryMethodValue === 'delivery_gauteng') {
-            if (cart.getTotal() >= 500) {
+            if (cart.getTotal() >= 500 || appliedPromoCode === 'FIRSTFREE') {
                 deliveryCost = 0.00;
-                deliveryLabel = "Nationwide Delivery (Free)";
+                deliveryLabel = appliedPromoCode === 'FIRSTFREE' ? "Nationwide Delivery (FREE - First Order!)" : "Nationwide Delivery (Free)";
             } else {
                 deliveryCost = 200.00;
                 deliveryLabel = "Nationwide Delivery";
