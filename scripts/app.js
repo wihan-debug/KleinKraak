@@ -804,6 +804,8 @@ function showOrderConfirmation() {
 
     // Render order items
     const itemsContainer = document.getElementById('confirm-items');
+    let itemsHtmlForEmail = '';
+    
     if (itemsContainer && lastOrderData && lastOrderData.items && lastOrderData.items.length > 0) {
         itemsContainer.innerHTML = `
             <h5>Items Ordered</h5>
@@ -814,8 +816,28 @@ function showOrderConfirmation() {
                 </div>
             `).join('')}
         `;
+        itemsHtmlForEmail = lastOrderData.items.map(item => `${item.qty}x ${item.name} (R ${(item.price * item.qty).toFixed(2)})`).join('\n');
     } else if (itemsContainer) {
         itemsContainer.innerHTML = '';
+    }
+
+    // Send Customer Email Confirmation
+    if (lastOrderData && lastOrderData.email && typeof emailjs !== 'undefined') {
+        const customerMessage = `Hi ${lastOrderData.name},\n\nThank you for your order!\n\nOrder Reference: ${orderRef}\nDelivery Method: ${lastOrderData.delivery}\n\nItems Ordered:\n${itemsHtmlForEmail}\n\nTotal: ${lastOrderData.total}\n\nWe will process your order shortly.\n\nBest regards,\nKleinKraak`;
+        
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, {
+            to_name: lastOrderData.name,
+            to_email: lastOrderData.email,
+            order_ref: orderRef,
+            message: customerMessage,
+            total: lastOrderData.total,
+            delivery: lastOrderData.delivery,
+            cart_details: itemsHtmlForEmail
+        }).then(() => {
+            console.log('Customer order confirmation email sent successfully.');
+        }).catch((err) => {
+            console.error('Failed to send customer order confirmation email:', err);
+        });
     }
 
     // Show the modal
