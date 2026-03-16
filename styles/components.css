@@ -898,3 +898,332 @@
     font-weight: 700;
     color: var(--primary-color);
 }
+
+/* ==========================================
+   ORDER CONFIRMATION MODAL
+   ========================================== */
+
+.order-confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 4000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.order-confirmation-overlay.active {
+    display: flex;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.order-confirmation-card {
+    background: white;
+    width: 100%;
+    max-width: 560px;
+    border-radius: 20px;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUpConfirm 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUpConfirm {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+.order-confirmation-header {
+    background: linear-gradient(135deg, #2E7D32, #4CAF50);
+    color: white;
+    text-align: center;
+    padding: 40px 30px 30px;
+}
+
+.order-checkmark {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+}
+
+.checkmark-svg {
+    width: 80px;
+    height: 80px;
+}
+
+.checkmark-circle {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    animation: drawCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+}
+
+.checkmark-check {
+    stroke: white;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: drawCheck 0.4s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes drawCircle {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawCheck {
+    to { stroke-dashoffset: 0; }
+}
+
+.order-confirmation-header h2 {
+    color: white;
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    border: none;
+    padding: 0;
+    text-align: center;
+}
+
+.order-confirmation-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Body */
+.order-confirmation-body {
+    padding: 28px 30px;
+}
+
+.order-ref-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f0f7ef;
+    border: 2px dashed var(--primary-color);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.order-ref-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.order-ref-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    font-family: monospace;
+    letter-spacing: 2px;
+}
+
+/* Details Grid */
+.order-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.order-detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #fafafa;
+    border-radius: 10px;
+    border: 1px solid #eee;
+}
+
+.detail-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.order-detail-item > div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.order-total-value {
+    color: var(--primary-dark);
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+/* Items Summary */
+.order-items-summary {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 22px;
+    border: 1px solid #eee;
+}
+
+.order-items-summary h5 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+    margin: 0 0 12px;
+    font-weight: 700;
+}
+
+.confirm-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.9rem;
+    color: #555;
+    border-bottom: 1px solid #eee;
+}
+
+.confirm-item-row:last-child {
+    border-bottom: none;
+}
+
+.confirm-item-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.confirm-item-qty {
+    color: #999;
+    font-size: 0.8rem;
+}
+
+/* Next Steps */
+.order-next-steps {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border-radius: 12px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.order-next-steps h4 {
+    color: var(--primary-dark);
+    font-size: 0.95rem;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-next-steps ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.order-next-steps li {
+    padding: 5px 0;
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Footer */
+.order-confirmation-footer {
+    padding: 20px 30px 28px;
+    border-top: 1px solid #eee;
+    background: white;
+}
+
+.order-back-btn {
+    font-size: 1.1rem;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+}
+
+.order-support-text {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #999;
+    margin: 0;
+}
+
+.order-support-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.order-support-text a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .order-confirmation-card {
+        border-radius: 16px;
+        max-height: 95vh;
+    }
+
+    .order-confirmation-header {
+        padding: 30px 20px 22px;
+    }
+
+    .order-confirmation-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .order-confirmation-body {
+        padding: 20px 20px;
+    }
+
+    .order-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .order-confirmation-footer {
+        padding: 16px 20px 24px;
+    }
+}

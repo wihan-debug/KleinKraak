@@ -73,17 +73,6 @@
         </div>
     </nav>
 
-    <!-- Promotional Banner -->
-    <div class="promo-banner" id="promo-banner">
-        <div class="promo-content">
-            <span class="promo-icon">🎉</span>
-            <span class="promo-text"><strong>FIRST ORDER FREE DELIVERY!</strong> Use code <strong>FIRSTFREE</strong> at
-                checkout &nbsp;|&nbsp; 🚚 Nationwide delivery <strong>R200</strong> | Free on orders over
-                <strong>R500</strong></span>
-            <button class="promo-close" id="close-promo-banner" aria-label="Close banner">&times;</button>
-        </div>
-    </div>
-
     <!-- Admin Sidebar -->
     <div id="admin-sidebar" class="admin-sidebar">
         <div class="admin-sidebar-header">
@@ -189,7 +178,7 @@
         <div class="hero-content">
             <h1>Experience the Crunch of Nature</h1>
             <p>Hand-picked, locally grown, and perfectly pickled cucamelons from KleinKraak.</p>
-            <a href="#products" class="btn btn-primary">Shop Now - Free Delivery Over R500! 🚚</a>
+            <a href="#products" class="btn btn-primary">Shop Now 🛒</a>
         </div>
         <div class="hero-overlay"></div>
     </header>
@@ -691,8 +680,7 @@
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="delivery" value="delivery_gauteng">
-                            <span>Nationwide Delivery (R 200.00) — <strong style="color:#2E7D32;">FREE for first
-                                    order!</strong> Use code <em>FIRSTFREE</em></span>
+                            <span>Nationwide Delivery (R 200.00)</span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="delivery" value="delivery_quote">
@@ -824,6 +812,81 @@
                     <p>Loading secure payment...</p>
                 </div>
                 <iframe id="payment-iframe" title="Yoco Payment"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="order-confirmation-modal" class="order-confirmation-overlay">
+        <div class="order-confirmation-card">
+            <div class="order-confirmation-header">
+                <div class="order-checkmark">
+                    <svg viewBox="0 0 52 52" class="checkmark-svg">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark-check" fill="none" d="M14.5 27l7.5 7.5 16-16" />
+                    </svg>
+                </div>
+                <h2>Order Confirmed! 🎉</h2>
+                <p class="order-confirmation-subtitle">Thank you for your order. We'll be in touch shortly!</p>
+            </div>
+
+            <div class="order-confirmation-body">
+                <div class="order-ref-box">
+                    <span class="order-ref-label">Order Reference</span>
+                    <span class="order-ref-number" id="confirm-order-ref">#KK-000000</span>
+                </div>
+
+                <div class="order-details-grid">
+                    <div class="order-detail-item">
+                        <span class="detail-icon">👤</span>
+                        <div>
+                            <span class="detail-label">Name</span>
+                            <span class="detail-value" id="confirm-name">—</span>
+                        </div>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="detail-icon">📧</span>
+                        <div>
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value" id="confirm-email">—</span>
+                        </div>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="detail-icon">🚚</span>
+                        <div>
+                            <span class="detail-label">Delivery</span>
+                            <span class="detail-value" id="confirm-delivery">—</span>
+                        </div>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="detail-icon">💰</span>
+                        <div>
+                            <span class="detail-label">Total Paid</span>
+                            <span class="detail-value order-total-value" id="confirm-total">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-items-summary" id="confirm-items">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div class="order-next-steps">
+                    <h4>What happens next?</h4>
+                    <ul>
+                        <li>📬 You'll receive a confirmation email shortly</li>
+                        <li>📦 We'll prepare your order with care</li>
+                        <li>📲 We'll contact you to arrange delivery or collection</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="order-confirmation-footer">
+                <button id="back-to-shop-btn" class="btn btn-primary btn-block order-back-btn">
+                    🛍️ Continue Shopping
+                </button>
+                <p class="order-support-text">Questions? Call us at <a href="tel:0714796079">071 479 6079</a> or <a
+                        href="mailto:kleinkraak@gmail.com">kleinkraak@gmail.com</a></p>
             </div>
         </div>
     </div>

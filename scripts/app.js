@@ -384,6 +384,12 @@ const closePaymentBtn = document.getElementById('close-payment-modal');
 const paymentIframe = document.getElementById('payment-iframe');
 const paymentLoading = document.querySelector('.payment-loading');
 
+// Order Confirmation Modal
+const orderConfirmationModal = document.getElementById('order-confirmation-modal');
+
+// Stores order snapshot for the confirmation screen
+let lastOrderData = null;
+
 // Debug: Log if payment modal elements are found
 console.log('Payment Modal Elements Check:');
 console.log('- paymentModal:', paymentModal ? 'Found' : 'NOT FOUND');
@@ -427,9 +433,7 @@ function renderProducts(containerId) {
         // CONVERSION OPTIMIZATION: Urgency & Scarcity Elements
         const stockLevel = getStockLevel(product.id);
         const isLowStock = stockLevel <= 14;
-        const stockBadge = product.inStock !== false && isLowStock
-            ? `<div class="stock-badge low-stock">Only ${stockLevel} left!</div>`
-            : '';
+        const stockBadge = '';
 
         const bestSellerBadge = product.bestSeller
             ? '<div class="best-seller-badge">⭐ Best Seller</div>'
@@ -777,6 +781,56 @@ function closePaymentModal() {
     setTimeout(() => {
         paymentIframe.src = '';
     }, 300);
+
+    // Show order confirmation screen
+    showOrderConfirmation();
+}
+
+function showOrderConfirmation() {
+    if (!orderConfirmationModal) return;
+
+    // Generate a simple order reference
+    const orderRef = '#KK-' + Date.now().toString().slice(-6);
+
+    // Populate fields from saved order data
+    document.getElementById('confirm-order-ref').textContent = orderRef;
+    document.getElementById('confirm-name').textContent = (lastOrderData && lastOrderData.name) || '—';
+    document.getElementById('confirm-email').textContent = (lastOrderData && lastOrderData.email) || '—';
+    document.getElementById('confirm-delivery').textContent = (lastOrderData && lastOrderData.delivery) || '—';
+    document.getElementById('confirm-total').textContent = (lastOrderData && lastOrderData.total) || '—';
+
+    // Render order items
+    const itemsContainer = document.getElementById('confirm-items');
+    if (itemsContainer && lastOrderData && lastOrderData.items && lastOrderData.items.length > 0) {
+        itemsContainer.innerHTML = `
+            <h5>Items Ordered</h5>
+            ${lastOrderData.items.map(item => `
+                <div class="confirm-item-row">
+                    <span class="confirm-item-name">${item.name}</span>
+                    <span class="confirm-item-qty">x${item.qty} &nbsp; <strong>R ${(item.price * item.qty).toFixed(2)}</strong></span>
+                </div>
+            `).join('')}
+        `;
+    } else if (itemsContainer) {
+        itemsContainer.innerHTML = '';
+    }
+
+    // Show the modal
+    orderConfirmationModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Re-trigger checkmark animation by cloning SVG paths
+    const circle = orderConfirmationModal.querySelector('.checkmark-circle');
+    const check = orderConfirmationModal.querySelector('.checkmark-check');
+    if (circle) { circle.style.animation = 'none'; void circle.offsetWidth; circle.style.animation = ''; }
+    if (check) { check.style.animation = 'none'; void check.offsetWidth; check.style.animation = ''; }
+}
+
+function closeOrderConfirmation() {
+    if (!orderConfirmationModal) return;
+    orderConfirmationModal.classList.remove('active');
+    document.body.style.overflow = '';
+    lastOrderData = null;
 }
 
 
@@ -795,6 +849,12 @@ closeCheckoutBtn.addEventListener('click', closeCheckout);
 // Payment Modal Listeners
 if (closePaymentBtn) {
     closePaymentBtn.addEventListener('click', closePaymentModal);
+}
+
+// Order Confirmation: Back to shop button
+const backToShopBtn = document.getElementById('back-to-shop-btn');
+if (backToShopBtn) {
+    backToShopBtn.addEventListener('click', closeOrderConfirmation);
 }
 
 
@@ -866,7 +926,7 @@ function updateCheckoutSummary() {
     const firstFreeApplied = appliedPromoCode === 'FIRSTFREE' && PROMO_CODES['FIRSTFREE'];
 
     if (deliveryMethod === 'delivery_gauteng') {
-        if (subtotal >= 500 || firstFreeApplied) {
+        if (firstFreeApplied) {
             deliveryCost = 0.00;
         } else {
             deliveryCost = 200.00;
@@ -972,9 +1032,9 @@ checkoutForm.addEventListener('submit', (e) => {
         let deliveryLabel = "Collect";
 
         if (deliveryMethodValue === 'delivery_gauteng') {
-            if (cart.getTotal() >= 500 || appliedPromoCode === 'FIRSTFREE') {
+            if (appliedPromoCode === 'FIRSTFREE') {
                 deliveryCost = 0.00;
-                deliveryLabel = appliedPromoCode === 'FIRSTFREE' ? "Nationwide Delivery (FREE - First Order!)" : "Nationwide Delivery (Free)";
+                deliveryLabel = "Nationwide Delivery (FREE - First Order!)";
             } else {
                 deliveryCost = 200.00;
                 deliveryLabel = "Nationwide Delivery";
@@ -1016,6 +1076,22 @@ checkoutForm.addEventListener('submit', (e) => {
             console.log('Numeric Total:', numericTotal);
 
             console.log('Proceeding to payment...');
+
+            // Snapshot delivery method label for confirmation screen
+            const deliveryLabelMap = {
+                collect: 'Collection (Free)',
+                delivery_gauteng: 'Nationwide Delivery',
+                delivery_quote: 'International (Quote)'
+            };
+
+            // Save order data BEFORE clearing the cart
+            lastOrderData = {
+                name: formData.name || '',
+                email: formData.email || '',
+                delivery: deliveryLabelMap[deliveryMethodValue] || deliveryMethodValue,
+                total: `R ${numericTotal.toFixed(2)}`,
+                items: cart.items.map(i => ({ name: i.name, qty: i.qty, price: i.price }))
+            };
 
             // Clear cart and close checkout
             cart.clear();
