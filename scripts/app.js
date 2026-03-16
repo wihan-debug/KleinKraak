@@ -280,15 +280,18 @@ const products = [
             './assets/products/vinegar/2.jpg'
         ],
         image: './assets/products/sweet-sour/5.jpg',
-        description: 'A mix of our favorite pickled varieties in one jar.',
+        description: 'A special pickled blend with aromatic spices and seeds.',
         ingredients: [
-            'Mixed Cucamelons',
+            'Cucamelons',
             'Vinegar',
+            'Water',
             'Salt',
-            'Sugar',
-            'Garlic',
-            'Mixed Herbs',
-            'Spices'
+            'Mustard Seeds',
+            'Black Peppercorns',
+            'Bay Leaves',
+            'Allspice Berries',
+            'Coriander Seeds',
+            'Dill Seeds'
         ]
     }
 ];
