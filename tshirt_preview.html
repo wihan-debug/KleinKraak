@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KleinKraak T-Shirt Design Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #7E9F70, #C2D5A8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .designs-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .design-card {
+            background: #16213e;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            max-width: 550px;
+            width: 100%;
+        }
+        .design-card:hover { transform: translateY(-5px); }
+        .design-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #C2D5A8;
+            margin-bottom: 8px;
+        }
+        .design-card .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .tshirt-mockup {
+            position: relative;
+            width: 420px;
+            height: 500px;
+            margin: 0 auto 20px;
+        }
+        .tshirt-svg { width: 100%; height: 100%; }
+
+        /* Print Info */
+        .print-info {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 900px;
+        }
+        .print-info h2 {
+            font-family: 'Playfair Display', serif;
+            color: #C2D5A8;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .print-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .print-method {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .print-method h3 { color: #7E9F70; margin-bottom: 8px; }
+        .print-method p { color: #aaa; font-size: 0.9rem; line-height: 1.6; }
+        .format-tag {
+            display: inline-block;
+            background: #2F4229;
+            color: #C2D5A8;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        .download-section {
+            text-align: center;
+            padding: 30px 20px 60px;
+        }
+        .download-section p { color: #888; margin-bottom: 20px; }
+        .btn-download {
+            display: inline-block;
+            background: linear-gradient(135deg, #2F4229, #4A6741);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-download:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(47,66,41,0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🌱 KleinKraak T-Shirt Design</h1>
+        <p>Manager & CEO Staff Shirts — Preview</p>
+    </div>
+
+    <div class="designs-container">
+
+        <!-- ========== FRONT DESIGN ========== -->
+        <div class="design-card">
+            <h2>Front</h2>
+            <p class="subtitle">Left chest — minimal branding</p>
+            <div class="tshirt-mockup">
+                <svg class="tshirt-svg" viewBox="0 0 420 500" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 105 0 L 0 80 L 40 120 L 75 95 L 75 480 Q 75 500 95 500 L 325 500 Q 345 500 345 480 L 345 95 L 380 120 L 420 80 L 315 0 Q 280 40 210 40 Q 140 40 105 0 Z"
+                          fill="#2F4229" stroke="#3a5233" stroke-width="2"/>
+                    <path d="M 105 0 Q 140 50 210 50 Q 280 50 315 0" fill="none" stroke="#3a5233" stroke-width="2"/>
+                    <line x1="75" y1="95" x2="40" y2="120" stroke="#3a5233" stroke-width="1.5" opacity="0.5"/>
+                    <line x1="345" y1="95" x2="380" y2="120" stroke="#3a5233" stroke-width="1.5" opacity="0.5"/>
+                    <!-- PNG Graphic overlay onto the Green SVG T-Shirt -->
+                    <image href="./assets/tshirt_front_4K.png" x="120" y="140" width="80" height="30" preserveAspectRatio="xMinYMin meet"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ========== BACK DESIGN (SIMPLIFIED) ========== -->
+        <div class="design-card">
+            <h2>Back</h2>
+            <p class="subtitle">Mouse mascot + clean branding</p>
+            <div class="tshirt-mockup">
+                <svg class="tshirt-svg" viewBox="0 0 420 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- T-Shirt Shape -->
+                    <path d="M 105 0 L 0 80 L 40 120 L 75 95 L 75 480 Q 75 500 95 500 L 325 500 Q 345 500 345 480 L 345 95 L 380 120 L 420 80 L 315 0 Q 280 40 210 40 Q 140 40 105 0 Z"
+                          fill="#2F4229" stroke="#3a5233" stroke-width="2"/>
+                    <path d="M 105 0 Q 150 20 210 20 Q 270 20 315 0" fill="none" stroke="#3a5233" stroke-width="2"/>
+                    <line x1="75" y1="95" x2="40" y2="120" stroke="#3a5233" stroke-width="1.5" opacity="0.5"/>
+                    <line x1="345" y1="95" x2="380" y2="120" stroke="#3a5233" stroke-width="1.5" opacity="0.5"/>
+
+                    <!-- Full Back Design PNG overlay onto the Green SVG T-Shirt -->
+                    <image href="./assets/tshirt_back_4K.png" x="80" y="60" width="260" height="380" preserveAspectRatio="xMidYMid meet"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT FORMAT INFO -->
+    <div class="print-info">
+        <h2>🖨️ Recommended Print Formats</h2>
+        <div class="print-grid">
+            <div class="print-method">
+                <h3>🏆 DTG (Direct to Garment)</h3>
+                <p>Best for small batches & detailed designs with the mouse mascot. Submit as a <strong>PNG with transparent background</strong> at <strong>300 DPI</strong> minimum.</p>
+                <span class="format-tag">PNG — 300 DPI — Transparent BG</span>
+            </div>
+            <div class="print-method">
+                <h3>🎨 Screen Printing</h3>
+                <p>Best for bulk orders (20+ shirts). Provide as <strong>vector file</strong> (SVG, AI, or EPS). The mouse illustration would need to be vectorized first.</p>
+                <span class="format-tag">SVG / AI / EPS — Vector</span>
+            </div>
+            <div class="print-method">
+                <h3>🔥 Heat Transfer / Vinyl</h3>
+                <p>Good for small runs. Submit a <strong>high-res PNG or SVG</strong>. Print shop handles the rest.</p>
+                <span class="format-tag">PNG or SVG — High Res</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="download-section">
+        <p>Download print-ready SVG files (text/layout) — for the mouse mascot, use your original sticker artwork file</p>
+        <button class="btn-download" onclick="downloadSVG('front')">⬇️ Download Front Design (SVG)</button>
+        <button class="btn-download" onclick="downloadSVG('back')">⬇️ Download Back Layout (SVG)</button>
+    </div>
+
+    <script>
+    function downloadSVG(side) {
+        let svgContent;
+        if (side === 'front') {
+            svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
+    <text x="100" y="600" 
+          font-family="'Outfit', 'Segoe UI', sans-serif" 
+          font-size="72" font-weight="600" fill="white"
+          letter-spacing="3">KleinKraak</text>
+</svg>`;
+        } else {
+            svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2400" height="3200" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
+    <!-- BACK DESIGN — Print Ready — Place mouse mascot image in the space above the text -->
+    
+    <!-- MOUSE MASCOT AREA: Place your original mouse artwork here, centered, approx 200x250px -->
+    <!-- The print shop can composite your mouse PNG/AI file into this position -->
+    <rect x="110" y="20" width="200" height="250" rx="10" fill="none" stroke="#7E9F70" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <text x="210" y="150" font-family="sans-serif" font-size="12" fill="#7E9F70" text-anchor="middle" opacity="0.6">[Mouse Mascot Here]</text>
+    
+    <!-- Company Name -->
+    <text x="210" y="310" 
+          font-family="'Playfair Display', Georgia, serif" 
+          font-size="36" font-weight="700" fill="white"
+          text-anchor="middle" letter-spacing="3">KleinKraak</text>
+
+    <!-- Tagline -->
+    <text x="210" y="345" 
+          font-family="'Outfit', sans-serif" 
+          font-size="15" font-weight="300" fill="#C2D5A8"
+          text-anchor="middle" font-style="italic">Tiny, Tasty, Terrific!</text>
+
+    <!-- Divider -->
+    <line x1="155" y1="368" x2="265" y2="368" stroke="#7E9F70" stroke-width="1" opacity="0.5"/>
+
+    <!-- Website -->
+    <text x="210" y="400" font-family="'Outfit', sans-serif" font-size="15" fill="#C2D5A8" text-anchor="middle" font-weight="600">kleinkraak.com</text>
+
+    <!-- Badge -->
+    <text x="210" y="450" font-family="'Outfit', sans-serif" font-size="10" fill="#7E9F70" text-anchor="middle" font-weight="600" letter-spacing="2">LOCALLY GROWN • NATURALLY FRESH</text>
+</svg>`;
+        }
+        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `kleinkraak_tshirt_${side}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    </script>
+
+</body>
+</html>

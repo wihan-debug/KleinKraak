@@ -22,7 +22,9 @@ const Inventory = {
             { id: 'hc7', name: 'French Salad Dressing', price: 120.00 },
             { id: 'hc8', name: 'Garlic And Herb Salad Dressing', price: 120.00 },
             { id: 'hc9', name: 'Sweet&Spicy', price: 120.00 },
-            { id: 'hc10', name: 'Pickled Apple Cider Vinegar', price: 130.00 }
+            { id: 'hc10', name: 'Pickled Apple Cider Vinegar', price: 120.00 },
+            { id: 'hc11', name: 'Sweet & Tangy Pickled Cucamelons', price: 120.00 },
+            { id: 'hc12', name: 'Pickled Mix', price: 120.00 }
         ];
     },
 

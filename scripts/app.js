@@ -73,7 +73,7 @@ const products = [
     {
         id: 'white-wine-vinegar',
         name: 'White Wine Vinegar',
-        price: 120.00,
+        price: 150.00,
         size: '455ml Bottle',
         bestSeller: true,
         // Uses images array for slideshow
@@ -102,7 +102,7 @@ const products = [
     {
         id: 'spicy-pickled',
         name: 'Spicy Pickled Cucamelons',
-        price: 96.00,
+        price: 120.00,
         size: '455ml Bottle',
         images: [
             './assets/products/spicy-pickled/1.jpg',
@@ -127,7 +127,7 @@ const products = [
     {
         id: 'dill-pickled',
         name: 'Dill & Garlic Pickled Cucamelons',
-        price: 96.00,
+        price: 120.00,
         size: '455ml Bottle',
         images: [
             './assets/products/dill-pickled/1.jpg',
@@ -151,8 +151,9 @@ const products = [
     {
         id: 'sweet-sour',
         name: 'Sweet & Sour Pickled Cucamelons',
-        price: 96.00,
+        price: 120.00,
         size: '455ml Bottle',
+        inStock: false,
         bestSeller: true,
         images: [
             './assets/products/sweet-sour/1.jpg',
@@ -178,7 +179,7 @@ const products = [
     {
         id: 'sweet-cucamelon',
         name: 'Sweet Cucamelon',
-        price: 96.00,
+        price: 120.00,
         size: '455ml Bottle',
         inStock: false,
         images: [
@@ -203,8 +204,9 @@ const products = [
     {
         id: 'fresh-punnet',
         name: 'Fresh Cucamelons (250g)',
-        price: 40.00,
+        price: 50.00,
         size: '250g Punnet',
+        inStock: false,
         bestSeller: true,
         images: [
             './assets/products/fresh/1.jpg',
@@ -224,6 +226,7 @@ const products = [
         name: 'Pickled Sweet&Spicy',
         price: 120.00,
         size: '455ml Bottle',
+        inStock: false,
         images: [
             './assets/products/spicy-pickled/2.jpg',
             './assets/products/sweet-sour/6.jpg',
@@ -247,7 +250,7 @@ const products = [
     {
         id: 'apple-cider-vinegar',
         name: 'Pickled Apple Cider Vinegar',
-        price: 130.00,
+        price: 120.00,
         size: '455ml Bottle',
         bestSeller: true,
         images: [
@@ -271,7 +274,7 @@ const products = [
     {
         id: 'pickled-mix',
         name: 'Pickled Mix',
-        price: 80.00,
+        price: 120.00,
         size: '455ml Bottle',
         images: [
             './assets/products/sweet-sour/5.jpg',
@@ -292,6 +295,23 @@ const products = [
             'Allspice Berries',
             'Coriander Seeds',
             'Dill Seeds'
+        ]
+    },
+    {
+        id: 'sweet-tangy',
+        name: 'Sweet & Tangy Pickled Cucamelons',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+             './assets/products/sweet-sour/1.jpg'
+        ],
+        image: './assets/products/sweet-sour/1.jpg',
+        description: 'Tangy twist on our classic cucumbers.',
+        ingredients: [
+            'Cucamelons',
+            'Vinegar',
+            'Sugar',
+            'Spices'
         ]
     }
 ];
