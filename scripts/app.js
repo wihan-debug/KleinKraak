@@ -64,10 +64,10 @@ function showRecentPurchaseNotification() {
 }
 
 // Trigger purchase notifications periodically
-if (document.getElementById('product-grid')) {
-    setTimeout(() => showRecentPurchaseNotification(), 5000);
-    setInterval(() => showRecentPurchaseNotification(), 45000);
-}
+// if (document.getElementById('product-grid')) {
+//     setTimeout(() => showRecentPurchaseNotification(), 5000);
+//     setInterval(() => showRecentPurchaseNotification(), 45000);
+// }
 
 const products = [
     {
@@ -313,6 +313,30 @@ const products = [
             'Sugar',
             'Spices'
         ]
+    },
+    {
+        id: 'french-salad-dressing',
+        name: 'French Salad Dressing',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/vinegar/1.jpg'
+        ],
+        image: './assets/products/vinegar/1.jpg',
+        description: 'Delicious home-made dressing.',
+        ingredients: ['Vinegar', 'Oil', 'Herbs']
+    },
+    {
+        id: 'garlic-herb-salad-dressing',
+        name: 'Garlic And Herb Salad Dressing',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/vinegar/2.jpg'
+        ],
+        image: './assets/products/vinegar/2.jpg',
+        description: 'Savory dressing with fresh herbs.',
+        ingredients: ['Garlic', 'Herbs', 'Vinegar', 'Oil']
     }
 ];
 
