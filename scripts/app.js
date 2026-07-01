@@ -153,7 +153,6 @@ const products = [
         name: 'Sweet & Sour Pickled Cucamelons',
         price: 120.00,
         size: '455ml Bottle',
-        inStock: false,
         bestSeller: true,
         images: [
             './assets/products/sweet-sour/1.jpg',
@@ -226,7 +225,6 @@ const products = [
         name: 'Pickled Sweet&Spicy',
         price: 120.00,
         size: '455ml Bottle',
-        inStock: false,
         images: [
             './assets/products/spicy-pickled/2.jpg',
             './assets/products/sweet-sour/6.jpg',
