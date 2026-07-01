@@ -276,6 +276,7 @@ const products = [
         name: 'Pickled Mix',
         price: 120.00,
         size: '455ml Bottle',
+        inStock: false,
         images: [
             './assets/products/sweet-sour/5.jpg',
             './assets/products/spicy-pickled/3.jpg',
@@ -302,6 +303,7 @@ const products = [
         name: 'Sweet & Tangy Pickled Cucamelons',
         price: 120.00,
         size: '455ml Bottle',
+        inStock: false,
         images: [
              './assets/products/sweet-sour/1.jpg'
         ],
@@ -319,6 +321,7 @@ const products = [
         name: 'French Salad Dressing',
         price: 120.00,
         size: '455ml Bottle',
+        inStock: false,
         images: [
             './assets/products/vinegar/1.jpg'
         ],
@@ -331,6 +334,7 @@ const products = [
         name: 'Garlic And Herb Salad Dressing',
         price: 120.00,
         size: '455ml Bottle',
+        inStock: false,
         images: [
             './assets/products/vinegar/2.jpg'
         ],
