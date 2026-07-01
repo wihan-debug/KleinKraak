@@ -339,6 +339,35 @@ const products = [
         image: './assets/products/vinegar/2.jpg',
         description: 'Savory dressing with fresh herbs.',
         ingredients: ['Garlic', 'Herbs', 'Vinegar', 'Oil']
+    },
+    {
+        id: 'salsa',
+        name: 'Salsa',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.51.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.52.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.52 (1).jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.53.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.54.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.54 (1).jpeg'
+        ],
+        image: './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.51.jpeg',
+        description: 'A fresh and fiery homemade salsa with a bold kick.',
+        ingredients: [
+            'Cucamelons',
+            'Pepper',
+            'Celery',
+            'Chilli Flakes',
+            'Vinegar',
+            'Water',
+            'Fennel',
+            'Chillies',
+            'Jalapeno',
+            'Onion',
+            'Garlic'
+        ]
     }
 ];
 
