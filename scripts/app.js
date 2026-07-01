@@ -368,6 +368,42 @@ const products = [
             'Onion',
             'Garlic'
         ]
+    },
+    {
+        id: 'piccalilli',
+        name: 'Piccalilli',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.16.jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17.jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17 (1).jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17 (2).jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.18.jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.18 (1).jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.19.jpeg'
+        ],
+        image: './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.16.jpeg',
+        description: 'A tangy, golden piccalilli packed with garden vegetables and bold spices.',
+        ingredients: [
+            'Cucamelons',
+            'Onion',
+            'Carrot',
+            'Cauliflower',
+            'Green Beans',
+            'Vinegar',
+            'Water',
+            'Salt',
+            'Celery',
+            'Maizena',
+            'Curry',
+            'Turmeric',
+            'Mustard',
+            'Coriander',
+            'Sugar',
+            'Fennel',
+            'Pepper'
+        ]
     }
 ];
 
