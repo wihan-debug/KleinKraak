@@ -70,6 +70,7 @@ function showRecentPurchaseNotification() {
 // }
 
 const products = [
+    // ── IN STOCK ──────────────────────────────────────────────
     {
         id: 'white-wine-vinegar',
         name: 'White Wine Vinegar',
@@ -176,51 +177,6 @@ const products = [
         ]
     },
     {
-        id: 'sweet-cucamelon',
-        name: 'Sweet Cucamelon',
-        price: 120.00,
-        size: '455ml Bottle',
-        inStock: false,
-        images: [
-            './assets/products/sweet-cucamelon/1.jpg',
-            './assets/products/sweet-cucamelon/2.jpg',
-            './assets/products/sweet-cucamelon/3.jpg'
-        ],
-        image: './assets/products/sweet-cucamelon/1.jpg',
-        description: 'A unique twist with a sweet kick from Drink-O-Pop powder.',
-        ingredients: [
-            'Dill',
-            'Garlic',
-            'Coriander Seeds',
-            'Kosher Salt',
-            'Sugar',
-            'Mustard Seeds',
-            'Vinegar',
-            'Water',
-            'Drink-O-Pop Powder'
-        ]
-    },
-    {
-        id: 'fresh-punnet',
-        name: 'Fresh Cucamelons (250g)',
-        price: 50.00,
-        size: '250g Punnet',
-        inStock: false,
-        bestSeller: true,
-        images: [
-            './assets/products/fresh/1.jpg',
-            './assets/products/fresh/2.jpg',
-            './assets/products/fresh/3.jpg',
-            './assets/products/fresh/4.jpg',
-            './assets/products/fresh/5.jpg',
-            './assets/products/fresh/6.jpg',
-            './assets/products/fresh/7.jpg'
-        ],
-        image: './assets/products/fresh/1.jpg',
-        description: 'Freshly harvested cucamelons, perfect for snacking.',
-        ingredients: null
-    },
-    {
         id: 'sweet-spicy-pickled',
         name: 'Pickled Sweet&Spicy',
         price: 120.00,
@@ -268,6 +224,117 @@ const products = [
             'Garlic',
             'Grape Leaves'
         ]
+    },
+    {
+        id: 'salsa',
+        name: 'Salsa',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.51.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.52.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.52 (1).jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.53.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.54.jpeg',
+            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.54 (1).jpeg'
+        ],
+        image: './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.51.jpeg',
+        description: 'A fresh and fiery homemade salsa with a bold kick.',
+        ingredients: [
+            'Cucamelons',
+            'Pepper',
+            'Celery',
+            'Chilli Flakes',
+            'Vinegar',
+            'Water',
+            'Fennel',
+            'Chillies',
+            'Jalapeno',
+            'Onion',
+            'Garlic'
+        ]
+    },
+    {
+        id: 'piccalilli',
+        name: 'Piccalilli',
+        price: 120.00,
+        size: '455ml Bottle',
+        images: [
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.16.jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17.jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17 (1).jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17 (2).jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.18.jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.18 (1).jpeg',
+            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.19.jpeg'
+        ],
+        image: './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.16.jpeg',
+        description: 'A tangy, golden piccalilli packed with garden vegetables and bold spices.',
+        ingredients: [
+            'Cucamelons',
+            'Onion',
+            'Carrot',
+            'Cauliflower',
+            'Green Beans',
+            'Vinegar',
+            'Water',
+            'Salt',
+            'Celery',
+            'Maizena',
+            'Curry',
+            'Turmeric',
+            'Mustard',
+            'Coriander',
+            'Sugar',
+            'Fennel',
+            'Pepper'
+        ]
+    },
+    // ── OUT OF STOCK ──────────────────────────────────────────
+    {
+        id: 'sweet-cucamelon',
+        name: 'Sweet Cucamelon',
+        price: 120.00,
+        size: '455ml Bottle',
+        inStock: false,
+        images: [
+            './assets/products/sweet-cucamelon/1.jpg',
+            './assets/products/sweet-cucamelon/2.jpg',
+            './assets/products/sweet-cucamelon/3.jpg'
+        ],
+        image: './assets/products/sweet-cucamelon/1.jpg',
+        description: 'A unique twist with a sweet kick from Drink-O-Pop powder.',
+        ingredients: [
+            'Dill',
+            'Garlic',
+            'Coriander Seeds',
+            'Kosher Salt',
+            'Sugar',
+            'Mustard Seeds',
+            'Vinegar',
+            'Water',
+            'Drink-O-Pop Powder'
+        ]
+    },
+    {
+        id: 'fresh-punnet',
+        name: 'Fresh Cucamelons (250g)',
+        price: 50.00,
+        size: '250g Punnet',
+        inStock: false,
+        bestSeller: true,
+        images: [
+            './assets/products/fresh/1.jpg',
+            './assets/products/fresh/2.jpg',
+            './assets/products/fresh/3.jpg',
+            './assets/products/fresh/4.jpg',
+            './assets/products/fresh/5.jpg',
+            './assets/products/fresh/6.jpg',
+            './assets/products/fresh/7.jpg'
+        ],
+        image: './assets/products/fresh/1.jpg',
+        description: 'Freshly harvested cucamelons, perfect for snacking.',
+        ingredients: null
     },
     {
         id: 'pickled-mix',
@@ -339,73 +406,9 @@ const products = [
         image: './assets/products/vinegar/2.jpg',
         description: 'Savory dressing with fresh herbs.',
         ingredients: ['Garlic', 'Herbs', 'Vinegar', 'Oil']
-    },
-    {
-        id: 'salsa',
-        name: 'Salsa',
-        price: 120.00,
-        size: '455ml Bottle',
-        images: [
-            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.51.jpeg',
-            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.52.jpeg',
-            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.52 (1).jpeg',
-            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.53.jpeg',
-            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.54.jpeg',
-            './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.54 (1).jpeg'
-        ],
-        image: './assets/products/Salsa/WhatsApp Image 2026-07-01 at 19.06.51.jpeg',
-        description: 'A fresh and fiery homemade salsa with a bold kick.',
-        ingredients: [
-            'Cucamelons',
-            'Pepper',
-            'Celery',
-            'Chilli Flakes',
-            'Vinegar',
-            'Water',
-            'Fennel',
-            'Chillies',
-            'Jalapeno',
-            'Onion',
-            'Garlic'
-        ]
-    },
-    {
-        id: 'piccalilli',
-        name: 'Piccalilli',
-        price: 120.00,
-        size: '455ml Bottle',
-        images: [
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.16.jpeg',
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17.jpeg',
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17 (1).jpeg',
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.17 (2).jpeg',
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.18.jpeg',
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.18 (1).jpeg',
-            './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.19.jpeg'
-        ],
-        image: './assets/products/piccalilli/WhatsApp Image 2026-07-01 at 19.07.16.jpeg',
-        description: 'A tangy, golden piccalilli packed with garden vegetables and bold spices.',
-        ingredients: [
-            'Cucamelons',
-            'Onion',
-            'Carrot',
-            'Cauliflower',
-            'Green Beans',
-            'Vinegar',
-            'Water',
-            'Salt',
-            'Celery',
-            'Maizena',
-            'Curry',
-            'Turmeric',
-            'Mustard',
-            'Coriander',
-            'Sugar',
-            'Fennel',
-            'Pepper'
-        ]
-    }
-];
+    }];
+
+// ==========================================
 
 // ==========================================
 // 2. CART LOGIC
@@ -1048,9 +1051,8 @@ let promoDiscount = 0;
 
 // Promo Code Database
 const PROMO_CODES = {
-    'FRESH10': { discount: 0.10, description: '10% off' },
-    'WELCOME15': { discount: 0.15, description: '15% off first order' },
-    'FIRSTFREE': { freeDelivery: true, description: 'FREE delivery on your first order!' }
+    'WELCOME10': { discount: 0.10, description: '10% off first order' },
+    'FRESH10': { discount: 0.10, description: '10% off' }
 };
 
 function updateCheckoutSummary() {
@@ -1058,20 +1060,13 @@ function updateCheckoutSummary() {
     const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
     let deliveryCost = 0.00;
 
-    // Check if FIRSTFREE promo is applied (free delivery override)
-    const firstFreeApplied = appliedPromoCode === 'FIRSTFREE' && PROMO_CODES['FIRSTFREE'];
-
     if (deliveryMethod === 'delivery_gauteng') {
-        if (firstFreeApplied) {
-            deliveryCost = 0.00;
-        } else {
-            deliveryCost = 200.00;
-        }
+        deliveryCost = 150.00;
     }
 
     // Calculate discount (percentage-based codes only)
     let discountAmount = 0;
-    if (appliedPromoCode && PROMO_CODES[appliedPromoCode] && !PROMO_CODES[appliedPromoCode].freeDelivery) {
+    if (appliedPromoCode && PROMO_CODES[appliedPromoCode]) {
         discountAmount = subtotal * PROMO_CODES[appliedPromoCode].discount;
         promoDiscount = discountAmount;
     }
@@ -1082,8 +1077,6 @@ function updateCheckoutSummary() {
 
     if (deliveryMethod === 'delivery_quote') {
         checkoutDelivery.textContent = "To Be Quoted";
-    } else if (firstFreeApplied && deliveryMethod === 'delivery_gauteng') {
-        checkoutDelivery.textContent = 'FREE 🎁';
     } else {
         checkoutDelivery.textContent = `R ${deliveryCost.toFixed(2)}`;
     }
@@ -1092,17 +1085,7 @@ function updateCheckoutSummary() {
     const existingDiscountRow = document.querySelector('.discount-row');
     if (existingDiscountRow) existingDiscountRow.remove();
 
-    if (firstFreeApplied && deliveryMethod === 'delivery_gauteng') {
-        const deliveryRow = document.querySelector('.checkout-summary .summary-row:nth-child(2)');
-        const discountRow = document.createElement('div');
-        discountRow.className = 'summary-row discount-row';
-        discountRow.style.color = '#2E7D32';
-        discountRow.innerHTML = `
-            <span>🎉 First Order Bonus:</span>
-            <span>Delivery FREE!</span>
-        `;
-        deliveryRow.after(discountRow);
-    } else if (discountAmount > 0) {
+    if (discountAmount > 0) {
         const deliveryRow = document.querySelector('.checkout-summary .summary-row:nth-child(2)');
         const discountRow = document.createElement('div');
         discountRow.className = 'summary-row discount-row';
@@ -1168,13 +1151,8 @@ checkoutForm.addEventListener('submit', (e) => {
         let deliveryLabel = "Collect";
 
         if (deliveryMethodValue === 'delivery_gauteng') {
-            if (appliedPromoCode === 'FIRSTFREE') {
-                deliveryCost = 0.00;
-                deliveryLabel = "Nationwide Delivery (FREE - First Order!)";
-            } else {
-                deliveryCost = 200.00;
-                deliveryLabel = "Nationwide Delivery";
-            }
+            deliveryCost = 150.00;
+            deliveryLabel = "Nationwide Delivery";
         } else if (deliveryMethodValue === 'delivery_quote') {
             deliveryCost = 0.00;
             deliveryLabel = "Outside Gauteng/Intl (Quote Required)";

@@ -112,7 +112,7 @@ function updateCheckoutSummary() {
     let deliveryCost = 0;
 
     if (deliveryMethod === 'delivery_gauteng') {
-        deliveryCost = 200.00;
+        deliveryCost = 150.00;
     }
 
     const total = subtotal + deliveryCost;
