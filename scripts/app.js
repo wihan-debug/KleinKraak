@@ -647,7 +647,7 @@ function renderProducts(containerId) {
             e.stopPropagation(); // Prevent modal opening
             const productId = btn.dataset.id;
             const product = products.find(p => p.id === productId);
-            if (product) {
+            if (product && product.inStock !== false) {
                 cart.add(product);
 
                 // CONVERSION OPTIMIZATION: Success feedback
@@ -679,6 +679,11 @@ function openProductDetails(product) {
     // Use the first image for the modal
     const mainImage = (product.images && product.images.length > 0) ? product.images[0] : product.image;
 
+    const isOutOfStock = product.inStock === false;
+    const addBtnHtml = isOutOfStock
+        ? `<button class="btn" id="modal-add-to-cart" disabled style="margin-top:20px; opacity:0.5; cursor:not-allowed; background:#999;">Out of Stock</button>`
+        : `<button class="btn btn-primary" id="modal-add-to-cart" style="margin-top:20px;">Add to Cart</button>`;
+
     modalProductContainer.innerHTML = `
         <img src="${mainImage}" alt="${product.name}" class="modal-product-image">
         <div class="modal-product-info">
@@ -687,16 +692,18 @@ function openProductDetails(product) {
             <p class="price" style="font-size: 1.5rem; color: var(--primary-color); margin: 10px 0;">R ${product.price.toFixed(2)}</p>
             <p class="description">${product.description}</p>
             ${ingredientsHtml}
-            <button class="btn btn-primary" id="modal-add-to-cart" style="margin-top:20px;">Add to Cart</button>
+            ${addBtnHtml}
         </div>
     `;
 
-    // Attach listener to new Add button
-    document.getElementById('modal-add-to-cart').addEventListener('click', () => {
-        cart.add(product);
-        closeProductDetails();
-        openCart();
-    });
+    // Attach listener to Add button only if product is in stock
+    if (!isOutOfStock) {
+        document.getElementById('modal-add-to-cart').addEventListener('click', () => {
+            cart.add(product);
+            closeProductDetails();
+            openCart();
+        });
+    }
 
     productModal.classList.add('active');
     overlay.classList.add('active');
