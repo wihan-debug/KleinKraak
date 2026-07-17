@@ -1,1006 +1,655 @@
 /**
- * KleinKraak Stock Control - Main Application
- * Handles UI interactions and view management
+ * KleinKraak Stock Control v2.0
+ * Single-file application: Firebase + SHA-256 PIN auth + full CRUD
+ * All data stored under `stockControl/` in Firebase Realtime Database.
  */
 
-// Application State
-const App = {
-    currentView: 'dashboard',
-    editingProductId: null,
+/* ============================================================
+   FIREBASE INIT
+============================================================ */
+const _fbConfig = {
+    apiKey:            "AIzaSyBLYTt1Wz4AcxDlQtnL374f0ntYuNG6C6U",
+    authDomain:        "kleinkraak-49f26.firebaseapp.com",
+    databaseURL:       "https://kleinkraak-49f26-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "kleinkraak-49f26",
+    storageBucket:     "kleinkraak-49f26.firebasestorage.app",
+    messagingSenderId: "82607492969",
+    appId:             "1:82607492969:web:73ab3ad041ca3cea0337f8"
+};
 
-    // Initialize application
-    async init() {
-        // Load data first
-        await Inventory.load();
-        await Movements.load();
-        await Materials.load();
-        await MaterialMovements.load();
+let _db;
+try {
+    firebase.initializeApp(_fbConfig);
+    _db = firebase.database();
+} catch (e) {
+    console.error("Firebase init failed:", e);
+}
 
+/* ============================================================
+   UTILITIES
+============================================================ */
+async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
+function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
 
-        // Then setup UI
-        this.setupNavigation();
-        this.setupModals();
-        this.setupForms();
-        this.setupSearch();
-        this.renderDashboard();
-        this.renderInventory();
-        this.renderMovements();
-        this.renderMaterials();
-        this.renderReports();
+function fmtDate(ts) {
+    const d = new Date(ts);
+    const date = d.toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' });
+    const time = d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+    return `${date} ${time}`;
+}
+
+function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ============================================================
+   DB — thin Firebase wrapper
+============================================================ */
+const DB = {
+    async get(path) {
+        const snap = await _db.ref(path).once('value');
+        return snap.exists() ? snap.val() : null;
     },
-
-    // Setup navigation
-    setupNavigation() {
-        const navItems = document.querySelectorAll('.nav-item');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        const menuBtn = document.getElementById('mobile-menu-btn');
-
-        // Toggle sidebar
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
-            });
-        }
-
-        // Close sidebar on overlay click
-        if (overlay) {
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-        }
-
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const view = item.dataset.view;
-                this.switchView(view);
-
-                // Close sidebar on mobile when item clicked
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                    if (overlay) overlay.classList.remove('active');
-                }
-            });
-        });
+    async set(path, val) {
+        await _db.ref(path).set(val);
     },
-
-    // Switch between views
-    switchView(viewName) {
-        // Update navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
-
-        // Update views
-        document.querySelectorAll('.view').forEach(view => {
-            view.classList.remove('active');
-        });
-        document.getElementById(`${viewName}-view`).classList.add('active');
-
-        // Update page title
-        const titles = {
-            dashboard: 'Dashboard',
-            inventory: 'Inventory',
-            movements: 'Stock Movements',
-            materials: 'Raw Materials',
-            'material-movements': 'Material Movements',
-            reports: 'Reports'
-        };
-        document.getElementById('page-title').textContent = titles[viewName];
-
-        this.currentView = viewName;
-
-        // Clear search when switching views
-        const searchInput = document.getElementById('global-search');
-        if (searchInput) {
-            searchInput.value = '';
-        }
-
-        // Update search placeholder
-        this.updateSearchPlaceholder();
-
-        // Refresh view data
-        switch (viewName) {
-            case 'dashboard':
-                this.renderDashboard();
-                break;
-            case 'inventory':
-                this.renderInventory();
-                break;
-            case 'movements':
-                this.renderMovements();
-                break;
-            case 'materials':
-                this.renderMaterials();
-                break;
-            case 'material-movements':
-                this.renderMaterialMovements();
-                break;
-            case 'reports':
-                this.renderReports();
-                break;
-            case 'invoices':
-                if (typeof Invoices !== 'undefined') Invoices.refreshProductSelect();
-                break;
-        }
+    async update(path, val) {
+        await _db.ref(path).update(val);
     },
-
-    // Setup modals
-    setupModals() {
-        const overlay = document.getElementById('overlay');
-
-        // Product modal
-        const productModal = document.getElementById('product-modal');
-        const closeProductModal = document.getElementById('close-product-modal');
-        const cancelProductBtn = document.getElementById('cancel-product-btn');
-
-        document.getElementById('add-product-btn').addEventListener('click', () => {
-            this.openProductModal();
-        });
-
-        closeProductModal.addEventListener('click', () => this.closeProductModal());
-        cancelProductBtn.addEventListener('click', () => this.closeProductModal());
-
-        // Movement modal
-        const movementModal = document.getElementById('movement-modal');
-        const closeMovementModal = document.getElementById('close-movement-modal');
-        const cancelMovementBtn = document.getElementById('cancel-movement-btn');
-
-        document.getElementById('add-incoming-btn').addEventListener('click', () => {
-            this.openMovementModal('in');
-        });
-
-        document.getElementById('add-outgoing-btn').addEventListener('click', () => {
-            this.openMovementModal('out');
-        });
-
-        closeMovementModal.addEventListener('click', () => this.closeMovementModal());
-        cancelMovementBtn.addEventListener('click', () => this.closeMovementModal());
-
-        // Material modal
-        const materialModal = document.getElementById('material-modal');
-        const closeMaterialModal = document.getElementById('close-material-modal');
-        const cancelMaterialBtn = document.getElementById('cancel-material-btn');
-
-        document.getElementById('add-material-btn').addEventListener('click', () => {
-            this.openMaterialModal();
-        });
-
-        closeMaterialModal.addEventListener('click', () => this.closeMaterialModal());
-        cancelMaterialBtn.addEventListener('click', () => this.closeMaterialModal());
-
-        // Material Movement modal
-        const materialMovementModal = document.getElementById('material-movement-modal');
-        const closeMaterialMovementModal = document.getElementById('close-material-movement-modal');
-        const cancelMaterialMovementBtn = document.getElementById('cancel-material-movement-btn');
-
-        document.getElementById('add-material-incoming-btn').addEventListener('click', () => {
-            this.openMaterialMovementModal('in');
-        });
-
-        document.getElementById('add-material-outgoing-btn').addEventListener('click', () => {
-            this.openMaterialMovementModal('out');
-        });
-
-        closeMaterialMovementModal.addEventListener('click', () => this.closeMaterialMovementModal());
-        cancelMaterialMovementBtn.addEventListener('click', () => this.closeMaterialMovementModal());
-
-        // Close on overlay click
-        overlay.addEventListener('click', () => {
-            this.closeProductModal();
-            this.closeMovementModal();
-            this.closeMaterialModal();
-            this.closeMaterialMovementModal();
-        });
+    async push(path, val) {
+        const ref = _db.ref(path).push();
+        await ref.set(val);
+        return ref.key;
     },
-
-    // Setup forms
-    setupForms() {
-        // Product form
-        const productForm = document.getElementById('product-form');
-        productForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleProductSubmit();
-        });
-
-        // Box to bottle conversion for product form
-        const productBoxesInput = document.getElementById('product-boxes');
-        const productQuantityInput = document.getElementById('product-quantity');
-        const productCategorySelect = document.getElementById('product-category');
-        const productBoxesGroup = productBoxesInput.closest('.form-group');
-
-        // Toggle boxes field based on category
-        productCategorySelect.addEventListener('change', (e) => {
-            const category = e.target.value;
-            if (category === 'Fresh') {
-                // Hide boxes field for Fresh products
-                productBoxesGroup.style.display = 'none';
-                productBoxesInput.value = '';
-                productQuantityInput.readOnly = false;
-                productQuantityInput.style.background = '';
-                productQuantityInput.value = '';
-            } else {
-                // Show boxes field for Pickled/Vinegar/Other
-                productBoxesGroup.style.display = 'block';
-                productQuantityInput.readOnly = true;
-                productQuantityInput.style.background = '#f5f5f5';
-            }
-        });
-
-        productBoxesInput.addEventListener('input', (e) => {
-            const boxes = parseInt(e.target.value) || 0;
-            const bottles = boxes * 12;
-            productQuantityInput.value = bottles;
-        });
-
-        // Movement form
-        const movementForm = document.getElementById('movement-form');
-        movementForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleMovementSubmit();
-        });
-
-        // Box to bottle conversion for movement form
-        const movementBoxesInput = document.getElementById('movement-boxes');
-        const movementQuantityInput = document.getElementById('movement-quantity');
-        const movementProductSelect = document.getElementById('movement-product');
-        const movementBoxesGroup = movementBoxesInput.closest('.form-group');
-
-        // Show/hide boxes field based on selected product's category
-        movementProductSelect.addEventListener('change', (e) => {
-            const productId = e.target.value;
-            if (!productId) {
-                movementBoxesGroup.style.display = 'none';
-                movementQuantityInput.readOnly = false;
-                movementQuantityInput.style.background = '';
-                return;
-            }
-
-            const product = Inventory.getById(productId);
-            if (product && product.category === 'Fresh') {
-                // Hide boxes field for Fresh products
-                movementBoxesGroup.style.display = 'none';
-                movementBoxesInput.value = '';
-                movementQuantityInput.readOnly = false;
-                movementQuantityInput.style.background = '';
-                movementQuantityInput.value = '';
-            } else {
-                // Show boxes field for Pickled/Vinegar/Other
-                movementBoxesGroup.style.display = 'block';
-                movementQuantityInput.readOnly = true;
-                movementQuantityInput.style.background = '#f5f5f5';
-            }
-        });
-
-        movementBoxesInput.addEventListener('input', (e) => {
-            const boxes = parseInt(e.target.value) || 0;
-            const bottles = boxes * 12;
-            movementQuantityInput.value = bottles;
-        });
-
-        // Material form
-        const materialForm = document.getElementById('material-form');
-        materialForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleMaterialSubmit();
-        });
-
-        // Box conversion for glass bottles
-        const materialNameInput = document.getElementById('material-name');
-        const materialBoxesInput = document.getElementById('material-boxes');
-        const materialQuantityInput = document.getElementById('material-quantity');
-        const materialBoxesGroup = document.getElementById('material-boxes-group');
-        const materialQuantityHint = document.getElementById('material-quantity-hint');
-
-        // Show/hide boxes field based on material name
-        materialNameInput.addEventListener('input', (e) => {
-            const name = e.target.value.toLowerCase();
-            if (name.includes('glass bottle') || name.includes('bottle') && !name.includes('lid')) {
-                materialBoxesGroup.style.display = 'block';
-                materialQuantityHint.style.display = 'block';
-                materialQuantityInput.readOnly = true;
-                materialQuantityInput.style.background = '#f5f5f5';
-            } else {
-                materialBoxesGroup.style.display = 'none';
-                materialQuantityHint.style.display = 'none';
-                materialQuantityInput.readOnly = false;
-                materialQuantityInput.style.background = '';
-            }
-        });
-
-        // Box to pieces conversion for glass bottles
-        materialBoxesInput.addEventListener('input', (e) => {
-            const boxes = parseInt(e.target.value) || 0;
-            const pieces = boxes * 12;
-            materialQuantityInput.value = pieces;
-        });
-
-        // Category filter
-        const categoryFilter = document.getElementById('category-filter');
-        categoryFilter.addEventListener('change', () => {
-            this.renderInventory();
-        });
-
-        // Export buttons
-        document.getElementById('export-csv-btn').addEventListener('click', () => {
-            Reports.exportToCSV();
-        });
-
-        document.getElementById('print-report-btn').addEventListener('click', () => {
-            Reports.printReport();
-        });
-
-        // Material Movement form
-        const materialMovementForm = document.getElementById('material-movement-form');
-        materialMovementForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleMaterialMovementSubmit();
-        });
-
-        // Update unit label when material is selected
-        const materialMovementMaterialSelect = document.getElementById('material-movement-material');
-        materialMovementMaterialSelect.addEventListener('change', (e) => {
-            const materialId = e.target.value;
-            if (!materialId) return;
-
-            const material = Materials.getById(materialId);
-            if (material) {
-                const unitLabel = document.getElementById('material-movement-unit-label');
-                unitLabel.textContent = `Enter quantity in ${material.unit}`;
-            }
-        });
+    async remove(path) {
+        await _db.ref(path).remove();
     },
-
-    // Setup search
-    setupSearch() {
-        const searchInput = document.getElementById('global-search');
-        const searchBox = searchInput.closest('.search-box');
-        const searchIcon = searchBox.querySelector('svg');
-
-        // Mobile search toggle
-        const isMobile = () => window.innerWidth <= 768;
-
-        // Add mobile-hidden class by default on mobile
-        const updateSearchBoxState = () => {
-            if (isMobile()) {
-                if (!searchBox.classList.contains('mobile-active')) {
-                    searchBox.classList.add('mobile-hidden');
-                }
-            } else {
-                searchBox.classList.remove('mobile-hidden', 'mobile-active');
-            }
-        };
-
-        // Initialize
-        updateSearchBoxState();
-        window.addEventListener('resize', updateSearchBoxState);
-
-        // Click on search icon to toggle on mobile
-        searchIcon.addEventListener('click', (e) => {
-            if (isMobile() && searchBox.classList.contains('mobile-hidden')) {
-                e.stopPropagation();
-                searchBox.classList.remove('mobile-hidden');
-                searchBox.classList.add('mobile-active');
-                searchInput.focus();
-            }
-        });
-
-        // Click outside to close on mobile
-        document.addEventListener('click', (e) => {
-            if (isMobile() && searchBox.classList.contains('mobile-active')) {
-                if (!searchBox.contains(e.target)) {
-                    searchBox.classList.remove('mobile-active');
-                    searchBox.classList.add('mobile-hidden');
-                    searchInput.value = '';
-                    // Re-render current view to clear search
-                    this.refreshCurrentView();
-                }
-            }
-        });
-
-        // Prevent clicks inside search box from closing it
-        searchBox.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        // Handle search input
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            this.performSearch(query);
-        });
-
-        // Update placeholder based on current view
-        this.updateSearchPlaceholder();
-    },
-
-    // Perform search across different views
-    performSearch(query) {
-        switch (this.currentView) {
-            case 'inventory':
-                this.renderInventory(query);
-                break;
-            case 'materials':
-                this.renderMaterials(query);
-                break;
-            case 'movements':
-                this.renderMovements(query);
-                break;
-            case 'material-movements':
-                this.renderMaterialMovements(query);
-                break;
-            default:
-                // Dashboard and reports don't have search
-                break;
-        }
-    },
-
-    // Update search placeholder based on view
-    updateSearchPlaceholder() {
-        const searchInput = document.getElementById('global-search');
-        const placeholders = {
-            dashboard: 'Search...',
-            inventory: 'Search products...',
-            materials: 'Search materials...',
-            movements: 'Search movements...',
-            'material-movements': 'Search material movements...',
-            reports: 'Search...'
-        };
-        searchInput.placeholder = placeholders[this.currentView] || 'Search...';
-    },
-
-    // Refresh current view
-    refreshCurrentView() {
-        switch (this.currentView) {
-            case 'dashboard':
-                this.renderDashboard();
-                break;
-            case 'inventory':
-                this.renderInventory();
-                break;
-            case 'movements':
-                this.renderMovements();
-                break;
-            case 'materials':
-                this.renderMaterials();
-                break;
-            case 'reports':
-                this.renderReports();
-                break;
-            case 'invoices':
-                if (typeof Invoices !== 'undefined') Invoices.refreshProductSelect();
-                break;
-        }
-    },
-
-    // Open product modal
-    openProductModal(productId = null) {
-        this.editingProductId = productId;
-        const modal = document.getElementById('product-modal');
-        const title = document.getElementById('product-modal-title');
-        const form = document.getElementById('product-form');
-        const boxesInput = document.getElementById('product-boxes');
-        const boxesGroup = boxesInput.closest('.form-group');
-        const quantityInput = document.getElementById('product-quantity');
-
-        form.reset();
-
-        if (productId) {
-            // Edit mode
-            title.textContent = 'Edit Product';
-            const product = Inventory.getById(productId);
-            if (product) {
-                document.getElementById('product-name').value = product.name;
-                document.getElementById('product-category').value = product.category;
-
-                // Check if Fresh category
-                if (product.category === 'Fresh') {
-                    // Hide boxes field for Fresh products
-                    boxesGroup.style.display = 'none';
-                    quantityInput.readOnly = false;
-                    quantityInput.style.background = '';
-                    document.getElementById('product-quantity').value = product.quantity;
-                } else {
-                    // Show boxes field for other categories
-                    boxesGroup.style.display = 'block';
-                    quantityInput.readOnly = true;
-                    quantityInput.style.background = '#f5f5f5';
-
-                    // Calculate boxes from bottles
-                    const boxes = Math.floor(product.quantity / 12);
-                    const remainingBottles = product.quantity % 12;
-
-                    if (remainingBottles === 0 && boxes > 0) {
-                        // Perfect box count
-                        boxesInput.value = boxes;
-                    } else {
-                        // Has remaining bottles, clear boxes field
-                        boxesInput.value = '';
-                    }
-
-                    document.getElementById('product-quantity').value = product.quantity;
-                }
-
-                document.getElementById('product-reorder').value = product.reorderLevel;
-                document.getElementById('product-price').value = product.price;
-                document.getElementById('product-supplier').value = product.supplier || '';
-                document.getElementById('product-notes').value = product.notes || '';
-            }
-        } else {
-            // Add mode
-            title.textContent = 'Add Product';
-            // Default: hide boxes field until category is selected
-            boxesGroup.style.display = 'none';
-            quantityInput.readOnly = false;
-            quantityInput.style.background = '';
-        }
-
-        modal.classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-    },
-
-    // Close product modal
-    closeProductModal() {
-        document.getElementById('product-modal').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-        this.editingProductId = null;
-    },
-
-    // Handle product form submit
-    handleProductSubmit() {
-        const formData = {
-            name: document.getElementById('product-name').value,
-            category: document.getElementById('product-category').value,
-            quantity: document.getElementById('product-quantity').value,
-            reorderLevel: document.getElementById('product-reorder').value,
-            price: document.getElementById('product-price').value,
-            supplier: document.getElementById('product-supplier').value,
-            notes: document.getElementById('product-notes').value
-        };
-
-        if (this.editingProductId) {
-            Inventory.update(this.editingProductId, formData);
-        } else {
-            Inventory.add(formData);
-        }
-
-        this.closeProductModal();
-        this.renderInventory();
-        this.renderDashboard();
-    },
-
-    // Open movement modal
-    openMovementModal(type) {
-        const modal = document.getElementById('movement-modal');
-        const title = document.getElementById('movement-modal-title');
-        const form = document.getElementById('movement-form');
-        const productSelect = document.getElementById('movement-product');
-
-        form.reset();
-        document.getElementById('movement-type').value = type;
-
-        title.textContent = type === 'in' ? 'Record Stock In' : 'Record Stock Out';
-
-        // Populate product dropdown
-        const products = Inventory.getAll();
-        productSelect.innerHTML = '<option value="">Select Product</option>';
-        products.forEach(p => {
-            productSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-        });
-
-        // Set current date/time
-        const now = new Date();
-        const dateString = now.toISOString().slice(0, 16);
-        document.getElementById('movement-date').value = dateString;
-
-        modal.classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-    },
-
-    // Close movement modal
-    closeMovementModal() {
-        document.getElementById('movement-modal').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-    },
-
-    // Handle movement form submit
-    handleMovementSubmit() {
-        const formData = {
-            productId: document.getElementById('movement-product').value,
-            type: document.getElementById('movement-type').value,
-            quantity: document.getElementById('movement-quantity').value,
-            reason: document.getElementById('movement-reason').value,
-            date: document.getElementById('movement-date').value,
-            notes: document.getElementById('movement-notes').value
-        };
-
-        Movements.add(formData);
-        this.closeMovementModal();
-        this.renderMovements();
-        this.renderInventory();
-        this.renderDashboard();
-    },
-
-    // Render dashboard
-    renderDashboard() {
-        const products = Inventory.getAll();
-        const lowStock = Inventory.getLowStock();
-        const totalValue = Inventory.getTotalValue();
-        const totalSales = Movements.getTotalSales();
-        const recentMovements = Movements.getRecent(5);
-
-        // Update metrics
-        document.getElementById('total-products').textContent = products.length;
-        document.getElementById('total-value').textContent = `R ${totalValue.toFixed(2)}`;
-        document.getElementById('total-sales').textContent = `R ${totalSales.toFixed(2)}`;
-        document.getElementById('low-stock-count').textContent = lowStock.length;
-        document.getElementById('recent-movements-count').textContent = recentMovements.length;
-
-        // Render low stock items
-        const lowStockList = document.getElementById('low-stock-list');
-        if (lowStock.length === 0) {
-            lowStockList.innerHTML = '<p class="empty-state">No low stock items</p>';
-        } else {
-            lowStockList.innerHTML = lowStock.map(p => {
-                const isCritical = p.quantity === 0;
-                return `
-                    <div class="low-stock-item ${isCritical ? 'critical' : ''}">
-                        <div>
-                            <div class="low-stock-name">${p.name}</div>
-                            <div class="low-stock-qty">Current: ${p.quantity} | Reorder: ${p.reorderLevel}</div>
-                        </div>
-                        <span class="badge ${Inventory.getStatusBadge(p)}">${Inventory.getStatusText(p)}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Render recent activity
-        const activityList = document.getElementById('recent-activity');
-        if (recentMovements.length === 0) {
-            activityList.innerHTML = '<p class="empty-state">No recent activity</p>';
-        } else {
-            activityList.innerHTML = recentMovements.map(m => `
-                <div class="activity-item">
-                    <div class="activity-icon ${m.type}">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            ${m.type === 'in'
-                    ? '<line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline>'
-                    : '<line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline>'
-                }
-                        </svg>
-                    </div>
-                    <div class="activity-details">
-                        <div class="activity-text">
-                            <strong>${m.productName}</strong> - ${m.type === 'in' ? '+' : '-'}${m.quantity} units
-                        </div>
-                        <div class="activity-time">${Movements.formatDate(m.date)}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-    },
-
-    // Render inventory
-    renderInventory(searchQuery = '') {
-        const categoryFilter = document.getElementById('category-filter').value;
-        let products = Inventory.getAll();
-
-        // Apply category filter
-        if (categoryFilter) {
-            products = Inventory.filterByCategory(categoryFilter);
-        }
-
-        // Apply search
-        if (searchQuery) {
-            products = Inventory.search(searchQuery);
-        }
-
-        const tbody = document.getElementById('inventory-tbody');
-
-        if (products.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No products found.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = products.map(p => {
-            const stockValue = (p.quantity * p.price).toFixed(2);
-            return `
-                <tr>
-                    <td><strong>${p.name}</strong></td>
-                    <td>${p.category}</td>
-                    <td>${p.quantity}</td>
-                    <td>${p.reorderLevel}</td>
-                    <td>R ${p.price.toFixed(2)}</td>
-                    <td>R ${stockValue}</td>
-                    <td><span class="badge ${Inventory.getStatusBadge(p)}">${Inventory.getStatusText(p)}</span></td>
-                    <td>
-                        <button class="action-btn action-btn-edit" onclick="App.openProductModal('${p.id}')">Edit</button>
-                        <button class="action-btn action-btn-delete" onclick="App.deleteProduct('${p.id}')">Delete</button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    },
-
-    // Delete product
-    deleteProduct(id) {
-        const product = Inventory.getById(id);
-        if (!product) return;
-
-        if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
-            Inventory.delete(id);
-            this.renderInventory();
-            this.renderDashboard();
-        }
-    },
-
-    // Render movements
-    renderMovements(searchQuery = '') {
-        let movements = Movements.getAll();
-        const tbody = document.getElementById('movements-tbody');
-
-        // Apply search filter
-        if (searchQuery) {
-            movements = movements.filter(m =>
-                m.productName.toLowerCase().includes(searchQuery) ||
-                m.reason.toLowerCase().includes(searchQuery) ||
-                (m.notes && m.notes.toLowerCase().includes(searchQuery))
-            );
-        }
-
-        if (movements.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No stock movements found.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = movements.map(m => `
-            <tr>
-                <td>${Movements.formatDateFull(m.date)}</td>
-                <td><strong>${m.productName}</strong></td>
-                <td><span class="badge badge-${m.type}">${m.type === 'in' ? 'Stock In' : 'Stock Out'}</span></td>
-                <td>${m.type === 'in' ? '+' : '-'}${m.quantity}</td>
-                <td>${m.reason}</td>
-                <td>${m.notes || '-'}</td>
-            </tr>
-        `).join('');
-    },
-
-    // Render reports
-    renderReports() {
-        Reports.renderStockSummary();
-        Reports.renderMovementSummary();
-    },
-
-    // Open material modal
-    openMaterialModal(materialId = null) {
-        this.editingMaterialId = materialId;
-        const modal = document.getElementById('material-modal');
-        const title = document.getElementById('material-modal-title');
-        const form = document.getElementById('material-form');
-        const boxesGroup = document.getElementById('material-boxes-group');
-        const quantityHint = document.getElementById('material-quantity-hint');
-        const quantityInput = document.getElementById('material-quantity');
-
-        form.reset();
-        boxesGroup.style.display = 'none';
-        quantityHint.style.display = 'none';
-        quantityInput.readOnly = false;
-        quantityInput.style.background = '';
-
-        if (materialId) {
-            // Edit mode
-            title.textContent = 'Edit Raw Material';
-            const material = Materials.getById(materialId);
-            if (material) {
-                document.getElementById('material-name').value = material.name;
-                document.getElementById('material-category').value = material.category;
-
-                // Check if this is glass bottles
-                const isGlassBottles = material.name.toLowerCase().includes('glass bottle');
-                if (isGlassBottles && material.unit === 'pieces') {
-                    boxesGroup.style.display = 'block';
-                    quantityHint.style.display = 'block';
-                    quantityInput.readOnly = true;
-                    quantityInput.style.background = '#f5f5f5';
-
-                    // Calculate boxes from pieces
-                    const boxes = Math.floor(material.quantity / 12);
-                    if (material.quantity % 12 === 0 && boxes > 0) {
-                        document.getElementById('material-boxes').value = boxes;
-                    }
-                }
-
-                document.getElementById('material-quantity').value = material.quantity;
-                document.getElementById('material-unit').value = material.unit;
-                document.getElementById('material-cost').value = material.unitCost;
-                document.getElementById('material-supplier').value = material.supplier || '';
-                document.getElementById('material-notes').value = material.notes || '';
-            }
-        } else {
-            // Add mode
-            title.textContent = 'Add Raw Material';
-        }
-
-        modal.classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-    },
-
-    // Close material modal
-    closeMaterialModal() {
-        document.getElementById('material-modal').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-        this.editingMaterialId = null;
-    },
-
-    // Handle material form submit
-    handleMaterialSubmit() {
-        const formData = {
-            name: document.getElementById('material-name').value,
-            category: document.getElementById('material-category').value,
-            quantity: document.getElementById('material-quantity').value,
-            unit: document.getElementById('material-unit').value,
-            unitCost: document.getElementById('material-cost').value,
-            supplier: document.getElementById('material-supplier').value,
-            notes: document.getElementById('material-notes').value
-        };
-
-        if (this.editingMaterialId) {
-            Materials.update(this.editingMaterialId, formData);
-        } else {
-            Materials.add(formData);
-        }
-
-        this.closeMaterialModal();
-        this.renderMaterials();
-    },
-
-    // Render materials
-    renderMaterials(searchQuery = '') {
-        let materials = Materials.getAll();
-        const tbody = document.getElementById('materials-tbody');
-
-        // Apply search filter
-        if (searchQuery) {
-            materials = materials.filter(m =>
-                m.name.toLowerCase().includes(searchQuery) ||
-                m.category.toLowerCase().includes(searchQuery) ||
-                (m.supplier && m.supplier.toLowerCase().includes(searchQuery))
-            );
-        }
-
-        if (materials.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No materials found.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = materials.map(m => {
-            const totalValue = (m.quantity * m.unitCost).toFixed(2);
-            return `
-                <tr>
-                    <td><strong>${m.name}</strong></td>
-                    <td>${m.category}</td>
-                    <td>${m.quantity}</td>
-                    <td>${m.unit}</td>
-                    <td>R ${m.unitCost.toFixed(2)}</td>
-                    <td>R ${totalValue}</td>
-                    <td>${m.supplier || '-'}</td>
-                    <td>
-                        <button class="action-btn action-btn-edit" onclick="App.openMaterialModal('${m.id}')">Edit</button>
-                        <button class="action-btn action-btn-delete" onclick="App.deleteMaterial('${m.id}')">Delete</button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    },
-
-    // Delete material
-    deleteMaterial(id) {
-        const material = Materials.getById(id);
-        if (!material) return;
-
-        if (confirm(`Are you sure you want to delete "${material.name}"?`)) {
-            Materials.delete(id);
-            this.renderMaterials();
-        }
-    },
-
-    // Open material movement modal
-    openMaterialMovementModal(type) {
-        const modal = document.getElementById('material-movement-modal');
-        const title = document.getElementById('material-movement-modal-title');
-        const form = document.getElementById('material-movement-form');
-        const materialSelect = document.getElementById('material-movement-material');
-
-        form.reset();
-        document.getElementById('material-movement-type').value = type;
-
-        title.textContent = type === 'in' ? 'Record Material Stock In' : 'Record Material Stock Out';
-
-        // Populate material dropdown
-        const materials = Materials.getAll();
-        materialSelect.innerHTML = '<option value="">Select Material</option>';
-        materials.forEach(m => {
-            materialSelect.innerHTML += `<option value="${m.id}">${m.name} (${m.unit})</option>`;
-        });
-
-        // Set current date/time
-        const now = new Date();
-        const dateString = now.toISOString().slice(0, 16);
-        document.getElementById('material-movement-date').value = dateString;
-
-        modal.classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-    },
-
-    // Close material movement modal
-    closeMaterialMovementModal() {
-        document.getElementById('material-movement-modal').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-    },
-
-    // Handle material movement form submit
-    handleMaterialMovementSubmit() {
-        const formData = {
-            materialId: document.getElementById('material-movement-material').value,
-            type: document.getElementById('material-movement-type').value,
-            quantity: document.getElementById('material-movement-quantity').value,
-            reason: document.getElementById('material-movement-reason').value,
-            date: document.getElementById('material-movement-date').value,
-            notes: document.getElementById('material-movement-notes').value
-        };
-
-        MaterialMovements.add(formData);
-        this.closeMaterialMovementModal();
-        this.renderMaterialMovements();
-        this.renderMaterials();
-    },
-
-    // Render material movements
-    renderMaterialMovements(searchQuery = '') {
-        let movements = MaterialMovements.getAll();
-        const tbody = document.getElementById('material-movements-tbody');
-
-        // Apply search filter
-        if (searchQuery) {
-            movements = movements.filter(m =>
-                m.materialName.toLowerCase().includes(searchQuery) ||
-                m.reason.toLowerCase().includes(searchQuery) ||
-                (m.notes && m.notes.toLowerCase().includes(searchQuery))
-            );
-        }
-
-        if (movements.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No material movements recorded yet.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = movements.map(m => `
-            <tr>
-                <td>${MaterialMovements.formatDateFull(m.date)}</td>
-                <td><strong>${m.materialName}</strong></td>
-                <td><span class="badge badge-${m.type}">${m.type === 'in' ? 'Stock In' : 'Stock Out'}</span></td>
-                <td>${m.type === 'in' ? '+' : '-'}${m.quantity} ${m.unit}</td>
-                <td>${m.reason}</td>
-                <td>${m.notes || '-'}</td>
-            </tr>
-        `).join('');
+    listen(path, cb) {
+        _db.ref(path).on('value', snap => cb(snap.exists() ? snap.val() : null));
     }
 };
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
-    // Wait for Firebase to initialize first
-    if (window.Storage) {
-        await App.init();
-    } else {
-        // If Storage isn't ready yet, wait a bit
-        setTimeout(async () => {
-            await App.init();
-        }, 500);
+/* ============================================================
+   APPLICATION STATE
+============================================================ */
+const State = {
+    pinHash:           null,
+    defaultThreshold:  5,
+    pinBuffer:         '',
+    unlocked:          false,
+    products:          {},   // { [id]: { name, size, category, stock, threshold, createdAt } }
+    movements:         {}    // { [id]: { productId, productName, qty, direction, reason, note, timestamp, adjustedStock } }
+};
+
+/* ============================================================
+   APP
+============================================================ */
+const App = {
+
+    /* ----------------------------------------------------------
+       BOOT
+    ---------------------------------------------------------- */
+    async init() {
+        // Dashboard date
+        const el = document.getElementById('dashboard-date');
+        if (el) el.textContent = new Date().toLocaleDateString('en-ZA', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+        });
+
+        // Keyboard PIN support
+        document.addEventListener('keydown', e => {
+            if (State.unlocked) return;
+            if (e.key >= '0' && e.key <= '9') this.pinPress(e.key);
+            if (e.key === 'Backspace') this.pinBackspace();
+        });
+
+        // Navigation
+        this._setupNav();
+
+        // Load / initialise PIN then show PIN screen
+        await this._initPin();
+    },
+
+    /* ----------------------------------------------------------
+       PIN MANAGEMENT
+    ---------------------------------------------------------- */
+    async _initPin() {
+        let stored = await DB.get('stockControl/settings/pin');
+        if (!stored) {
+            // First run — seed with the default PIN 2907
+            stored = await sha256('2907');
+            await DB.set('stockControl/settings/pin', stored);
+        }
+        State.pinHash = stored;
+
+        // Load threshold
+        const thr = await DB.get('stockControl/settings/defaultThreshold');
+        if (thr !== null) {
+            State.defaultThreshold = thr;
+            const el = document.getElementById('settings-threshold');
+            if (el) el.value = thr;
+        }
+    },
+
+    pinPress(digit) {
+        if (State.pinBuffer.length >= 4) return;
+        State.pinBuffer += digit;
+        this._refreshDots();
+        if (State.pinBuffer.length === 4) setTimeout(() => this._checkPin(), 180);
+    },
+
+    pinBackspace() {
+        State.pinBuffer = State.pinBuffer.slice(0, -1);
+        this._refreshDots();
+        document.getElementById('pin-error').textContent = '';
+    },
+
+    _refreshDots() {
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`dot-${i}`)?.classList.toggle('filled', i < State.pinBuffer.length);
+        }
+    },
+
+    async _checkPin() {
+        const hash = await sha256(State.pinBuffer);
+        if (hash === State.pinHash) {
+            this._unlock();
+        } else {
+            const card = document.getElementById('pin-card');
+            card.classList.add('shake');
+            setTimeout(() => card.classList.remove('shake'), 500);
+            document.getElementById('pin-error').textContent = 'Incorrect PIN — try again.';
+            State.pinBuffer = '';
+            this._refreshDots();
+        }
+    },
+
+    _unlock() {
+        State.unlocked = true;
+        const pinScreen = document.getElementById('pin-screen');
+        const mainApp   = document.getElementById('main-app');
+        pinScreen.classList.add('unlocking');
+        setTimeout(() => {
+            pinScreen.style.display = 'none';
+            mainApp.style.display   = 'flex';
+            this._startListeners();
+        }, 480);
+    },
+
+    lock() {
+        State.unlocked    = false;
+        State.pinBuffer   = '';
+        this._refreshDots();
+        document.getElementById('pin-error').textContent = '';
+        const ps = document.getElementById('pin-screen');
+        ps.style.display = 'flex';
+        ps.classList.remove('unlocking');
+        document.getElementById('main-app').style.display = 'none';
+    },
+
+    /* ----------------------------------------------------------
+       REAL-TIME LISTENERS
+    ---------------------------------------------------------- */
+    _startListeners() {
+        DB.listen('stockControl/products', data => {
+            State.products = data || {};
+            this.renderDashboard();
+            this.renderProducts();
+        });
+        DB.listen('stockControl/movements', data => {
+            State.movements = data || {};
+            this.renderLog();
+        });
+    },
+
+    /* ----------------------------------------------------------
+       NAVIGATION
+    ---------------------------------------------------------- */
+    _setupNav() {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', e => {
+                e.preventDefault();
+                this.switchView(item.dataset.view);
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebar-overlay').classList.remove('open');
+            });
+        });
+
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        menuBtn?.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+    },
+
+    switchView(name) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelector(`[data-view="${name}"]`)?.classList.add('active');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(`view-${name}`)?.classList.add('active');
+    },
+
+    /* ----------------------------------------------------------
+       DASHBOARD
+    ---------------------------------------------------------- */
+    renderDashboard() {
+        const entries  = Object.entries(State.products).map(([id, p]) => ({ ...p, _id: id }));
+        const total    = entries.length;
+        const outList  = entries.filter(p => (p.stock || 0) <= 0);
+        const lowList  = entries.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= (p.threshold ?? State.defaultThreshold));
+        const okList   = entries.filter(p => (p.stock || 0) > (p.threshold ?? State.defaultThreshold));
+
+        // Stat cards
+        const sg = document.getElementById('stat-grid');
+        if (sg) sg.innerHTML = `
+            <div class="stat-card blue">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value">${total}</div>
+                <div class="stat-sub">product lines</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-label">In Stock</div>
+                <div class="stat-value">${okList.length}</div>
+                <div class="stat-sub">above threshold</div>
+            </div>
+            <div class="stat-card amber">
+                <div class="stat-label">Low Stock</div>
+                <div class="stat-value">${lowList.length}</div>
+                <div class="stat-sub">at or near alert</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-label">Out of Stock</div>
+                <div class="stat-value">${outList.length}</div>
+                <div class="stat-sub">need restocking</div>
+            </div>
+        `;
+
+        // Product cards — sort: out first, low next, ok last; then alphabetical
+        entries.sort((a, b) => {
+            const rank = p => (p.stock || 0) <= 0 ? 0 : (p.stock || 0) <= (p.threshold ?? State.defaultThreshold) ? 1 : 2;
+            const diff = rank(a) - rank(b);
+            return diff !== 0 ? diff : (a.name || '').localeCompare(b.name || '');
+        });
+
+        const grid = document.getElementById('dashboard-grid');
+        if (!grid) return;
+
+        if (entries.length === 0) {
+            grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+                <div class="empty-icon">📦</div>
+                <p>No products yet.<br><a href="#" onclick="App.switchView('products')">Add your first product →</a></p>
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = entries.map(p => {
+            const stock   = p.stock || 0;
+            const thr     = p.threshold ?? State.defaultThreshold;
+            const isOut   = stock <= 0;
+            const isLow   = !isOut && stock <= thr;
+            const cls     = isOut ? 'out' : isLow ? 'low' : '';
+            const badgeCls = isOut ? 'badge-out' : isLow ? 'badge-low' : 'badge-ok';
+            const badgeTxt = isOut ? 'Out of Stock' : isLow ? 'Low Stock' : 'In Stock';
+            return `
+            <div class="product-card ${cls}">
+                <span class="stock-badge ${badgeCls}">${badgeTxt}</span>
+                <div class="product-card-name">${esc(p.name)}</div>
+                <div class="product-card-meta">${esc(p.size || '')}${p.size && p.category ? ' · ' : ''}${esc(p.category || '')}</div>
+                <div class="product-card-stock">${stock}</div>
+                <div class="product-card-unit">bottles / units</div>
+                <div class="quick-adjust">
+                    <button class="quick-btn minus" onclick="App.quickAdjust('${p._id}', -1)" title="Remove 1">−</button>
+                    <button class="quick-btn plus"  onclick="App.quickAdjust('${p._id}',  1)" title="Add 1">+</button>
+                </div>
+            </div>`;
+        }).join('');
+    },
+
+    /* ----------------------------------------------------------
+       PRODUCTS VIEW
+    ---------------------------------------------------------- */
+    renderProducts() {
+        const tbody   = document.getElementById('products-tbody');
+        const emptyEl = document.getElementById('products-empty');
+        if (!tbody) return;
+
+        let list = Object.entries(State.products).map(([id, p]) => ({ ...p, _id: id }));
+
+        const search = (document.getElementById('product-search')?.value || '').toLowerCase();
+        const cat    = document.getElementById('product-cat-filter')?.value || '';
+
+        if (search) list = list.filter(p =>
+            (p.name  || '').toLowerCase().includes(search) ||
+            (p.size  || '').toLowerCase().includes(search)
+        );
+        if (cat) list = list.filter(p => p.category === cat);
+
+        list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+        if (list.length === 0) {
+            tbody.innerHTML = '';
+            emptyEl.style.display = 'block';
+            return;
+        }
+        emptyEl.style.display = 'none';
+
+        tbody.innerHTML = list.map(p => {
+            const stock  = p.stock || 0;
+            const thr    = p.threshold ?? State.defaultThreshold;
+            const isOut  = stock <= 0;
+            const isLow  = !isOut && stock <= thr;
+            const sCls   = isOut ? 'out' : isLow ? 'low' : 'ok';
+            return `<tr>
+                <td>
+                    <div style="font-weight:700;font-size:0.9rem">${esc(p.name)}</div>
+                    <div style="font-size:0.76rem;color:var(--text-muted);margin-top:2px">${esc(p.size || '—')}</div>
+                </td>
+                <td><span class="cat-pill">${esc(p.category || 'Other')}</span></td>
+                <td style="color:var(--text-muted);font-size:0.88rem">${thr}</td>
+                <td><span class="stock-cell ${sCls}">${stock}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn btn-adjust" onclick="App.openMovementModal('${p._id}')">Adjust</button>
+                        <button class="action-btn btn-edit"   onclick="App.openProductModal('${p._id}')">Edit</button>
+                        <button class="action-btn btn-delete" onclick="App.deleteProduct('${p._id}')">Delete</button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+    },
+
+    /* ----------------------------------------------------------
+       LOG VIEW
+    ---------------------------------------------------------- */
+    renderLog() {
+        const tbody   = document.getElementById('log-tbody');
+        const emptyEl = document.getElementById('log-empty');
+        if (!tbody) return;
+
+        let list = Object.entries(State.movements).map(([id, m]) => ({ ...m, _id: id }));
+
+        const search     = (document.getElementById('log-search')?.value     || '').toLowerCase();
+        const dirFilter  = document.getElementById('log-dir-filter')?.value  || '';
+        const dateFilter = document.getElementById('log-date-filter')?.value || '';
+
+        if (search) list = list.filter(m =>
+            (m.productName || '').toLowerCase().includes(search) ||
+            (m.reason || '').toLowerCase().includes(search) ||
+            (m.note   || '').toLowerCase().includes(search)
+        );
+        if (dirFilter) list = list.filter(m => m.direction === dirFilter);
+        if (dateFilter) list = list.filter(m => {
+            const d  = new Date(m.timestamp);
+            const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            return ds === dateFilter;
+        });
+
+        list.sort((a, b) => b.timestamp - a.timestamp);
+
+        if (list.length === 0) {
+            tbody.innerHTML = '';
+            emptyEl.style.display = 'block';
+            return;
+        }
+        emptyEl.style.display = 'none';
+
+        tbody.innerHTML = list.map(m => {
+            const sign = m.direction === 'in' ? '+' : '−';
+            const note = m.note ? `<br><span style="color:var(--text-muted);font-size:0.76rem">${esc(m.note)}</span>` : '';
+            return `<tr>
+                <td style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap">${fmtDate(m.timestamp)}</td>
+                <td style="font-weight:600;font-size:0.88rem">${esc(m.productName || '—')}</td>
+                <td><span class="dir-badge ${m.direction}">${m.direction === 'in' ? '▲ In' : '▼ Out'}</span></td>
+                <td><span class="qty-change ${m.direction}">${sign}${m.qty}</span></td>
+                <td style="font-size:0.84rem">${esc(m.reason || '—')}${note}</td>
+                <td style="font-weight:700">${m.adjustedStock !== undefined ? m.adjustedStock : '—'}</td>
+            </tr>`;
+        }).join('');
+    },
+
+    /* ----------------------------------------------------------
+       PRODUCT MODAL
+    ---------------------------------------------------------- */
+    openProductModal(productId = null) {
+        const overlay = document.getElementById('product-modal-overlay');
+        const title   = document.getElementById('product-modal-title');
+        const osr     = document.getElementById('opening-stock-row');
+        const etr     = document.getElementById('edit-threshold-row');
+
+        // Reset
+        document.getElementById('product-edit-id').value       = '';
+        document.getElementById('product-name').value          = '';
+        document.getElementById('product-size').value          = '';
+        document.getElementById('product-category').value      = 'Pickled';
+        document.getElementById('product-opening-stock').value = '0';
+        document.getElementById('product-threshold').value     = String(State.defaultThreshold);
+
+        if (productId && State.products[productId]) {
+            const p = State.products[productId];
+            title.textContent = 'Edit Product';
+            document.getElementById('product-edit-id').value           = productId;
+            document.getElementById('product-name').value              = p.name      || '';
+            document.getElementById('product-size').value              = p.size      || '';
+            document.getElementById('product-category').value          = p.category  || 'Other';
+            document.getElementById('product-threshold-edit').value    = String(p.threshold ?? State.defaultThreshold);
+            osr.style.display = 'none';
+            etr.style.display = '';
+        } else {
+            title.textContent = 'Add Product';
+            osr.style.display = '';
+            etr.style.display = 'none';
+        }
+
+        overlay.classList.add('open');
+        setTimeout(() => document.getElementById('product-name').focus(), 100);
+    },
+
+    closeProductModal() {
+        document.getElementById('product-modal-overlay').classList.remove('open');
+    },
+
+    async saveProduct() {
+        const editId   = document.getElementById('product-edit-id').value;
+        const name     = document.getElementById('product-name').value.trim();
+        const size     = document.getElementById('product-size').value.trim();
+        const category = document.getElementById('product-category').value;
+        const isNew    = !editId;
+
+        if (!name) { this.toast('Please enter a product name.', 'error'); return; }
+
+        if (isNew) {
+            const stock     = parseInt(document.getElementById('product-opening-stock').value) || 0;
+            const threshold = parseInt(document.getElementById('product-threshold').value)     || State.defaultThreshold;
+            const productId = uid();
+
+            await DB.set(`stockControl/products/${productId}`, {
+                name, size, category, stock, threshold, createdAt: Date.now()
+            });
+
+            // Log opening stock movement if stock > 0
+            if (stock > 0) {
+                await this._writeMovement(productId, `${name}${size ? ' (' + size + ')' : ''}`,
+                    stock, 'in', 'Opening stock', '', stock);
+            }
+            this.toast(`${name} added!`, 'success');
+        } else {
+            const threshold = parseInt(document.getElementById('product-threshold-edit').value) || State.defaultThreshold;
+            await DB.update(`stockControl/products/${editId}`, { name, size, category, threshold });
+            this.toast(`${name} updated.`, 'success');
+        }
+
+        this.closeProductModal();
+    },
+
+    async deleteProduct(productId) {
+        const p = State.products[productId];
+        if (!p) return;
+        if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
+        await DB.remove(`stockControl/products/${productId}`);
+        this.toast(`${p.name} deleted.`, 'warning');
+    },
+
+    /* ----------------------------------------------------------
+       MOVEMENT MODAL
+    ---------------------------------------------------------- */
+    openMovementModal(preselect = null) {
+        const overlay = document.getElementById('movement-modal-overlay');
+
+        // Reset
+        document.getElementById('dir-in').checked = true;
+        document.getElementById('mov-qty').value  = '1';
+        document.getElementById('mov-note').value = '';
+
+        // Populate product dropdown
+        const select   = document.getElementById('mov-product');
+        const products = Object.entries(State.products)
+            .map(([id, p]) => ({ ...p, _id: id }))
+            .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+        select.innerHTML = `<option value="">Select product…</option>` +
+            products.map(p =>
+                `<option value="${p._id}" ${p._id === preselect ? 'selected' : ''}>` +
+                `${esc(p.name)}${p.size ? ' (' + esc(p.size) + ')' : ''} — ${p.stock || 0} in stock` +
+                `</option>`
+            ).join('');
+
+        this.updateReasons();
+        overlay.classList.add('open');
+    },
+
+    closeMovementModal() {
+        document.getElementById('movement-modal-overlay').classList.remove('open');
+    },
+
+    updateReasons() {
+        const dir    = document.querySelector('input[name="mov-dir"]:checked')?.value || 'in';
+        const select = document.getElementById('mov-reason');
+        const inR  = ['Batch produced', 'Stock correction', 'Returned stock', 'Transfer in', 'Other'];
+        const outR = ['Sold — direct', 'Sold — market stall', 'Sold — invoice', 'Damaged / broken', 'Sample / giveaway', 'Stock correction', 'Other'];
+        select.innerHTML = (dir === 'in' ? inR : outR).map(r => `<option value="${r}">${r}</option>`).join('');
+    },
+
+    async saveMovement() {
+        const productId = document.getElementById('mov-product').value;
+        const direction = document.querySelector('input[name="mov-dir"]:checked')?.value;
+        const qty       = parseInt(document.getElementById('mov-qty').value)    || 0;
+        const reason    = document.getElementById('mov-reason').value;
+        const note      = document.getElementById('mov-note').value.trim();
+
+        if (!productId) { this.toast('Please select a product.', 'error'); return; }
+        if (!qty || qty < 1) { this.toast('Please enter a valid quantity.', 'error'); return; }
+
+        const p = State.products[productId];
+        if (!p) { this.toast('Product not found.', 'error'); return; }
+
+        const current  = p.stock || 0;
+        const newStock = direction === 'in' ? current + qty : Math.max(0, current - qty);
+        const fullName = `${p.name}${p.size ? ' (' + p.size + ')' : ''}`;
+
+        await DB.update(`stockControl/products/${productId}`, { stock: newStock });
+        await this._writeMovement(productId, fullName, qty, direction, reason, note, newStock);
+
+        this.toast(`${p.name}: ${direction === 'in' ? '+' : '−'}${qty} → ${newStock}`, 'success');
+        this.closeMovementModal();
+    },
+
+    async _writeMovement(productId, productName, qty, direction, reason, note, adjustedStock) {
+        await DB.push('stockControl/movements', {
+            productId,
+            productName,
+            qty,
+            direction,
+            reason,
+            note: note || '',
+            timestamp: Date.now(),
+            adjustedStock
+        });
+    },
+
+    /* ----------------------------------------------------------
+       QUICK ADJUST (dashboard ± buttons)
+    ---------------------------------------------------------- */
+    async quickAdjust(productId, delta) {
+        const p = State.products[productId];
+        if (!p) return;
+        const current  = p.stock || 0;
+        const newStock = Math.max(0, current + delta);
+        const dir      = delta > 0 ? 'in' : 'out';
+        const reason   = delta > 0 ? 'Quick add' : 'Quick remove';
+        const fullName = `${p.name}${p.size ? ' (' + p.size + ')' : ''}`;
+
+        await DB.update(`stockControl/products/${productId}`, { stock: newStock });
+        await this._writeMovement(productId, fullName, Math.abs(delta), dir, reason, '', newStock);
+        this.toast(`${p.name}: ${delta > 0 ? '+' : ''}${delta} → ${newStock}`, 'success');
+    },
+
+    /* ----------------------------------------------------------
+       SETTINGS
+    ---------------------------------------------------------- */
+    async changePin() {
+        const cur     = document.getElementById('settings-current-pin').value;
+        const next    = document.getElementById('settings-new-pin').value;
+        const confirm = document.getElementById('settings-confirm-pin').value;
+
+        if (!cur || !next || !confirm) { this.toast('Please fill in all PIN fields.', 'error'); return; }
+        if (!/^\d{4}$/.test(next))    { this.toast('New PIN must be exactly 4 digits.', 'error'); return; }
+        if (next !== confirm)          { this.toast('New PINs do not match.', 'error'); return; }
+
+        const curHash = await sha256(cur);
+        if (curHash !== State.pinHash) { this.toast('Current PIN is incorrect.', 'error'); return; }
+
+        const newHash = await sha256(next);
+        await DB.set('stockControl/settings/pin', newHash);
+        State.pinHash = newHash;
+
+        ['settings-current-pin','settings-new-pin','settings-confirm-pin'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        this.toast('PIN updated successfully!', 'success');
+    },
+
+    async saveThreshold() {
+        const val = parseInt(document.getElementById('settings-threshold').value) || 5;
+        await DB.set('stockControl/settings/defaultThreshold', val);
+        State.defaultThreshold = val;
+        this.toast('Default threshold saved.', 'success');
+        this.renderDashboard();
+        this.renderProducts();
+    },
+
+    /* ----------------------------------------------------------
+       TOAST
+    ---------------------------------------------------------- */
+    toast(msg, type = 'success') {
+        const c   = document.getElementById('toast-container');
+        const el  = document.createElement('div');
+        el.className    = `toast ${type}`;
+        el.textContent  = msg;
+        c.appendChild(el);
+        setTimeout(() => {
+            el.style.transition = 'opacity 0.3s';
+            el.style.opacity    = '0';
+            setTimeout(() => el.remove(), 300);
+        }, 3200);
     }
-});
+};
+
+/* ============================================================
+   EXPORT for invoices.html compat + BOOT
+============================================================ */
+window.App = App;
+
+document.addEventListener('DOMContentLoaded', () => App.init());

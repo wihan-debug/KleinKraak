@@ -4,1155 +4,1165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KleinKraak - Stock Control System</title>
-    <meta name="description"
-        content="KleinKraak Stock Control - Manage inventory, track stock movements, and generate reports.">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./favicon.png?v=2">
-    <link rel="apple-touch-icon" href="./favicon.png?v=2">
-    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=2">
-
-    <!-- Google Fonts -->
+    <title>KleinKraak — Stock Control</title>
+    <meta name="description" content="KleinKraak Stock Control System — manage finished product inventory.">
+    <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="./styles/main.css">
-    <link rel="stylesheet" href="./styles/components.css">
+    <style>
+        /* ============================================================
+           VARIABLES & RESET
+        ============================================================ */
+        :root {
+            --primary:       #4A6741;
+            --primary-dark:  #2F4229;
+            --primary-light: #7BA05B;
+            --accent:        #A8C89A;
+            --bg:            #F0F3EE;
+            --card:          #FFFFFF;
+            --sidebar-w:     240px;
+            --text:          #1C2B19;
+            --text-muted:    #6B7B69;
+            --border:        #DDE5DB;
+            --green:         #22C55E;
+            --amber:         #F59E0B;
+            --red:           #EF4444;
+            --blue:          #3B82F6;
+            --shadow-sm:     0 1px 4px rgba(0,0,0,0.07);
+            --shadow:        0 4px 18px rgba(0,0,0,0.10);
+            --shadow-lg:     0 10px 40px rgba(0,0,0,0.16);
+            --radius:        14px;
+            --radius-sm:     9px;
+            --ease:          0.2s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+           PIN SCREEN
+        ============================================================ */
+        #pin-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(145deg, #1C2B19 0%, #2F4229 45%, #4A6741 80%, #7BA05B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .pin-card {
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 28px;
+            padding: 44px 40px 36px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+        }
+
+        .pin-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.1rem;
+            color: #fff;
+            letter-spacing: 0.01em;
+        }
+
+        .pin-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+            margin-bottom: 36px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .pin-dots {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 36px;
+        }
+
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.35);
+            background: transparent;
+            transition: all 0.18s ease;
+        }
+
+        .pin-dot.filled {
+            background: #fff;
+            border-color: #fff;
+            transform: scale(1.2);
+            box-shadow: 0 0 8px rgba(255,255,255,0.5);
+        }
+
+        .pin-numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 11px;
+        }
+
+        .pin-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            height: 68px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.14s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .pin-btn:hover  { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+        .pin-btn:active { transform: scale(0.93); background: rgba(255,255,255,0.28); }
+
+        .pin-btn.zero       { grid-column: 2; }
+        .pin-btn.backspace  { background: rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.3); }
+        .pin-btn.backspace:hover { background: rgba(239,68,68,0.4); }
+
+        .pin-error {
+            color: #FCA5A5;
+            font-size: 0.84rem;
+            margin-top: 18px;
+            min-height: 22px;
+            font-weight: 500;
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%      { transform: translateX(-10px); }
+            40%      { transform: translateX(10px); }
+            60%      { transform: translateX(-6px); }
+            80%      { transform: translateX(6px); }
+        }
+        .pin-card.shake { animation: shake 0.45s ease; }
+
+        @keyframes pinFadeOut {
+            to { opacity: 0; pointer-events: none; }
+        }
+        #pin-screen.unlocking { animation: pinFadeOut 0.5s ease forwards; }
+
+        /* ============================================================
+           MAIN APP LAYOUT
+        ============================================================ */
+        #main-app { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--primary-dark);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 200;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 28px 22px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.09);
+        }
+
+        .sidebar-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .sidebar-tag {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.42);
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            margin-top: 3px;
+        }
+
+        .sidebar-nav { padding: 12px 0; flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 22px;
+            color: rgba(255,255,255,0.58);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--ease);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover  { color: #fff; background: rgba(255,255,255,0.07); }
+        .nav-item.active {
+            color: #fff;
+            background: rgba(255,255,255,0.11);
+            border-left-color: var(--accent);
+        }
+
+        .nav-item svg { flex-shrink: 0; }
+
+        .sidebar-footer {
+            padding: 14px 22px;
+            border-top: 1px solid rgba(255,255,255,0.09);
+        }
+
+        .lock-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(239,68,68,0.18);
+            border: 1px solid rgba(239,68,68,0.28);
+            color: #FCA5A5;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.84rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--ease);
+        }
+        .lock-btn:hover { background: rgba(239,68,68,0.32); }
+
+        /* Mobile header */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 58px;
+            background: var(--primary-dark);
+            z-index: 150;
+            align-items: center;
+            padding: 0 16px;
+            gap: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+        }
+
+        .mobile-title {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.48);
+            z-index: 190;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 36px 32px;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           VIEWS
+        ============================================================ */
+        .view { display: none; animation: fadeIn 0.25s ease; }
+        .view.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .view-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .view-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            color: var(--primary-dark);
+            line-height: 1.15;
+        }
+
+        .view-subtitle {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ============================================================
+           STAT CARDS
+        ============================================================ */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 22px 20px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary);
+            transition: transform var(--ease), box-shadow var(--ease);
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .stat-card.green { border-left-color: var(--green); }
+        .stat-card.amber { border-left-color: var(--amber); }
+        .stat-card.red   { border-left-color: var(--red); }
+        .stat-card.blue  { border-left-color: var(--blue); }
+
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+        .stat-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 6px; }
+
+        /* ============================================================
+           PRODUCT CARDS (Dashboard)
+        ============================================================ */
+        .section-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .product-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid var(--green);
+            position: relative;
+            transition: all var(--ease);
+        }
+        .product-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+        .product-card.low   { border-top-color: var(--amber); }
+        .product-card.out   { border-top-color: var(--red); }
+
+        .product-card-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 2px;
+            padding-right: 60px;
+        }
+        .product-card-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .product-card-stock {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .product-card.low .product-card-stock { color: var(--amber); }
+        .product-card.out .product-card-stock { color: var(--red); }
+        .product-card-unit { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+        .stock-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-ok  { background: #DCFCE7; color: #166534; }
+        .badge-low { background: #FEF3C7; color: #92400E; }
+        .badge-out { background: #FEE2E2; color: #991B1B; }
+
+        .quick-adjust { display: flex; gap: 8px; margin-top: 16px; }
+
+        .quick-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all var(--ease);
+            line-height: 1;
+        }
+        .quick-btn.plus:hover  { background: #DCFCE7; border-color: #86EFAC; color: #166534; }
+        .quick-btn.minus:hover { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; }
+
+        /* ============================================================
+           TABLE
+        ============================================================ */
+        .table-wrap {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead th {
+            background: var(--primary-dark);
+            color: rgba(255,255,255,0.85);
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            white-space: nowrap;
+        }
+
+        tbody tr { border-bottom: 1px solid var(--border); transition: background var(--ease); }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #F7FAF5; }
+
+        td { padding: 13px 18px; font-size: 0.88rem; vertical-align: middle; }
+
+        .stock-cell { font-weight: 700; font-size: 1.05rem; }
+        .stock-cell.ok  { color: var(--primary); }
+        .stock-cell.low { color: var(--amber); }
+        .stock-cell.out { color: var(--red); }
+
+        .cat-pill {
+            display: inline-block;
+            padding: 3px 11px;
+            border-radius: 20px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            background: #E4EDE2;
+            color: var(--primary-dark);
+        }
+
+        .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .action-btn {
+            padding: 5px 12px;
+            border-radius: 7px;
+            border: 1.5px solid;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: all var(--ease);
+            white-space: nowrap;
+        }
+        .btn-adjust { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+        .btn-adjust:hover { background: #DBEAFE; }
+        .btn-edit   { background: #F0FDF4; border-color: #BBF7D0; color: #166534; }
+        .btn-edit:hover { background: #DCFCE7; }
+        .btn-delete { background: #FFF5F5; border-color: #FECACA; color: #991B1B; }
+        .btn-delete:hover { background: #FEE2E2; }
+
+        /* ============================================================
+           MOVEMENT LOG BADGES
+        ============================================================ */
+        .dir-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .dir-badge.in  { background: #DCFCE7; color: #166534; }
+        .dir-badge.out { background: #FEE2E2; color: #991B1B; }
+
+        .qty-change { font-weight: 700; }
+        .qty-change.in  { color: #22C55E; }
+        .qty-change.out { color: #EF4444; }
+
+        /* ============================================================
+           BUTTONS
+        ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all var(--ease);
+            text-decoration: none;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(74,103,65,0.35); }
+        .btn-secondary { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg); }
+        .btn-danger { background: #EF4444; color: #fff; }
+        .btn-danger:hover { background: #DC2626; }
+
+        /* ============================================================
+           MODALS
+        ============================================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.44);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 490px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.24s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(28px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 24px 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--primary-dark); }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            line-height: 0;
+            border-radius: 6px;
+            transition: all var(--ease);
+        }
+        .modal-close:hover { background: var(--bg); color: var(--text); }
+
+        .modal-body   { padding: 20px 24px; }
+        .modal-footer { padding: 4px 24px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+
+        /* ============================================================
+           FORMS
+        ============================================================ */
+        .form-group { margin-bottom: 16px; }
+
+        .form-label {
+            display: block;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 7px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="password"],
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.92rem;
+            color: var(--text);
+            background: #fff;
+            transition: border-color var(--ease), box-shadow var(--ease);
+            outline: none;
+            appearance: auto;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74,103,65,0.12);
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        /* Direction toggle */
+        .dir-toggle {
+            display: flex;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        .dir-toggle input[type="radio"] { display: none; }
+        .dir-toggle label {
+            flex: 1;
+            padding: 11px 10px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all var(--ease);
+            display: block;
+            text-transform: none;
+            letter-spacing: 0;
+            border: none;
+            margin: 0;
+        }
+        .dir-toggle .lbl-in  { border-right: 1px solid var(--border); }
+        #dir-in:checked  + .lbl-in  { background: #DCFCE7; color: #166534; }
+        #dir-out:checked + .lbl-out { background: #FEE2E2; color: #991B1B; }
+
+        /* ============================================================
+           FILTER BAR
+        ============================================================ */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .filter-bar input,
+        .filter-bar select { width: auto; flex: 1; min-width: 150px; }
+
+        /* ============================================================
+           SETTINGS
+        ============================================================ */
+        .settings-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 26px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            max-width: 500px;
+        }
+        .settings-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .settings-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+
+        /* ============================================================
+           EMPTY STATE
+        ============================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.35; }
+        .empty-state p { font-size: 0.92rem; line-height: 1.6; }
+        .empty-state a { color: var(--primary); font-weight: 600; text-decoration: none; }
+        .empty-state a:hover { text-decoration: underline; }
+
+        /* ============================================================
+           TOAST
+        ============================================================ */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 320px;
+        }
+
+        .toast {
+            padding: 13px 20px;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font-size: 0.87rem;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            animation: toastSlide 0.3s ease;
+            line-height: 1.4;
+        }
+        @keyframes toastSlide {
+            from { transform: translateX(80px); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+        .toast.success { background: var(--primary); }
+        .toast.error   { background: #EF4444; }
+        .toast.warning { background: var(--amber); }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; padding: 78px 16px 28px; }
+            .stat-grid { grid-template-columns: 1fr 1fr; }
+            .product-grid { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .view-header { flex-direction: column; align-items: stretch; }
+            .view-header .btn { justify-content: center; }
+            thead th:nth-child(3), td:nth-child(3) { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: 1fr 1fr; }
+            #toast-container { left: 16px; right: 16px; max-width: none; bottom: 16px; }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+
+<!-- ============================================================
+     PIN SCREEN
+============================================================ -->
+<div id="pin-screen">
+    <div class="pin-card" id="pin-card">
+        <div class="pin-logo">KleinKraak</div>
+        <div class="pin-subtitle">Stock Control</div>
+        <div class="pin-dots">
+            <div class="pin-dot" id="dot-0"></div>
+            <div class="pin-dot" id="dot-1"></div>
+            <div class="pin-dot" id="dot-2"></div>
+            <div class="pin-dot" id="dot-3"></div>
+        </div>
+        <div class="pin-numpad">
+            <button class="pin-btn" onclick="App.pinPress('1')">1</button>
+            <button class="pin-btn" onclick="App.pinPress('2')">2</button>
+            <button class="pin-btn" onclick="App.pinPress('3')">3</button>
+            <button class="pin-btn" onclick="App.pinPress('4')">4</button>
+            <button class="pin-btn" onclick="App.pinPress('5')">5</button>
+            <button class="pin-btn" onclick="App.pinPress('6')">6</button>
+            <button class="pin-btn" onclick="App.pinPress('7')">7</button>
+            <button class="pin-btn" onclick="App.pinPress('8')">8</button>
+            <button class="pin-btn" onclick="App.pinPress('9')">9</button>
+            <button class="pin-btn zero" onclick="App.pinPress('0')">0</button>
+            <button class="pin-btn backspace" onclick="App.pinBackspace()">⌫</button>
+        </div>
+        <div class="pin-error" id="pin-error"></div>
+    </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+============================================================ -->
+<div id="main-app" style="display:none">
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="3" y1="6"  x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+        <span class="mobile-title">KleinKraak</span>
+    </div>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1 class="logo">KleinKraak</h1>
-            <p class="logo-subtitle">Stock Control</p>
+            <div class="sidebar-logo">KleinKraak</div>
+            <div class="sidebar-tag">Stock Control</div>
         </div>
         <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" data-view="dashboard">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
+            <a class="nav-item active" data-view="dashboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
                 </svg>
-                <span>Dashboard</span>
+                Dashboard
             </a>
-            <a href="#" class="nav-item" data-view="inventory">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                    </path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            <a class="nav-item" data-view="products">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
                 </svg>
-                <span>Inventory</span>
+                Products
             </a>
-            <a href="#" class="nav-item" data-view="movements">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                    <polyline points="17 6 23 6 23 12"></polyline>
+            <a class="nav-item" data-view="log">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                 </svg>
-                <span>Stock Movements</span>
+                Movement Log
             </a>
-            <a href="#" class="nav-item" data-view="materials">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 7h-9"></path>
-                    <path d="M14 17H5"></path>
-                    <circle cx="17" cy="17" r="3"></circle>
-                    <circle cx="7" cy="7" r="3"></circle>
+            <a class="nav-item" data-view="settings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                 </svg>
-                <span>Raw Materials</span>
-            </a>
-            <a href="#" class="nav-item" data-view="material-movements">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <polyline points="17 11 19 13 23 9"></polyline>
-                </svg>
-                <span>Material Movements</span>
-            </a>
-            <a href="#" class="nav-item" data-view="reports">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <span>Reports</span>
-            </a>
-            <a href="#" class="nav-item" data-view="invoices">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>Invoices</span>
+                Settings
             </a>
         </nav>
+        <div class="sidebar-footer">
+            <button class="lock-btn" onclick="App.lock()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Lock
+            </button>
+        </div>
     </aside>
 
-    <!-- Main Content Area -->
+    <!-- ============================================================
+         MAIN CONTENT
+    ============================================================ -->
     <main class="main-content">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left" style="display: flex; align-items: center; gap: 15px;">
-                <button id="mobile-menu-btn" class="btn-icon mobile-only" aria-label="Open Menu">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
+
+        <!-- DASHBOARD -->
+        <section id="view-dashboard" class="view active">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Dashboard</h2>
+                    <p class="view-subtitle" id="dashboard-date"></p>
+                </div>
+                <button class="btn btn-primary" onclick="App.openMovementModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
+                    Log Movement
                 </button>
-                <h2 id="page-title">Dashboard</h2>
             </div>
-            <div class="header-right">
-                <div class="search-box">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
+            <div class="stat-grid" id="stat-grid"></div>
+            <p class="section-label">All Stock Levels</p>
+            <div class="product-grid" id="dashboard-grid"></div>
+        </section>
+
+        <!-- PRODUCTS -->
+        <section id="view-products" class="view">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Products</h2>
+                    <p class="view-subtitle">Add, edit and manage your product list</p>
+                </div>
+                <button class="btn btn-primary" onclick="App.openProductModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
-                    <input type="text" id="global-search" placeholder="Search products..." autocomplete="off">
-                </div>
-                <div id="connection-status" class="connection-status online">
-                    🟢 Online
-                </div>
-                <div class="user-info">
-                    <span class="user-name">Admin</span>
+                    Add Product
+                </button>
+            </div>
+            <div class="filter-bar">
+                <input type="text" id="product-search" placeholder="Search products…" oninput="App.renderProducts()">
+                <select id="product-cat-filter" onchange="App.renderProducts()">
+                    <option value="">All Categories</option>
+                    <option>Vinegar</option>
+                    <option>Pickled</option>
+                    <option>Dressing</option>
+                    <option>Salsa</option>
+                    <option>Fresh</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Alert At</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-tbody"></tbody>
+                </table>
+                <div id="products-empty" class="empty-state" style="display:none">
+                    <div class="empty-icon">📦</div>
+                    <p>No products yet.<br>Click <strong>Add Product</strong> to get started.</p>
                 </div>
             </div>
-        </header>
+        </section>
 
-        <!-- Dynamic Content Container -->
-        <div class="content-container">
-            <!-- Dashboard View -->
-            <section id="dashboard-view" class="view active">
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-icon" style="background: #E8F5E9;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6741"
-                                stroke-width="2">
-                                <path
-                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <p class="metric-label">Total Products</p>
-                            <h3 class="metric-value" id="total-products">0</h3>
-                        </div>
-                    </div>
+        <!-- LOG -->
+        <section id="view-log" class="view">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Movement Log</h2>
+                    <p class="view-subtitle">Every stock change, newest first</p>
+                </div>
+                <button class="btn btn-primary" onclick="App.openMovementModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Log Movement
+                </button>
+            </div>
+            <div class="filter-bar">
+                <input type="text" id="log-search" placeholder="Search product or reason…" oninput="App.renderLog()">
+                <select id="log-dir-filter" onchange="App.renderLog()">
+                    <option value="">All Movements</option>
+                    <option value="in">Stock In</option>
+                    <option value="out">Stock Out</option>
+                </select>
+                <input type="date" id="log-date-filter" onchange="App.renderLog()" title="Filter by date">
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date &amp; Time</th>
+                            <th>Product</th>
+                            <th>Direction</th>
+                            <th>Qty</th>
+                            <th>Reason / Note</th>
+                            <th>Stock After</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-tbody"></tbody>
+                </table>
+                <div id="log-empty" class="empty-state" style="display:none">
+                    <div class="empty-icon">📋</div>
+                    <p>No movements logged yet.</p>
+                </div>
+            </div>
+        </section>
 
-                    <div class="metric-card">
-                        <div class="metric-icon" style="background: #FFF3E0;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F57C00"
-                                stroke-width="2">
-                                <line x1="12" y1="1" x2="12" y2="23"></line>
-                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <p class="metric-label">Total Stock Value</p>
-                            <h3 class="metric-value" id="total-value">R 0.00</h3>
-                        </div>
-                    </div>
+        <!-- SETTINGS -->
+        <section id="view-settings" class="view">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Settings</h2>
+                    <p class="view-subtitle">PIN and stock alert configuration</p>
+                </div>
+            </div>
 
-                    <div class="metric-card">
-                        <div class="metric-icon" style="background: #E8F5E9;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E7D32"
-                                stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <p class="metric-label">Total Sales</p>
-                            <h3 class="metric-value" id="total-sales">R 0.00</h3>
-                        </div>
-                    </div>
+            <div class="settings-card">
+                <h3>🔐 Change PIN</h3>
+                <div class="form-group">
+                    <label class="form-label">Current PIN</label>
+                    <input type="password" id="settings-current-pin" maxlength="4" inputmode="numeric" placeholder="••••">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New PIN</label>
+                    <input type="password" id="settings-new-pin" maxlength="4" inputmode="numeric" placeholder="••••">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm New PIN</label>
+                    <input type="password" id="settings-confirm-pin" maxlength="4" inputmode="numeric" placeholder="••••">
+                </div>
+                <button class="btn btn-primary" onclick="App.changePin()">Update PIN</button>
+            </div>
 
-                    <div class="metric-card">
-                        <div class="metric-icon" style="background: #FFEBEE;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C62828"
-                                stroke-width="2">
-                                <path
-                                    d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                                </path>
-                                <line x1="12" y1="9" x2="12" y2="13"></line>
-                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <p class="metric-label">Low Stock Alerts</p>
-                            <h3 class="metric-value" id="low-stock-count">0</h3>
-                        </div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-icon" style="background: #E3F2FD;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1976D2"
-                                stroke-width="2">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <p class="metric-label">Recent Movements</p>
-                            <h3 class="metric-value" id="recent-movements-count">0</h3>
-                        </div>
+            <div class="settings-card">
+                <h3>⚠️ Default Low Stock Threshold</h3>
+                <p class="settings-desc">Products at or below this quantity will show a <strong>Low Stock</strong> warning. You can also set a custom threshold per product.</p>
+                <div style="max-width: 200px;">
+                    <div class="form-group">
+                        <label class="form-label">Default Threshold</label>
+                        <input type="number" id="settings-threshold" value="5" min="0" max="999">
                     </div>
                 </div>
+                <button class="btn btn-primary" style="margin-top:8px" onclick="App.saveThreshold()">Save Threshold</button>
+            </div>
 
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Low Stock Items</h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="low-stock-list" class="low-stock-list">
-                                <p class="empty-state">No low stock items</p>
-                            </div>
-                        </div>
-                    </div>
+            <div class="settings-card">
+                <h3>ℹ️ About</h3>
+                <p class="settings-desc">KleinKraak Stock Control v2.0<br>Tracks finished product stock. All data stored in Firebase Realtime Database.</p>
+            </div>
+        </section>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Recent Activity</h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="recent-activity" class="activity-list">
-                                <p class="empty-state">No recent activity</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Inventory View -->
-            <section id="inventory-view" class="view">
-                <div class="view-header">
-                    <button class="btn btn-primary" id="add-product-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Add Product
-                    </button>
-                    <div class="view-actions">
-                        <select id="category-filter" class="filter-select">
-                            <option value="">All Categories</option>
-                            <option value="Pickled">Pickled</option>
-                            <option value="Fresh">Fresh</option>
-                            <option value="Vinegar">Vinegar</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="data-table" id="inventory-table">
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Category</th>
-                                        <th>Current Stock</th>
-                                        <th>Reorder Level</th>
-                                        <th>Unit Price</th>
-                                        <th>Stock Value</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="inventory-tbody">
-                                    <tr>
-                                        <td colspan="8" class="empty-state">No products found. Click "Add Product" to
-                                            get started.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Stock Movements View -->
-            <section id="movements-view" class="view">
-                <div class="view-header">
-                    <button class="btn btn-success" id="add-incoming-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                        Stock In
-                    </button>
-                    <button class="btn btn-danger" id="add-outgoing-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <polyline points="19 12 12 19 5 12"></polyline>
-                        </svg>
-                        Stock Out
-                    </button>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="data-table" id="movements-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date & Time</th>
-                                        <th>Product</th>
-                                        <th>Type</th>
-                                        <th>Quantity</th>
-                                        <th>Reason/Supplier</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="movements-tbody">
-                                    <tr>
-                                        <td colspan="6" class="empty-state">No stock movements recorded yet.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Raw Materials View -->
-            <section id="materials-view" class="view">
-                <div class="view-header">
-                    <button class="btn btn-primary" id="add-material-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Add Material
-                    </button>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="data-table" id="materials-table">
-                                <thead>
-                                    <tr>
-                                        <th>Material Name</th>
-                                        <th>Category</th>
-                                        <th>Current Stock</th>
-                                        <th>Unit</th>
-                                        <th>Unit Cost</th>
-                                        <th>Total Value</th>
-                                        <th>Supplier</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="materials-tbody">
-                                    <tr>
-                                        <td colspan="8" class="empty-state">Loading materials...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Material Movements View -->
-            <section id="material-movements-view" class="view">
-                <div class="view-header">
-                    <button class="btn btn-success" id="add-material-incoming-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                        Stock In
-                    </button>
-                    <button class="btn btn-danger" id="add-material-outgoing-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <polyline points="19 12 12 19 5 12"></polyline>
-                        </svg>
-                        Stock Out
-                    </button>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="data-table" id="material-movements-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date & Time</th>
-                                        <th>Material</th>
-                                        <th>Type</th>
-                                        <th>Quantity</th>
-                                        <th>Reason/Supplier</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="material-movements-tbody">
-                                    <tr>
-                                        <td colspan="6" class="empty-state">No material movements recorded yet.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Reports View -->
-            <section id="reports-view" class="view">
-                <div class="view-header">
-                    <button class="btn btn-secondary" id="export-csv-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Export CSV
-                    </button>
-                    <button class="btn btn-secondary" id="print-report-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                            <rect x="6" y="14" width="12" height="8"></rect>
-                        </svg>
-                        Print
-                    </button>
-                </div>
-
-                <div class="reports-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Stock Summary</h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="stock-summary" class="summary-list">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Movement Summary (Last 30 Days)</h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="movement-summary" class="summary-list">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Invoices View -->
-            <section id="invoices-view" class="view">
-                <div class="view-header">
-                    <a href="../invoices.html" class="btn btn-primary">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        Create New Invoice
-                    </a>
-                    <button class="btn btn-secondary" onclick="window.print()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                            <rect x="6" y="14" width="12" height="8"></rect>
-                        </svg>
-                        Print Catalogue
-                    </button>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Product Catalogue & Wholesale Pricing</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Size</th>
-                                        <th>Description</th>
-                                        <th>Standard Price</th>
-                                        <th>Wholesale (20% Off)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>White Wine Vinegar</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Infused with salt, sugar, dill, spearmint, and more.</td>
-                                        <td>R 150.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 120.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>White Wine Vinegar</td>
-                                        <td>230ml Bottle</td>
-                                        <td>Infused with salt, sugar, dill, spearmint, and more.</td>
-                                        <td>R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Spicy Pickled Cucamelons</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Crunchy with a kick of chilli and garlic.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Spicy Pickled Cucamelons</td>
-                                        <td>230ml Bottle</td>
-                                        <td>Crunchy with a kick of chilli and garlic.</td>
-                                        <td>R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Dill & Garlic Pickled Cucamelons</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Classic dill flavor, perfect for salads.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Dill & Garlic Pickled Cucamelons</td>
-                                        <td>230ml Bottle</td>
-                                        <td>Classic dill flavor, perfect for salads.</td>
-                                        <td>R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet & Sour Pickled Cucamelons <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>455ml Bottle</td>
-                                        <td>A delightful balance of sweet and tangy flavors.</td>
-                                        <td style="opacity: 0.5;">R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet & Sour Pickled Cucamelons <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>230ml Bottle</td>
-                                        <td>A delightful balance of sweet and tangy flavors.</td>
-                                        <td style="opacity: 0.5;">R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet Cucamelon <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>455ml Bottle</td>
-                                        <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
-                                        <td style="opacity: 0.5;">R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet Cucamelon <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>230ml Bottle</td>
-                                        <td>Unique twist with a sweet kick from Drink-O-Pop powder.</td>
-                                        <td style="opacity: 0.5;">R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Fresh Cucamelons <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>250g Punnet</td>
-                                        <td>Freshly harvested, perfect for snacking.</td>
-                                        <td style="opacity: 0.5;">R 50.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 40.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet & Spicy Pickled Cucamelons <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>455ml Bottle</td>
-                                        <td>New flavor variant.</td>
-                                        <td style="opacity: 0.5;">R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet & Spicy Pickled Cucamelons <span
-                                                style="color: #d50000; font-weight: 600; font-size: 0.85em;">(OUT OF
-                                                STOCK)</span></td>
-                                        <td>230ml Bottle</td>
-                                        <td>New flavor variant.</td>
-                                        <td style="opacity: 0.5;">R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741; opacity: 0.5;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>French Salad Dressing</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Delicious home-made dressing.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>French Salad Dressing</td>
-                                        <td>230ml Bottle</td>
-                                        <td>Delicious home-made dressing.</td>
-                                        <td>R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Garlic & Herb Salad Dressing</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Savory dressing with fresh herbs.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Garlic & Herb Salad Dressing</td>
-                                        <td>230ml Bottle</td>
-                                        <td>Savory dressing with fresh herbs.</td>
-                                        <td>R 70.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 56.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Pickled Apple Cider Vinegar</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Pickled in apple cider vinegar with fresh herbs.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sweet & Tangy Pickled Cucamelons</td>
-                                        <td>455ml Bottle</td>
-                                        <td>Tangy twist on our classic cucumbers.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Pickled Mix</td>
-                                        <td>455ml Bottle</td>
-                                        <td>A mix of our favorite pickled varieties.</td>
-                                        <td>R 120.00</td>
-                                        <td style="font-weight: bold; color: #4A6741;">R 96.00</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-
-        </div>
     </main>
+</div>
 
-    <!-- Add/Edit Product Modal -->
-    <div id="product-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="product-modal-title">Add Product</h2>
-                <button class="close-modal-btn" id="close-product-modal">&times;</button>
+<!-- ============================================================
+     PRODUCT MODAL
+============================================================ -->
+<div class="modal-overlay" id="product-modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="product-modal-title">Add Product</h3>
+            <button class="modal-close" onclick="App.closeProductModal()" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="product-edit-id">
+            <div class="form-group">
+                <label class="form-label">Product Name *</label>
+                <input type="text" id="product-name" placeholder="e.g. Spicy Pickled Cucamelons">
             </div>
-            <form id="product-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="product-name">Product Name *</label>
-                        <input type="text" id="product-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-category">Category *</label>
-                        <select id="product-category" required>
-                            <option value="">Select Category</option>
-                            <option value="Pickled">Pickled</option>
-                            <option value="Fresh">Fresh</option>
-                            <option value="Vinegar">Vinegar</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-boxes">Current Stock (Boxes)</label>
-                        <input type="number" id="product-boxes" min="0" step="1" placeholder="Enter boxes">
-                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-quantity">Total Units *</label>
-                        <input type="number" id="product-quantity" min="0" required readonly
-                            style="background: #f5f5f5;">
-                        <small style="color: var(--text-light); font-size: 0.85rem;">Auto-calculated from boxes, or
-                            enter directly for Fresh products</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-reorder">Reorder Level (Units) *</label>
-                        <input type="number" id="product-reorder" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-price">Unit Price (R) *</label>
-                        <input type="number" id="product-price" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-supplier">Supplier</label>
-                        <input type="text" id="product-supplier">
-                    </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Size / Unit</label>
+                    <input type="text" id="product-size" placeholder="e.g. 455ml, 250g">
                 </div>
                 <div class="form-group">
-                    <label for="product-notes">Notes</label>
-                    <textarea id="product-notes" rows="3"></textarea>
+                    <label class="form-label">Category</label>
+                    <select id="product-category">
+                        <option value="Pickled">Pickled</option>
+                        <option value="Vinegar">Vinegar</option>
+                        <option value="Dressing">Dressing</option>
+                        <option value="Salsa">Salsa</option>
+                        <option value="Fresh">Fresh</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-product-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Product</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Stock Movement Modal -->
-    <div id="movement-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="movement-modal-title">Record Stock Movement</h2>
-                <button class="close-modal-btn" id="close-movement-modal">&times;</button>
             </div>
-            <form id="movement-form">
-                <input type="hidden" id="movement-type">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="movement-product">Product *</label>
-                        <select id="movement-product" required>
-                            <option value="">Select Product</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="movement-boxes">Boxes</label>
-                        <input type="number" id="movement-boxes" min="0" step="1" placeholder="Enter boxes">
-                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="movement-quantity">Total Units *</label>
-                        <input type="number" id="movement-quantity" min="1" required readonly
-                            style="background: #f5f5f5;">
-                        <small style="color: var(--text-light); font-size: 0.85rem;">Auto-calculated from boxes</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="movement-reason">Reason/Supplier *</label>
-                        <input type="text" id="movement-reason" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="movement-date">Date & Time *</label>
-                        <input type="datetime-local" id="movement-date" required>
-                    </div>
+            <div class="form-row" id="opening-stock-row">
+                <div class="form-group">
+                    <label class="form-label">Opening Stock</label>
+                    <input type="number" id="product-opening-stock" value="0" min="0" placeholder="0">
                 </div>
                 <div class="form-group">
-                    <label for="movement-notes">Notes</label>
-                    <textarea id="movement-notes" rows="3"></textarea>
+                    <label class="form-label">Low Stock Alert At</label>
+                    <input type="number" id="product-threshold" value="5" min="0" placeholder="5">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-movement-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Record Movement</button>
-                </div>
-            </form>
+            </div>
+            <div class="form-group" id="edit-threshold-row" style="display:none">
+                <label class="form-label">Low Stock Alert At</label>
+                <input type="number" id="product-threshold-edit" value="5" min="0" placeholder="5">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="App.closeProductModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="App.saveProduct()">Save Product</button>
         </div>
     </div>
+</div>
 
-    <!-- Add/Edit Material Modal -->
-    <div id="material-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="material-modal-title">Add Raw Material</h2>
-                <button class="close-modal-btn" id="close-material-modal">&times;</button>
+<!-- ============================================================
+     MOVEMENT MODAL
+============================================================ -->
+<div class="modal-overlay" id="movement-modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Log Stock Movement</h3>
+            <button class="modal-close" onclick="App.closeMovementModal()" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Direction</label>
+                <div class="dir-toggle">
+                    <input type="radio" name="mov-dir" id="dir-in" value="in" checked>
+                    <label for="dir-in" class="lbl-in" onclick="App.updateReasons()">▲ Stock In</label>
+                    <input type="radio" name="mov-dir" id="dir-out" value="out">
+                    <label for="dir-out" class="lbl-out" onclick="App.updateReasons()">▼ Stock Out</label>
+                </div>
             </div>
-            <form id="material-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="material-name">Material Name *</label>
-                        <input type="text" id="material-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-category">Category *</label>
-                        <select id="material-category" required>
-                            <option value="">Select Category</option>
-                            <option value="Packaging">Packaging</option>
-                            <option value="Spices">Spices & Herbs</option>
-                            <option value="Vinegar">Vinegar</option>
-                            <option value="Dry Goods">Dry Goods</option>
-                            <option value="Grown">Grown (Dill/Grape Leaves)</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="material-boxes-group" style="display: none;">
-                        <label for="material-boxes">Stock (Boxes)</label>
-                        <input type="number" id="material-boxes" min="0" step="1" placeholder="Enter boxes">
-                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-quantity">Current Stock *</label>
-                        <input type="number" id="material-quantity" min="0" step="0.01" required>
-                        <small id="material-quantity-hint"
-                            style="color: var(--text-light); font-size: 0.85rem; display: none;">Auto-calculated from
-                            boxes</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-unit">Unit *</label>
-                        <select id="material-unit" required>
-                            <option value="">Select Unit</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="g">Grams (g)</option>
-                            <option value="kg">Kilograms (kg)</option>
-                            <option value="ml">Milliliters (ml)</option>
-                            <option value="L">Liters (L)</option>
-                            <option value="packets">Packets</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-cost">Unit Cost (R) *</label>
-                        <input type="number" id="material-cost" min="0" step="0.01" required>
-                        <small style="color: var(--text-light); font-size: 0.85rem;">Cost per unit</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-supplier">Supplier</label>
-                        <input type="text" id="material-supplier">
-                    </div>
+            <div class="form-group">
+                <label class="form-label">Product *</label>
+                <select id="mov-product">
+                    <option value="">Select product…</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Quantity *</label>
+                    <input type="number" id="mov-qty" value="1" min="1">
                 </div>
                 <div class="form-group">
-                    <label for="material-notes">Notes</label>
-                    <textarea id="material-notes" rows="3"></textarea>
+                    <label class="form-label">Reason</label>
+                    <select id="mov-reason"></select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-material-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Material</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Material Movement Modal -->
-    <div id="material-movement-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="material-movement-modal-title">Record Material Movement</h2>
-                <button class="close-modal-btn" id="close-material-movement-modal">&times;</button>
             </div>
-            <form id="material-movement-form">
-                <input type="hidden" id="material-movement-type">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="material-movement-material">Material *</label>
-                        <select id="material-movement-material" required>
-                            <option value="">Select Material</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="material-movement-boxes-group" style="display: none;">
-                        <label for="material-movement-boxes">Boxes</label>
-                        <input type="number" id="material-movement-boxes" min="0" step="1" placeholder="Enter boxes">
-                        <small style="color: var(--text-light); font-size: 0.85rem;">1 box = 12 bottles</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-movement-quantity">Quantity *</label>
-                        <input type="number" id="material-movement-quantity" min="0.01" step="0.01" required>
-                        <small id="material-movement-unit-label"
-                            style="color: var(--text-light); font-size: 0.85rem;">Unit will be shown here</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-movement-reason">Reason/Supplier *</label>
-                        <input type="text" id="material-movement-reason" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="material-movement-date">Date & Time *</label>
-                        <input type="datetime-local" id="material-movement-date" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="material-movement-notes">Notes</label>
-                    <textarea id="material-movement-notes" rows="3"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-material-movement-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Record Movement</button>
-                </div>
-            </form>
+            <div class="form-group">
+                <label class="form-label">Note (optional)</label>
+                <input type="text" id="mov-note" placeholder="e.g. Batch #5, Saturday market">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="App.closeMovementModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="App.saveMovement()">Log Movement</button>
         </div>
     </div>
+</div>
 
-    <div id="sidebar-overlay" class="overlay"></div>
-    <div id="overlay" class="overlay"></div>
+<!-- Toast -->
+<div id="toast-container"></div>
 
-    <!-- Scripts -->
-    <!-- Load Firebase modules first (they will set window.Storage) -->
-    <script type="module">
-        // Import and initialize Firebase
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getDatabase, ref, onValue, set, push, update, remove, get } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="./scripts/app.js?v=2.0"></script>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBLYTt1Wz4AcxDlQtnL374f0ntYuNG6C6U",
-            authDomain: "kleinkraak-49f26.firebaseapp.com",
-            databaseURL: "https://kleinkraak-49f26-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "kleinkraak-49f26",
-            storageBucket: "kleinkraak-49f26.firebasestorage.app",
-            messagingSenderId: "82607492969",
-            appId: "1:82607492969:web:73ab3ad041ca3cea0337f8",
-            measurementId: "G-39PR70CELK"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        const dbRefs = {
-            inventory: ref(database, 'products'),
-            movements: ref(database, 'movements'),
-            materials: ref(database, 'materials'),
-            materialMovements: ref(database, 'materialMovements')
-        };
-
-        // Create Firebase Storage wrapper
-        const FirebaseStorage = {
-            KEYS: {
-                PRODUCTS: 'products',
-                MOVEMENTS: 'movements',
-                MATERIALS: 'materials',
-                MATERIAL_MOVEMENTS: 'materialMovements',
-                SETTINGS: 'settings'
-            },
-
-            migrated: false,
-            isOnline: true,
-
-            async init() {
-                console.log('🔥 Initializing Firebase Storage...');
-                this.monitorConnection();
-                await this.migrateFromLocalStorage();
-                await this.initializeSampleData();
-                console.log('✅ Firebase Storage initialized');
-            },
-
-            monitorConnection() {
-                const connectedRef = ref(database, '.info/connected');
-                onValue(connectedRef, (snapshot) => {
-                    this.isOnline = snapshot.val() === true;
-                    this.updateConnectionStatus();
-                    console.log(this.isOnline ? '🟢 Connected to Firebase' : '🔴 Disconnected from Firebase');
-                });
-            },
-
-            updateConnectionStatus() {
-                const statusEl = document.getElementById('connection-status');
-                if (statusEl) {
-                    if (this.isOnline) {
-                        statusEl.innerHTML = '🟢 Online';
-                        statusEl.classList.remove('offline');
-                        statusEl.classList.add('online');
-                    } else {
-                        statusEl.innerHTML = '🔴 Offline';
-                        statusEl.classList.remove('online');
-                        statusEl.classList.add('offline');
-                    }
-                }
-            },
-
-            async migrateFromLocalStorage() {
-                const migrationFlag = localStorage.getItem('kleinkraak-firebase-migrated');
-                if (migrationFlag === 'true') {
-                    this.migrated = true;
-                    return;
-                }
-
-                console.log('📦 Migrating localStorage data to Firebase...');
-                try {
-                    const localProducts = localStorage.getItem('kleinkraak-stock-products');
-                    if (localProducts) {
-                        const products = JSON.parse(localProducts);
-                        if (products && products.length > 0) {
-                            await set(dbRefs.inventory, products);
-                        }
-                    }
-
-                    const localMovements = localStorage.getItem('kleinkraak-stock-movements');
-                    if (localMovements) {
-                        const movements = JSON.parse(localMovements);
-                        if (movements && movements.length > 0) {
-                            await set(dbRefs.movements, movements);
-                        }
-                    }
-
-                    const localMaterials = localStorage.getItem('kleinkraak-materials');
-                    if (localMaterials) {
-                        const materials = JSON.parse(localMaterials);
-                        if (materials && materials.length > 0) {
-                            await set(dbRefs.materials, materials);
-                        }
-                    }
-
-                    localStorage.setItem('kleinkraak-firebase-migrated', 'true');
-                    this.migrated = true;
-                    console.log('✅ Migration complete!');
-                } catch (error) {
-                    console.error('❌ Migration failed:', error);
-                }
-            },
-
-            async get(key) {
-                try {
-                    const dataRef = ref(database, key);
-                    const snapshot = await get(dataRef);
-                    return snapshot.exists() ? snapshot.val() : null;
-                } catch (error) {
-                    console.error('Error reading from Firebase:', error);
-                    return null;
-                }
-            },
-
-            async set(key, value) {
-                try {
-                    const dataRef = ref(database, key);
-                    await set(dataRef, value);
-                    return true;
-                } catch (error) {
-                    console.error('Error writing to Firebase:', error);
-                    return false;
-                }
-            },
-
-            listen(key, callback) {
-                const dataRef = ref(database, key);
-                return onValue(dataRef, (snapshot) => {
-                    const data = snapshot.exists() ? snapshot.val() : null;
-                    callback(data);
-                });
-            },
-
-            async initializeSampleData() {
-                const products = await this.get(this.KEYS.PRODUCTS);
-                if (!products || products.length === 0) {
-                    const sampleProducts = [
-                        {
-                            id: 'prod-' + Date.now() + '-1',
-                            name: 'White Wine Vinegar Cucamelons',
-                            category: 'Vinegar',
-                            quantity: 36,
-                            reorderLevel: 60,
-                            price: 150.00,
-                            supplier: 'Local Supplier',
-                            notes: 'Premium white wine vinegar infused - 3 boxes in stock',
-                            createdAt: new Date().toISOString()
-                        },
-                        {
-                            id: 'prod-' + Date.now() + '-2',
-                            name: 'Spicy Pickled Cucamelons',
-                            category: 'Pickled',
-                            quantity: 144,
-                            reorderLevel: 120,
-                            price: 120.00,
-                            supplier: 'Local Supplier',
-                            notes: 'With chilli and garlic - 12 boxes in stock',
-                            createdAt: new Date().toISOString()
-                        },
-                        {
-                            id: 'prod-' + Date.now() + '-3',
-                            name: 'Dill & Garlic Pickled Cucamelons',
-                            category: 'Pickled',
-                            quantity: 96,
-                            reorderLevel: 120,
-                            price: 120.00,
-                            supplier: 'Local Supplier',
-                            notes: 'Classic dill flavor - 8 boxes in stock',
-                            createdAt: new Date().toISOString()
-                        },
-                        {
-                            id: 'prod-' + Date.now() + '-4',
-                            name: 'Sweet & Sour Pickled Cucamelons',
-                            category: 'Pickled',
-                            quantity: 180,
-                            reorderLevel: 120,
-                            price: 120.00,
-                            supplier: 'Local Supplier',
-                            notes: 'Balanced sweet and tangy - 15 boxes in stock',
-                            createdAt: new Date().toISOString()
-                        },
-                        {
-                            id: 'prod-' + Date.now() + '-5',
-                            name: 'Sweet Cucamelons',
-                            category: 'Pickled',
-                            quantity: 36,
-                            reorderLevel: 60,
-                            price: 120.00,
-                            supplier: 'Local Supplier',
-                            notes: 'Sweet with Drink-O-Pop powder - 3 boxes in stock',
-                            createdAt: new Date().toISOString()
-                        },
-                        {
-                            id: 'prod-' + Date.now() + '-6',
-                            name: 'Fresh Cucamelons (250g)',
-                            category: 'Fresh',
-                            quantity: 50,
-                            reorderLevel: 30,
-                            price: 50.00,
-                            supplier: 'Farm Fresh',
-                            notes: 'Freshly harvested - 50 packets in stock',
-                            createdAt: new Date().toISOString()
-                        }
-                    ];
-                    await this.set(this.KEYS.PRODUCTS, sampleProducts);
-                }
-
-                const movements = await this.get(this.KEYS.MOVEMENTS);
-                if (!movements || movements.length === 0) {
-                    await this.set(this.KEYS.MOVEMENTS, []);
-                }
-
-                const materials = await this.get(this.KEYS.MATERIALS);
-                if (!materials || materials.length === 0) {
-                    await this.set(this.KEYS.MATERIALS, []);
-                }
-            }
-        };
-
-        // Make Storage globally available
-        window.Storage = FirebaseStorage;
-        window.FirebaseStorage = FirebaseStorage;
-
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => FirebaseStorage.init());
-        } else {
-            FirebaseStorage.init();
-        }
-    </script>
-
-    <!-- PDF Generation Libs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Load other scripts after Firebase is initialized -->
-    <script src="./scripts/invoices.js"></script>
-    <script src="./scripts/inventory.js"></script>
-    <script src="./scripts/movements.js"></script>
-    <script src="./scripts/materials.js"></script>
-    <script src="./scripts/material-movements.js"></script>
-    <script src="./scripts/reports.js"></script>
-    <script src="./scripts/app.js"></script>
 </body>
-
 </html>
