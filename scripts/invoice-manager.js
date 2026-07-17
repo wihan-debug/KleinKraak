@@ -16,18 +16,44 @@ const InvoiceManager = {
         // EMERGENCY FIX: Hardcode products directly into state to bypass loading issues
         // Products with BOTH retail and wholesale prices (from catalogue.html)
         const manualProducts = [
-            { id: 'hc1', name: 'White Wine Vinegar', price: 150.00, wholesalePrice: 120.00 },
-            { id: 'hc2', name: 'Spicy Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc3', name: 'Dill & Garlic Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc4', name: 'Sweet & Sour Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc5', name: 'Sweet Cucamelons', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc6', name: 'Fresh Cucamelons (250g)', price: 50.00, wholesalePrice: 40.00 },
-            { id: 'hc7', name: 'French Salad Dressing', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc8', name: 'Garlic And Herb Salad Dressing', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc9', name: 'Sweet&Spicy', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc10', name: 'Pickled Apple Cider Vinegar', price: 120.00, wholesalePrice: 104.00 },
-            { id: 'hc11', name: 'Sweet & Tangy Pickled Cucamelons', price: 120.00, wholesalePrice: 96.00 },
-            { id: 'hc12', name: 'Pickled Mix', price: 120.00, wholesalePrice: 96.00 }
+            // White Wine Vinegar
+            { id: 'hc1',  name: 'White Wine Vinegar (455ml)',                   price: 150.00, wholesalePrice: 120.00 },
+            { id: 'hc1b', name: 'White Wine Vinegar (230ml)',                   price:  70.00, wholesalePrice:  56.00 },
+            // Spicy Pickled Cucamelons
+            { id: 'hc2',  name: 'Spicy Pickled Cucamelons (455ml)',             price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc2b', name: 'Spicy Pickled Cucamelons (230ml)',             price:  70.00, wholesalePrice:  56.00 },
+            // Dill & Garlic Pickled Cucamelons
+            { id: 'hc3',  name: 'Dill & Garlic Pickled Cucamelons (455ml)',    price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc3b', name: 'Dill & Garlic Pickled Cucamelons (230ml)',    price:  70.00, wholesalePrice:  56.00 },
+            // Sweet & Sour Pickled Cucamelons
+            { id: 'hc4',  name: 'Sweet & Sour Pickled Cucamelons (455ml)',     price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc4b', name: 'Sweet & Sour Pickled Cucamelons (230ml)',     price:  70.00, wholesalePrice:  56.00 },
+            // Pickled Sweet & Spicy
+            { id: 'hc5',  name: 'Pickled Sweet & Spicy (455ml)',               price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc5b', name: 'Pickled Sweet & Spicy (230ml)',               price:  70.00, wholesalePrice:  56.00 },
+            // Pickled Apple Cider Vinegar
+            { id: 'hc6',  name: 'Pickled Apple Cider Vinegar (455ml)',         price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc6b', name: 'Pickled Apple Cider Vinegar (230ml)',         price:  70.00, wholesalePrice:  56.00 },
+            // Salsa
+            { id: 'hc7',  name: 'Salsa (455ml)',                               price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc7b', name: 'Salsa (230ml)',                               price:  70.00, wholesalePrice:  56.00 },
+            // Piccalilli
+            { id: 'hc8',  name: 'Piccalilli (455ml)',                          price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc8b', name: 'Piccalilli (230ml)',                          price:  70.00, wholesalePrice:  56.00 },
+            // Sweet Cucamelons
+            { id: 'hc9',  name: 'Sweet Cucamelons (455ml)',                    price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc9b', name: 'Sweet Cucamelons (230ml)',                    price:  70.00, wholesalePrice:  56.00 },
+            // Sweet & Tangy Pickled Cucamelons
+            { id: 'hc10', name: 'Sweet & Tangy Pickled Cucamelons (455ml)',    price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc10b', name: 'Sweet & Tangy Pickled Cucamelons (230ml)',   price:  70.00, wholesalePrice:  56.00 },
+            // French Salad Dressing
+            { id: 'hc11', name: 'French Salad Dressing (455ml)',               price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc11b', name: 'French Salad Dressing (230ml)',              price:  70.00, wholesalePrice:  56.00 },
+            // Garlic & Herb Salad Dressing
+            { id: 'hc12', name: 'Garlic & Herb Salad Dressing (455ml)',        price: 120.00, wholesalePrice:  96.00 },
+            { id: 'hc12b', name: 'Garlic & Herb Salad Dressing (230ml)',       price:  70.00, wholesalePrice:  56.00 },
+            // Fresh Cucamelons
+            { id: 'hc13', name: 'Fresh Cucamelons (250g Punnet)',              price:  50.00, wholesalePrice:  40.00 }
         ];
 
         console.log("InvoiceManager: EMERGENCY LOADING HARDCODED PRODUCTS", manualProducts);
