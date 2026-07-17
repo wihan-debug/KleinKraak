@@ -1,6 +1,7 @@
 /**
  * KleinKraak Stock Control v2.0
- * Single-file application: Firebase + SHA-256 PIN auth + full CRUD
+ * Single-file application: Firebase + full CRUD
+ * Auth is handled by the main site (admin.js password gate).
  * All data stored under `stockControl/` in Firebase Realtime Database.
  */
 
@@ -79,11 +80,8 @@ const DB = {
    APPLICATION STATE
 ============================================================ */
 const State = {
-    pinHash:           null,
     defaultThreshold:  5,
-    pinBuffer:         '',
-    unlocked:          false,
-    products:          {},   // { [id]: { name, size, category, stock, threshold, createdAt } }
+    products:          {},   // { [id]: { name, size, category, stock, threshold, retailPrice, createdAt } }
     movements:         {}    // { [id]: { productId, productName, qty, direction, reason, note, timestamp, adjustedStock } }
 };
 
@@ -102,95 +100,33 @@ const App = {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
         });
 
-        // Keyboard PIN support
-        document.addEventListener('keydown', e => {
-            if (State.unlocked) return;
-            if (e.key >= '0' && e.key <= '9') this.pinPress(e.key);
-            if (e.key === 'Backspace') this.pinBackspace();
-        });
-
         // Navigation
         this._setupNav();
 
-        // Load / initialise PIN then show PIN screen
-        await this._initPin();
-    },
+        // Skip PIN screen — main site already authenticated the user.
+        // Hide pin screen, show app, start loading.
+        const pinScreen = document.getElementById('pin-screen');
+        const mainApp   = document.getElementById('main-app');
+        if (pinScreen) pinScreen.style.display = 'none';
+        if (mainApp)   mainApp.style.display   = 'flex';
 
-    /* ----------------------------------------------------------
-       PIN MANAGEMENT
-    ---------------------------------------------------------- */
-    async _initPin() {
-        let stored = await DB.get('stockControl/settings/pin');
-        if (!stored) {
-            // First run — seed with the default PIN 2907
-            stored = await sha256('2907');
-            await DB.set('stockControl/settings/pin', stored);
-        }
-        State.pinHash = stored;
-
-        // Load threshold
+        // Load threshold setting
         const thr = await DB.get('stockControl/settings/defaultThreshold');
         if (thr !== null) {
             State.defaultThreshold = thr;
-            const el = document.getElementById('settings-threshold');
-            if (el) el.value = thr;
+            const thrEl = document.getElementById('settings-threshold');
+            if (thrEl) thrEl.value = thr;
         }
+
+        this._startListeners();
     },
 
-    pinPress(digit) {
-        if (State.pinBuffer.length >= 4) return;
-        State.pinBuffer += digit;
-        this._refreshDots();
-        if (State.pinBuffer.length === 4) setTimeout(() => this._checkPin(), 180);
-    },
-
-    pinBackspace() {
-        State.pinBuffer = State.pinBuffer.slice(0, -1);
-        this._refreshDots();
-        document.getElementById('pin-error').textContent = '';
-    },
-
-    _refreshDots() {
-        for (let i = 0; i < 4; i++) {
-            document.getElementById(`dot-${i}`)?.classList.toggle('filled', i < State.pinBuffer.length);
-        }
-    },
-
-    async _checkPin() {
-        const hash = await sha256(State.pinBuffer);
-        if (hash === State.pinHash) {
-            this._unlock();
-        } else {
-            const card = document.getElementById('pin-card');
-            card.classList.add('shake');
-            setTimeout(() => card.classList.remove('shake'), 500);
-            document.getElementById('pin-error').textContent = 'Incorrect PIN — try again.';
-            State.pinBuffer = '';
-            this._refreshDots();
-        }
-    },
-
-    _unlock() {
-        State.unlocked = true;
-        const pinScreen = document.getElementById('pin-screen');
-        const mainApp   = document.getElementById('main-app');
-        pinScreen.classList.add('unlocking');
-        setTimeout(() => {
-            pinScreen.style.display = 'none';
-            mainApp.style.display   = 'flex';
-            this._startListeners();
-        }, 480);
-    },
-
+    /* ----------------------------------------------------------
+       LOCK (goes back to main site)
+    ---------------------------------------------------------- */
     lock() {
-        State.unlocked    = false;
-        State.pinBuffer   = '';
-        this._refreshDots();
-        document.getElementById('pin-error').textContent = '';
-        const ps = document.getElementById('pin-screen');
-        ps.style.display = 'flex';
-        ps.classList.remove('unlocking');
-        document.getElementById('main-app').style.display = 'none';
+        // Return to main site — the password gate there handles re-auth
+        window.location.href = '../index.html';
     },
 
     /* ----------------------------------------------------------
@@ -252,6 +188,10 @@ const App = {
         const lowList  = entries.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= (p.threshold ?? State.defaultThreshold));
         const okList   = entries.filter(p => (p.stock || 0) > (p.threshold ?? State.defaultThreshold));
 
+        // Total stock value = sum of (stock × retailPrice) for all products
+        const totalValue = entries.reduce((sum, p) => sum + ((p.stock || 0) * (p.retailPrice || 0)), 0);
+        const fmtVal = 'R\u00A0' + totalValue.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
         // Stat cards
         const sg = document.getElementById('stat-grid');
         if (sg) sg.innerHTML = `
@@ -274,6 +214,11 @@ const App = {
                 <div class="stat-label">Out of Stock</div>
                 <div class="stat-value">${outList.length}</div>
                 <div class="stat-sub">need restocking</div>
+            </div>
+            <div class="stat-card" style="border-left-color:#7C3AED">
+                <div class="stat-label">Stock Value</div>
+                <div class="stat-value" style="font-size:1.4rem;color:#7C3AED">${fmtVal}</div>
+                <div class="stat-sub">at retail prices</div>
             </div>
         `;
 
@@ -352,6 +297,8 @@ const App = {
             const isOut  = stock <= 0;
             const isLow  = !isOut && stock <= thr;
             const sCls   = isOut ? 'out' : isLow ? 'low' : 'ok';
+            const price  = p.retailPrice ? 'R\u00A0' + Number(p.retailPrice).toFixed(2) : '—';
+            const lineVal = p.retailPrice ? 'R\u00A0' + (stock * p.retailPrice).toFixed(2) : '—';
             return `<tr>
                 <td>
                     <div style="font-weight:700;font-size:0.9rem">${esc(p.name)}</div>
@@ -360,6 +307,8 @@ const App = {
                 <td><span class="cat-pill">${esc(p.category || 'Other')}</span></td>
                 <td style="color:var(--text-muted);font-size:0.88rem">${thr}</td>
                 <td><span class="stock-cell ${sCls}">${stock}</span></td>
+                <td style="font-size:0.85rem;color:var(--text-muted)">${price}</td>
+                <td style="font-size:0.85rem;font-weight:600">${lineVal}</td>
                 <td>
                     <div class="action-btns">
                         <button class="action-btn btn-adjust" onclick="App.openMovementModal('${p._id}')">Adjust</button>
@@ -436,15 +385,17 @@ const App = {
         document.getElementById('product-category').value      = 'Pickled';
         document.getElementById('product-opening-stock').value = '0';
         document.getElementById('product-threshold').value     = String(State.defaultThreshold);
+        document.getElementById('product-price').value         = '';
 
         if (productId && State.products[productId]) {
             const p = State.products[productId];
             title.textContent = 'Edit Product';
             document.getElementById('product-edit-id').value           = productId;
-            document.getElementById('product-name').value              = p.name      || '';
-            document.getElementById('product-size').value              = p.size      || '';
-            document.getElementById('product-category').value          = p.category  || 'Other';
+            document.getElementById('product-name').value              = p.name         || '';
+            document.getElementById('product-size').value              = p.size         || '';
+            document.getElementById('product-category').value          = p.category     || 'Other';
             document.getElementById('product-threshold-edit').value    = String(p.threshold ?? State.defaultThreshold);
+            document.getElementById('product-price').value             = p.retailPrice  || '';
             osr.style.display = 'none';
             etr.style.display = '';
         } else {
@@ -462,11 +413,12 @@ const App = {
     },
 
     async saveProduct() {
-        const editId   = document.getElementById('product-edit-id').value;
-        const name     = document.getElementById('product-name').value.trim();
-        const size     = document.getElementById('product-size').value.trim();
-        const category = document.getElementById('product-category').value;
-        const isNew    = !editId;
+        const editId      = document.getElementById('product-edit-id').value;
+        const name        = document.getElementById('product-name').value.trim();
+        const size        = document.getElementById('product-size').value.trim();
+        const category    = document.getElementById('product-category').value;
+        const retailPrice = parseFloat(document.getElementById('product-price').value) || 0;
+        const isNew       = !editId;
 
         if (!name) { this.toast('Please enter a product name.', 'error'); return; }
 
@@ -476,7 +428,7 @@ const App = {
             const productId = uid();
 
             await DB.set(`stockControl/products/${productId}`, {
-                name, size, category, stock, threshold, createdAt: Date.now()
+                name, size, category, stock, threshold, retailPrice, createdAt: Date.now()
             });
 
             // Log opening stock movement if stock > 0
@@ -487,7 +439,8 @@ const App = {
             this.toast(`${name} added!`, 'success');
         } else {
             const threshold = parseInt(document.getElementById('product-threshold-edit').value) || State.defaultThreshold;
-            await DB.update(`stockControl/products/${editId}`, { name, size, category, threshold });
+            const editPrice = parseFloat(document.getElementById('product-price').value) || 0;
+            await DB.update(`stockControl/products/${editId}`, { name, size, category, threshold, retailPrice: editPrice });
             this.toast(`${name} updated.`, 'success');
         }
 
