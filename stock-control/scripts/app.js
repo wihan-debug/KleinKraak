@@ -574,6 +574,56 @@ const App = {
         this.toast('PIN updated successfully!', 'success');
     },
 
+
+    /* ----------------------------------------------------------
+       SEED -- import all catalogue products
+    ---------------------------------------------------------- */
+    async seedCatalogueProducts() {
+        const existing = Object.keys(State.products).length;
+        if (existing > 0) {
+            if (!confirm(`You already have ${existing} product(s). This will ADD the catalogue products alongside them (nothing deleted). Continue?`)) return;
+        }
+        const catalogue = [
+            { name: 'White Wine Vinegar',               size: '455ml',       category: 'Vinegar',  retailPrice: 150 },
+            { name: 'White Wine Vinegar',               size: '230ml',       category: 'Vinegar',  retailPrice:  70 },
+            { name: 'Spicy Pickled Cucamelons',         size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Spicy Pickled Cucamelons',         size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Dill & Garlic Pickled Cucamelons', size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Dill & Garlic Pickled Cucamelons', size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Sweet & Sour Pickled Cucamelons',  size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Sweet & Sour Pickled Cucamelons',  size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Pickled Sweet & Spicy',            size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Pickled Sweet & Spicy',            size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Pickled Apple Cider Vinegar',      size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Pickled Apple Cider Vinegar',      size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Sweet Cucamelons',                 size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Sweet Cucamelons',                 size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Sweet & Tangy Pickled Cucamelons', size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Sweet & Tangy Pickled Cucamelons', size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Piccalilli',                       size: '455ml',       category: 'Pickled',  retailPrice: 120 },
+            { name: 'Piccalilli',                       size: '230ml',       category: 'Pickled',  retailPrice:  70 },
+            { name: 'Salsa',                            size: '455ml',       category: 'Salsa',    retailPrice: 120 },
+            { name: 'Salsa',                            size: '230ml',       category: 'Salsa',    retailPrice:  70 },
+            { name: 'French Salad Dressing',            size: '455ml',       category: 'Dressing', retailPrice: 120 },
+            { name: 'French Salad Dressing',            size: '230ml',       category: 'Dressing', retailPrice:  70 },
+            { name: 'Garlic & Herb Salad Dressing',     size: '455ml',       category: 'Dressing', retailPrice: 120 },
+            { name: 'Garlic & Herb Salad Dressing',     size: '230ml',       category: 'Dressing', retailPrice:  70 },
+            { name: 'Fresh Cucamelons',                 size: '250g Punnet', category: 'Fresh',    retailPrice:  50 }
+        ];
+        const btn = document.getElementById('seed-btn');
+        if (btn) { btn.textContent = 'Importing...'; btn.disabled = true; }
+        const thr = State.defaultThreshold || 5;
+        for (const p of catalogue) {
+            await DB.set(`stockControl/products/${uid()}`, {
+                name: p.name, size: p.size, category: p.category,
+                retailPrice: p.retailPrice, stock: 0, threshold: thr,
+                createdAt: Date.now()
+            });
+        }
+        if (btn) { btn.textContent = 'Import Catalogue Products'; btn.disabled = false; }
+        this.toast(`${catalogue.length} products imported! Log your opening stock to get started.`, 'success');
+        this.switchView('products');
+    },
     async saveThreshold() {
         const val = parseInt(document.getElementById('settings-threshold').value) || 5;
         await DB.set('stockControl/settings/defaultThreshold', val);

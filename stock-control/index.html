@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1040,7 +1040,12 @@
                 <button class="btn btn-primary" style="margin-top:8px" onclick="App.saveThreshold()">Save Threshold</button>
             </div>
 
-            <div class="settings-card">
+                        <div class="settings-card" style="border-left: 4px solid var(--primary);">
+                <h3>&#128230; Import Catalogue Products</h3>
+                <p class="settings-desc">Instantly adds all 25 products from the KleinKraak catalogue with correct names, sizes, categories, and retail prices. Stock starts at <strong>0</strong> &mdash; use <strong>Log Movement</strong> to set your current quantities per product.</p>
+                <button class="btn btn-primary" id="seed-btn" onclick="App.seedCatalogueProducts()">Import Catalogue Products</button>
+            </div>
+<div class="settings-card">
                 <h3>ℹ️ About</h3>
                 <p class="settings-desc">KleinKraak Stock Control v2.0<br>Tracks finished product stock. All data stored in Firebase Realtime Database.</p>
             </div>
